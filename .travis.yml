@@ -12,7 +12,7 @@ branches:
 before_install:
   - chmod +x gradlew
 
-# Travis CI 서버의 home
+# Travis CI 서버의 Home
 # gradle을 통하여 의존성을 받게 되면 이를 캐시하여 배포할 때 마다 다시 받지 않도록 설정한다.
 cache:
   directories:
@@ -22,6 +22,22 @@ cache:
 # main 브랜치에 push 되면 수행되는 명령어이다.
 # 프로젝트 내에 권한이 추가된 gradlew를 활용하여 clean, build를 진행한다.
 script: "./gradlew clean build"
+
+before_deploy:
+  - zip -r springboot-webservice *
+  - mkdir -p deploy
+  - mv springboot-webservice.zip deploy/springboot-webservice.zip
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: team12-ci
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait_until_deployed : true
+
 
 # CI 실행 완료 시 작성한 이메일로 알람
 notifications:
