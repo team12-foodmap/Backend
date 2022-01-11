@@ -40,6 +40,17 @@ deploy:
     on:
       branch: feature/lhw
 
+  - provider: codedeploy
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  bucket: team12-ci
+  key: springboot-webservice.zip
+  bundle_type: zip
+  application: springboot-webservice
+  deployment_group: springboot-webservice-group
+  region: ap-northeast-2
+  wait-until-deployed: true
+
 
 # CI 실행 완료 시 작성한 이메일로 알람
 notifications:
