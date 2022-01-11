@@ -23,8 +23,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findTop5ByRestaurantOrderByReviewLikeDesc(Restaurant restaurant);
 
-    @Query("select count(distinct restaurantTags) from Review where restaurantTags = :tagId")
-    int countByRestaurantTags(int tagId);
+    @Query("select count(distinct restaurantTags) from Review where restaurantTags = :tagId and restaurant.id = :restaurantId" )
+    int countRestaurantTags(Long restaurantId, int tagId);
+
+
 
 
     List<Review> findAllByRestaurantIdOrderByReviewLikeDesc(Long restaurantId);

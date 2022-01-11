@@ -49,8 +49,7 @@ public class RestaurantService {
              imagePath = storageService.uploadFile(image, "restaurant");
         }
 
-        Location location = new Location(requestDto.getAddress(), requestDto.getLatitude(), requestDto.getLongitude());
-        Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser, location);
+        Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser);
 
         return restaurantRepository.save(restaurant).getId();
     }
@@ -123,7 +122,7 @@ public class RestaurantService {
 
                 RestaurantReviewResponseDto responseDto = RestaurantReviewResponseDto.builder()
                         .reviewId(review.getId())
-                        .image(review.getImage())
+                        .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
                         .build();
 
                 restaurantReviewResponseDtos.add(responseDto);
@@ -141,7 +140,7 @@ public class RestaurantService {
         double distance = getDistance(userLat, userLon, restLat, restLon);
 
         //식당리뷰 태그
-        List<RestaurantTagResponseDto> tagList = getTagList();
+        List<RestaurantTagResponseDto> tagList = getTagList(restaurant);
 
         //식당 즐겨찾기 리스트
         List<RestaurantLikesDto> restaurantLikesDtoList = getRestaurantLikesDtos(restaurant);
@@ -177,11 +176,11 @@ public class RestaurantService {
         return restaurantLikesDtoList;
     }
 
-    private List<RestaurantTagResponseDto> getTagList() {
+    private List<RestaurantTagResponseDto> getTagList(Restaurant restaurant) {
         List<RestaurantTagResponseDto> taglist = new ArrayList<>();
 
         for (int i = 1; i < 5; i++) {
-            int sum = reviewRepository.countByRestaurantTags(i);
+            int sum = reviewRepository.countRestaurantTags(restaurant.getId(), i);
             RestaurantTagResponseDto tagsDto = RestaurantTagResponseDto.builder()
                     .tagId(i)
                     .count(sum)
@@ -211,7 +210,7 @@ public class RestaurantService {
                     .restaurantId(restaurantList.getId())
                     .restaurantName(restaurantList.getRestaurantName())
                     .restaurantLikesCount(restaurantList.getRestaurantLikesCount())
-                    .image(restaurantList.getImage())
+                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
                     .distance(distance)
                     .build();
 
