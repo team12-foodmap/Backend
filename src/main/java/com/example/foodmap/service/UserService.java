@@ -47,6 +47,7 @@ public class UserService {
                 user.getNickname(),
                 user.getProfileImage(),
                 user.getKakaoId(),
+                user.getId(),
                 user.getLevel(),
                 user.getLocation()
         );
