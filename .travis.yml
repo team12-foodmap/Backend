@@ -12,7 +12,7 @@ branches:
 before_install:
   - chmod +x gradlew
 
-# Travis CI 서버의 home
+# Travis CI 서버의 Home
 # gradle을 통하여 의존성을 받게 되면 이를 캐시하여 배포할 때 마다 다시 받지 않도록 설정한다.
 cache:
   directories:
