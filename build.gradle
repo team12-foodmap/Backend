@@ -53,6 +53,10 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     testImplementation 'org.mockito:mockito-junit-jupiter'
+
+    //s3 mock library
+    implementation 'io.findify:s3mock_2.13:0.2.6'
+
 }
 
 test {
