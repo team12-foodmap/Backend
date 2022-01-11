@@ -37,6 +37,8 @@ deploy:
     acl: private
     local_dir: deploy
     wait_until_deployed : true
+    on:
+      branch: release
 
 
 # CI 실행 완료 시 작성한 이메일로 알람
