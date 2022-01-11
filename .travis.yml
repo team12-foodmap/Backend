@@ -1,3 +1,4 @@
+# 언어와 jdk의 버전을 지정한다.
 language: java
 version:
   - openjdk11
@@ -6,7 +7,7 @@ version:
 # 오직 main 브랜치가 push될 때 수행하도록 지정하였다.
 branches:
   only:
-    - develop
+    - feature/lhw
 
 # 빌드 전에 gradlew의 권한을 추가한다.
 before_install:
@@ -38,19 +39,18 @@ deploy:
     local_dir: deploy
     wait_until_deployed : true
     on:
-      branch: develop
+      branch: feature/lhw
 
   - provider: codedeploy
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
-  bucket: team12-ci
-  key: springboot-webservice.zip
-  bundle_type: zip
-  application: springboot-webservice
-  deployment_group: springboot-webservice-group
-  region: ap-northeast-2
-  wait-until-deployed: true
-
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: team12-ci
+    key: springboot-webservice.zip
+    bundle_type: zip
+    application: springboot-webservice
+    deployment_group: springboot-webservice-group
+    region: ap-northeast-2
+    wait-until-deployed: true
 
 # CI 실행 완료 시 작성한 이메일로 알람
 notifications:
