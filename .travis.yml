@@ -6,7 +6,7 @@ version:
 # 오직 main 브랜치가 push될 때 수행하도록 지정하였다.
 branches:
   only:
-    - develop
+    - feature/lhw
 
 # 빌드 전에 gradlew의 권한을 추가한다.
 before_install:
