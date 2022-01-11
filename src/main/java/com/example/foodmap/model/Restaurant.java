@@ -57,10 +57,10 @@ public class Restaurant extends Timestamped {
     private int restaurantLikesCount;
 
     @Builder
-    public Restaurant(RestaurantSaveRequestDto requestDto, String imagePath, User foundUser, Location location) {
+    public Restaurant(RestaurantSaveRequestDto requestDto, String imagePath, User foundUser) {
         this.user = foundUser;
         this.restaurantName = requestDto.getRestaurantName();
-        this.location = location;
+        this.location =  new Location(requestDto.getAddress(), requestDto.getLatitude(), requestDto.getLongitude());
         this.restaurantType = requestDto.getRestaurantType();
         this.fried = requestDto.getFried();
         this.sundae = requestDto.getSundae();

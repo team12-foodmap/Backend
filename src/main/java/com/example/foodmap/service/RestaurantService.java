@@ -49,8 +49,7 @@ public class RestaurantService {
              imagePath = storageService.uploadFile(image, "restaurant");
         }
 
-        Location location = new Location(requestDto.getAddress(), requestDto.getLatitude(), requestDto.getLongitude());
-        Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser, location);
+        Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser);
 
         return restaurantRepository.save(restaurant).getId();
     }
@@ -123,7 +122,7 @@ public class RestaurantService {
 
                 RestaurantReviewResponseDto responseDto = RestaurantReviewResponseDto.builder()
                         .reviewId(review.getId())
-                        .image(review.getImage())
+                        .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
                         .build();
 
                 restaurantReviewResponseDtos.add(responseDto);
@@ -211,7 +210,7 @@ public class RestaurantService {
                     .restaurantId(restaurantList.getId())
                     .restaurantName(restaurantList.getRestaurantName())
                     .restaurantLikesCount(restaurantList.getRestaurantLikesCount())
-                    .image(restaurantList.getImage())
+                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
                     .distance(distance)
                     .build();
 
