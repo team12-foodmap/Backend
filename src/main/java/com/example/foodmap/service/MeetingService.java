@@ -58,8 +58,16 @@ public class MeetingService {
         );
         //조회수 증가
         viewCountUp(meeting.getId());
-        //댓글 정보
 
+        //참여자 정보
+        List<MeetingParticipate> participates =meetingParticipateRepository.findAllByMeetingId(meetingId);
+
+        List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
+       for(MeetingParticipate participate: participates){
+
+
+           participateInfoDtoList.add(new ParticipateInfoDto(participate.getUser().getId()));
+       }
 
         MeetingInfoResponseDto meetingInfoResponseDto = new MeetingInfoResponseDto(
                 meeting.getMeetingTitle(),
@@ -80,7 +88,7 @@ public class MeetingService {
         );
         //반환할 객체 생성
 
-        return new MeetingDetailResponseDto(meetingInfoResponseDto,commentAll(meetingId,userDetails));
+        return new MeetingDetailResponseDto(participateInfoDtoList,meetingInfoResponseDto,commentAll(meetingId,userDetails));
     }
 
 
@@ -92,7 +100,7 @@ public class MeetingService {
         return convertNestedStructure(meetingCommentRepository.findMeetingCommentByMeeting(meeting));
     }
 
-    public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){ //댓글삭제
+    public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){
         return new MeetingCommentResponseDto(
                 comment.getId(),comment.getContent(),
                 StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),

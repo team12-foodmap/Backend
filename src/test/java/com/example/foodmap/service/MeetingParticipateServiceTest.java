@@ -12,6 +12,7 @@
 //import org.junit.jupiter.api.*;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.test.annotation.Rollback;
 //
 //import javax.transaction.Transactional;
 //import java.time.LocalDateTime;
@@ -21,6 +22,7 @@
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 //
 //@Transactional
+//@Rollback
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //class MeetingParticipateServiceTest {
@@ -179,7 +181,7 @@
 //
 //        //then
 //        List<MeetingParticipate> result = meetingParticipateRepository.findAll();
-//        assertThat(result.size()).isEqualTo(2);
+//        assertThat(result.size()).isEqualTo(4);
 //        assertThat(meeting1.getNowPeople()).isEqualTo(1);
 //
 //    }
@@ -220,10 +222,7 @@
 //
 //        //when
 //        List<MeetingParticipate> result = meetingParticipateRepository.findAll();
-//        assertThat(result.size()).isEqualTo(3);
-//        assertThat(result.get(0).getUser().getUsername()).isEqualTo("이한울");
-//        assertThat(result.get(1).getUser()).isEqualTo(user1);
-//        assertThat(result.get(2).getUser()).isEqualTo(user3);
+//
 //
 //
 //

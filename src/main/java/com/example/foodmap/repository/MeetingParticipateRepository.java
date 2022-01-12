@@ -13,4 +13,6 @@ public interface MeetingParticipateRepository extends JpaRepository<MeetingParti
     Optional<MeetingParticipate> findByMeetingAndUser(Meeting meeting, User user);
 
     List<MeetingParticipate> findAllByUser(User user);
+
+    List<MeetingParticipate> findAllByMeetingId(Long meetingId);
 }
