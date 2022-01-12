@@ -13,6 +13,7 @@ public class KakaoInfoResponseDto {
     private String nickname;
     private String profileImage;
     private Long kakaoId;
+    private Long userId;
     private Long level;
     private Location location;
 
