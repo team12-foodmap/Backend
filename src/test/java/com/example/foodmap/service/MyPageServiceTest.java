@@ -214,7 +214,7 @@ class MyPageServiceTest {
     //region 성공케이스
     @Nested
     @DisplayName("성공케이스")
-    class sucess {
+    class success {
 
         //region 리뷰 리스트
         @Test
