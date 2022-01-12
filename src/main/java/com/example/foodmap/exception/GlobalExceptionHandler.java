@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import static com.example.foodmap.exception.ErrorCode.DUPLICATE_RESOURCE;
 
-@Slf4j
+@Slf4j(topic = "ERROR_FILE_LOGGER")
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestApiException restApiException = new RestApiException();
         restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
         restApiException.setErrorMessage(ex.getMessage());
-
+        log.error("handleApiRequestException throw NullPointerException : {}", ex);
         return new ResponseEntity(
                 restApiException,
                 HttpStatus.BAD_REQUEST
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestApiException restApiException = new RestApiException();
         restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
         restApiException.setErrorMessage(ex.getMessage());
-
+        log.error("handleApiRequestException throw IllegalArgumentException : {}", ex);
         return new ResponseEntity(
                 restApiException,
                 HttpStatus.BAD_REQUEST
