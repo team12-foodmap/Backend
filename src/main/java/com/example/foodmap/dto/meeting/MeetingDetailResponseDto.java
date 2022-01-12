@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class MeetingDetailResponseDto<T> {
-
+    private List<ParticipateInfoDto> participateInfo;
     private MeetingInfoResponseDto meetingInfo;
     private List<T> comment;
 }
