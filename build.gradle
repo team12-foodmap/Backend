@@ -54,9 +54,8 @@ dependencies {
 
     testImplementation 'org.mockito:mockito-junit-jupiter'
 
-    //s3 mock library
+    //S3 Mock Server
     implementation 'io.findify:s3mock_2.13:0.2.6'
-
 }
 
 test {
