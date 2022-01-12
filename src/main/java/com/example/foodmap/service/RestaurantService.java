@@ -7,6 +7,7 @@ import com.example.foodmap.model.*;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.repository.UserRepository;
+import com.example.foodmap.validator.RestaurantValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,7 @@ public class RestaurantService {
                 () -> new CustomException(USER_NOT_FOUND)
         );
 
+        RestaurantValidator.isValidRestaurant(requestDto);
 
         String imagePath = "";
         if (image != null) {
