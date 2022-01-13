@@ -172,7 +172,7 @@ public class MeetingService {
 
 
         //반환 목록에 들어갈 데이터 찾을 리스트
-        Pageable pageable = PageRequest.of(page-1,size, Sort.unsorted());
+        Pageable pageable = PageRequest.of(page,size, Sort.unsorted());
         Page <Meeting> meetingList = meetingRepository.findAllByOrderByModifiedAtDesc(pageable);
 
         for(Meeting meeting:meetingList){
