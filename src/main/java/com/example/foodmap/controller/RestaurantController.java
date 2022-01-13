@@ -74,7 +74,7 @@ public class RestaurantController {
         return ResponseEntity.ok().body(myLikeResponseDto);
     }
 
-    //로그인하지 않은 사용자(둘러보기) -서울역 근처 식당 조회
+    //로그인하지 않은 사용자(둘러보기) - 서울역 근처 식당 조회
     @GetMapping("/home")
     public List<RestaurantResponseDto> getRestaurantsInHome(@RequestParam int page,@RequestParam int size) {
         double lat = 126.97260868381068;
