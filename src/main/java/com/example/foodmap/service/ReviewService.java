@@ -12,6 +12,7 @@ import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -124,10 +125,12 @@ public class ReviewService {
     }
 
     //region 리뷰 조회
-    public List<ReviewResponseDto> showReview(Long userId) {
+    public List<ReviewResponseDto> showReview(Long userId,int page, int size) {
+
+        PageRequest pageable = PageRequest.of(page, size);
 
         List<ReviewResponseDto> reviewLists = new ArrayList<>();
-        List<Review> reviewList = reviewRepository.findAllByUserId(userId);
+        List<Review> reviewList = reviewRepository.findAllByUserId(userId,pageable);
         for (Review review : reviewList) {
             ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
                     .reviewId(review.getId())
@@ -144,10 +147,12 @@ public class ReviewService {
 
     //region 리뷰 전체 조회
 
-    public List<ReviewAllResponseDto> showAllReview(Long restaurantId) {
+    public List<ReviewAllResponseDto> showAllReview(Long restaurantId,int page, int size) {
+
+        PageRequest pageable = PageRequest.of(page, size);
 
         List<ReviewAllResponseDto> reviewLists = new ArrayList<>();
-        List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurantId);
+        List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurantId,pageable);
         for (Review review : reviewList) {
             ReviewAllResponseDto reviewResponseDto = ReviewAllResponseDto.builder()
                     .reviewId(review.getId())

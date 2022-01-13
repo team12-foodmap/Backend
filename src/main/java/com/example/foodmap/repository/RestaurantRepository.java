@@ -17,7 +17,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     Optional<Restaurant> findById(Long restaurantId);
 
-    List<Restaurant> findAllByUser(User user);
+    List<Restaurant> findAllByUser(User user,Pageable pageable);
 
     String HAVERSINE_PART = "(6371 * acos(cos(radians(:latitude)) * cos(radians(r.location.latitude)) * cos(radians(r.location.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(r.location.latitude))))";
 
