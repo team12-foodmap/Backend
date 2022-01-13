@@ -30,9 +30,9 @@ public class ReviewController {
     public ResponseEntity<String> createReview(@PathVariable Long restaurantId,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @ModelAttribute ReviewRequestDto reviewRequestDto,
-                                               @RequestParam MultipartFile image)   {
+                                               @RequestParam MultipartFile image) {
 
-        reviewService.createReview(restaurantId, reviewRequestDto, userDetails.getUser(),image);
+        reviewService.createReview(restaurantId, reviewRequestDto, userDetails.getUser(), image);
 
         return ResponseEntity.ok()
                 .body("리뷰 작성 완료!");
@@ -43,9 +43,9 @@ public class ReviewController {
     public ResponseEntity<String> updateReview(@PathVariable Long reviewId,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @ModelAttribute ReviewUpdateRequestDto reviewUpdateRequestDto,
-                                               @RequestParam MultipartFile image)   {
+                                               @RequestParam MultipartFile image) {
 
-        reviewService.updateReview(reviewId, reviewUpdateRequestDto, userDetails.getUser(),image);
+        reviewService.updateReview(reviewId, reviewUpdateRequestDto, userDetails.getUser(), image);
 
         return ResponseEntity.ok()
                 .body("리뷰 수정 완료!");
@@ -63,21 +63,26 @@ public class ReviewController {
 
     @ApiOperation(value = "다른 사람이 쓴 리뷰 조회")
     @GetMapping("/reviews/{userId}")
-    public ResponseEntity<List<ReviewResponseDto>> showReview (@PathVariable Long userId){
+    public ResponseEntity<List<ReviewResponseDto>> showReview(@PathVariable Long userId,
+                                                              @RequestParam int page,
+                                                              @RequestParam int size) {
 
 
-        List<ReviewResponseDto> requestDto = reviewService.showReview(userId);
+        List<ReviewResponseDto> requestDto = reviewService.showReview(userId,page,size);
 
         return ResponseEntity.ok()
                 .body(requestDto);
 
     }
+
     @ApiOperation(value = "식당 리뷰 전체조회")
     @GetMapping("/reviews/all/{restaurantId}")
-    public ResponseEntity<List<ReviewAllResponseDto>> showAllReview (@PathVariable Long restaurantId
-                                                                     ){
+    public ResponseEntity<List<ReviewAllResponseDto>> showAllReview(@PathVariable Long restaurantId,
+                                                                    @RequestParam int page,
+                                                                    @RequestParam int size
+    ) {
 
-        List<ReviewAllResponseDto> responseDto = reviewService.showAllReview(restaurantId);
+        List<ReviewAllResponseDto> responseDto = reviewService.showAllReview(restaurantId,page,size);
 
         return ResponseEntity.ok()
                 .body(responseDto);

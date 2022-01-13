@@ -51,7 +51,7 @@ public class KakaoUserService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserRequestDto);
 
 // 4. 강제 로그인 처리
-       return forceLogin(kakaoUser, response);
+        return forceLogin(kakaoUser, response);
 
     }
 
@@ -65,10 +65,10 @@ public class KakaoUserService {
         body.add("grant_type", "authorization_code");
 //        body.add("client_id", "ca4aaaf3918b25c2334089d9a1d1e8ce");
 //        body.add("redirect_uri", "http://13.125.148.51:8080/user/kakao/callback");
-       body.add("client_id", "c0e66cf5516530d16e6aa5105af69ae9");
+        body.add("client_id", "c0e66cf5516530d16e6aa5105af69ae9");
         body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
-//        body.add("client_id", "96226a61dfa74ab382d1603dde61b318");
 //        body.add("client_id", "b70f4e2d805f84002174ac1aa5b2f11a");
+//        body.add("client_id", "96226a61dfa74ab382d1603dde61b318");
 //        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
         body.add("code", code);
 
@@ -117,7 +117,7 @@ public class KakaoUserService {
         String profileImage = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
 
 
-        return new KakaoUserRequestDto(id, nickname, email,profileImage);
+        return new KakaoUserRequestDto(id, nickname, email, profileImage);
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserRequestDto kakaoUserRequestDto) {
@@ -144,7 +144,7 @@ public class KakaoUserService {
 // role: 일반 사용자
             UserRoleEnum role = UserRoleEnum.USER;
             Location location = new Location();
-            kakaoUser = new User(username, encodedPassword, kakaoId, email, role, level,profileImage,location,nickname);
+            kakaoUser = new User(username, encodedPassword, kakaoId, email, role, level, profileImage, location, nickname);
             userRepository.save(kakaoUser);
         }
 
@@ -162,15 +162,15 @@ public class KakaoUserService {
         response.addHeader("Authorization", "Bearer " + token);
 
 
-        if(kakaoUser.getNickname().equals("")){
+        if (kakaoUser.getNickname().equals("")) {
             boolean result = true;
             return KakaoUserResponseDto.builder()
                     .JWtToken(token)
                     .result(result)
                     .build();
 
-        }else {
-            boolean result= false;
+        } else {
+            boolean result = false;
             return KakaoUserResponseDto.builder()
                     .JWtToken(token)
                     .result(result)
