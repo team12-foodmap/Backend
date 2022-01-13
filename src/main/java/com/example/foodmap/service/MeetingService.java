@@ -105,7 +105,10 @@ public class MeetingService {
                 comment.getId(),comment.getContent(),
                 StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
                 comment.getUser().getId(),
-                comment.getUser().getNickname());
+                comment.getUser().getNickname(),
+                comment.getModifiedAt()
+                );
+
     }
 
 
