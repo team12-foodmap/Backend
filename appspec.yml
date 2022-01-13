@@ -8,4 +8,4 @@ hooks:
   AfterInstall: # 배포가 끝나면 아래 명령어를 실행
     - location: execute-deploy.sh
       runas: root
-      timeout: 110
+      timeout: 100

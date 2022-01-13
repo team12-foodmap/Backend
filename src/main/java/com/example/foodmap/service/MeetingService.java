@@ -105,7 +105,10 @@ public class MeetingService {
                 comment.getId(),comment.getContent(),
                 StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
                 comment.getUser().getId(),
-                comment.getUser().getNickname());
+                comment.getUser().getNickname(),
+                comment.getModifiedAt()
+                );
+
     }
 
 
@@ -169,7 +172,7 @@ public class MeetingService {
 
 
         //반환 목록에 들어갈 데이터 찾을 리스트
-        Pageable pageable = PageRequest.of(page-1,size, Sort.unsorted());
+        Pageable pageable = PageRequest.of(page,size, Sort.unsorted());
         Page <Meeting> meetingList = meetingRepository.findAllByOrderByModifiedAtDesc(pageable);
 
         for(Meeting meeting:meetingList){
