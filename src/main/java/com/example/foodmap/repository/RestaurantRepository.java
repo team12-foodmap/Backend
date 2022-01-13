@@ -31,11 +31,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     @Modifying
     @Query(value = "update Restaurant r set r.restaurantLikesCount= r.restaurantLikesCount + 1 where r.id = :id")
-    void upLikeCnt(Long id);
+    void upLikeCnt(@Param("id")Long id);
 
     @Modifying
     @Query(value = "update Restaurant r set r.restaurantLikesCount= r.restaurantLikesCount - 1 where r.id = :id")
-    void downLikeCnt(Long id);
+    void downLikeCnt(@Param("id")Long id);
 
     @Query("select r from Restaurant r  order by r.restaurantLikesCount desc ")
     List<Restaurant> findRestaurantsByRestaurantLikesCountDesc(Restaurant restaurant);
