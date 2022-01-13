@@ -2,16 +2,15 @@ package com.example.foodmap.service;
 
 import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
 import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
-import com.example.foodmap.dto.mypage.MyLikeResponseDto;
 import com.example.foodmap.dto.mypage.MyReviewResponseDto;
 import com.example.foodmap.dto.review.ReviewRequestDto;
-import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.*;
 import com.example.foodmap.security.UserDetailsImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 
 import javax.transaction.Transactional;
 
@@ -21,7 +20,6 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
@@ -59,6 +57,7 @@ class MyPageServiceTest {
     private RestaurantLikes restaurantLikes2;
     private RestaurantLikes restaurantLikes3;
     private MeetingParticipate meetingParticipate;
+    private Pageable pageable;
 
     //region 사전세팅
     @BeforeEach
@@ -104,7 +103,7 @@ class MyPageServiceTest {
                 "허파만",
                 "밀떡"
         );
-        restaurant1 = new Restaurant(restaurantSaveRequestDto2, null, user1, location1);
+        restaurant1 = new Restaurant(restaurantSaveRequestDto2, null, user1);
         restaurantRepository.save(restaurant1);
         restaurantLikes1 = new RestaurantLikes(1L, user1, restaurant1);
         restaurantLikesRepository.save(restaurantLikes1);
@@ -118,7 +117,7 @@ class MyPageServiceTest {
                 "허파만",
                 "밀떡"
         );
-        restaurant2 = new Restaurant(restaurantSaveRequestDto1, null, user1, location1);
+        restaurant2 = new Restaurant(restaurantSaveRequestDto1, null, user1);
         restaurantRepository.save(restaurant2);
         restaurantLikes2 = new RestaurantLikes(2L, user1, restaurant2);
         restaurantLikesRepository.save(restaurantLikes2);
@@ -254,7 +253,7 @@ class MyPageServiceTest {
             review2 = new Review(reviewRequestDto2, user1, restaurant1, "image1");
             reviewRepository.save(review2);
 
-            List<Review> reviewList = reviewRepository.findAllByUser(user1);
+            List<Review> reviewList = reviewRepository.findAllByUser(user1,pageable);
             for (Review review : reviewList) {
                 MyReviewResponseDto myReviewResponseDto = MyReviewResponseDto.builder()
                         .reviewId(review.getId())
@@ -276,7 +275,7 @@ class MyPageServiceTest {
             // given
 
             //when
-            List<RestaurantLikes> restaurantLikesList = restaurantLikesRepository.findAllByUser(user1);
+            List<RestaurantLikes> restaurantLikesList = restaurantLikesRepository.findAllByUser(user1,pageable);
 
             //then
             assertThat(restaurantLikesList.size()).isEqualTo(2);
@@ -291,7 +290,7 @@ class MyPageServiceTest {
             // given
 
             //when
-            List<Restaurant> restaurantList = restaurantRepository.findAllByUser(user1);
+            List<Restaurant> restaurantList = restaurantRepository.findAllByUser(user1,pageable);
 
             //then
             assertThat(restaurantList.size()).isEqualTo(2);
@@ -306,7 +305,7 @@ class MyPageServiceTest {
         // given
 
         //when
-        List<MeetingParticipate> meetingList = meetingParticipateRepository.findAllByUser(user1);
+        List<MeetingParticipate> meetingList = meetingParticipateRepository.findAllByUser(user1,pageable);
 
         //then
         assertThat(meetingList.size()).isEqualTo(2);

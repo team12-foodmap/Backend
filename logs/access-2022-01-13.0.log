@@ -1,0 +1,2 @@
+2022-01-13 11:31:20.329  INFO 8408 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/user/kakao/callback
+2022-01-13 11:31:20.330  INFO 8408 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/user/kakao/callback

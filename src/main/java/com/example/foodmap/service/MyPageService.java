@@ -8,6 +8,7 @@ import com.example.foodmap.repository.RestaurantLikesRepository;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,18 +26,19 @@ public class MyPageService {
     private final MeetingParticipateRepository meetingParticipateRepository;
 
 
-
     //region 리뷰 조회
-    public List<MyReviewResponseDto> showMyReview(User user) {
+    public List<MyReviewResponseDto> showMyReview(User user, int page, int size) {
+
+        PageRequest pageable = PageRequest.of(page, size);
 
         List<MyReviewResponseDto> myReviewList = new ArrayList<>();
-        List<Review> reviewList = reviewRepository.findAllByUser(user);
+        List<Review> reviewList = reviewRepository.findAllByUser(user, pageable);
         for (Review review : reviewList) {
             MyReviewResponseDto myReviewResponseDto = MyReviewResponseDto.builder()
                     .reviewId(review.getId())
                     .userId(review.getUser().getId())
                     .restaurantId(review.getRestaurant().getId())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
+                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
                     .build();
             myReviewList.add(myReviewResponseDto);
         }
@@ -47,10 +49,12 @@ public class MyPageService {
 
 
     //region 좋아요 한 식당 조회
-    public List<MyLikeResponseDto> showMyLike(User user) {
+    public List<MyLikeResponseDto> showMyLike(User user, int page, int size) {
 
-      List<MyLikeResponseDto> myLikeList = new ArrayList<>();
-      List<RestaurantLikes> restaurantLikesList = restaurantLikesRepository.findAllByUser(user);
+        PageRequest pageable = PageRequest.of(page, size);
+
+        List<MyLikeResponseDto> myLikeList = new ArrayList<>();
+        List<RestaurantLikes> restaurantLikesList = restaurantLikesRepository.findAllByUser(user,pageable);
         for (RestaurantLikes restaurantLikes : restaurantLikesList) {
             double userLat = user.getLocation().getLatitude();
             double userLon = user.getLocation().getLongitude();
@@ -67,7 +71,7 @@ public class MyPageService {
                     .distance(distance)
                     .reviewCount(reviews.size())
                     .restaurantLikesCount(restaurantLikes.getRestaurant().getRestaurantLikesCount())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +restaurantLikes.getRestaurant().getImage())
+                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantLikes.getRestaurant().getImage())
                     .build();
             myLikeList.add(myLikeResponseDto);
         }
@@ -77,10 +81,12 @@ public class MyPageService {
     //endregion
 
     //region 내가 작성 한 식당 조회
-    public List<MyRestaurantResponseDto> showMyRestaurant(User user) {
+    public List<MyRestaurantResponseDto> showMyRestaurant(User user,int page, int size) {
+
+        PageRequest pageable = PageRequest.of(page, size);
 
         List<MyRestaurantResponseDto> myRestaurantList = new ArrayList<>();
-        List<Restaurant> restaurantList = restaurantRepository.findAllByUser(user);
+        List<Restaurant> restaurantList = restaurantRepository.findAllByUser(user,pageable);
         for (Restaurant restaurant : restaurantList) {
             double userLat = user.getLocation().getLatitude();
             double userLon = user.getLocation().getLongitude();
@@ -97,7 +103,7 @@ public class MyPageService {
                     .distance(distance)
                     .reviewCount(reviews.size())
                     .restaurantLikesCount(restaurant.getRestaurantLikesCount())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +restaurant.getImage())
+                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                     .build();
             myRestaurantList.add(myRestaurantResponseDto);
         }
@@ -107,10 +113,12 @@ public class MyPageService {
     //endregion
 
     //region 내가 참가 한 모임
-    public List<MyMeetingResponseDto> showMyMeeting(User user) {
+    public List<MyMeetingResponseDto> showMyMeeting(User user,int page, int size) {
+
+        PageRequest pageable = PageRequest.of(page, size);
 
         List<MyMeetingResponseDto> myMeetingList = new ArrayList<>();
-        List<MeetingParticipate> meetingList = meetingParticipateRepository.findAllByUser(user);
+        List<MeetingParticipate> meetingList = meetingParticipateRepository.findAllByUser(user,pageable);
 
         for (MeetingParticipate meetingParticipate : meetingList) {
 
@@ -137,26 +145,26 @@ public class MyPageService {
 
     //region 내 리뷰 상세조회
 
-    public MyReviewDetailResponseDto showMyDetailReview(Long reviewId, User user){
+    public MyReviewDetailResponseDto showMyDetailReview(Long reviewId, User user) {
 
 
-        Review review = reviewRepository.findAllByUserAndId(user,reviewId);
-        if (review == null){
+        Review review = reviewRepository.findAllByUserAndId(user, reviewId);
+        if (review == null) {
             reviewRepository.findById(reviewId).orElseThrow(
                     () -> new CustomException(REVIEW_NOT_FOUND));
         }
 
         assert review != null;
         return MyReviewDetailResponseDto.builder()
-                    .restaurantId(review.getRestaurant().getId())
-                    .reviewId(review.getId())
-                    .userId(review.getUser().getId())
-                    .restaurantTags(review.getRestaurantTags())
-                    .reviewLikes(review.getReviewLike())
-                    .spicy(review.getSpicy())
-                    .content(review.getContent())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
-                    .build();
+                .restaurantId(review.getRestaurant().getId())
+                .reviewId(review.getId())
+                .userId(review.getUser().getId())
+                .restaurantTags(review.getRestaurantTags())
+                .reviewLikes(review.getReviewLike())
+                .spicy(review.getSpicy())
+                .content(review.getContent())
+                .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
+                .build();
 
     }
 

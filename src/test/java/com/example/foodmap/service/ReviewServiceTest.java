@@ -1,7 +1,6 @@
 package com.example.foodmap.service;
 
 import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
-import com.example.foodmap.dto.review.ReviewAllResponseDto;
 import com.example.foodmap.dto.review.ReviewRequestDto;
 import com.example.foodmap.dto.review.ReviewUpdateRequestDto;
 import com.example.foodmap.exception.CustomException;
@@ -11,15 +10,15 @@ import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.repository.UserRepository;
 import com.example.foodmap.security.UserDetailsImpl;
-import com.example.foodmap.service.ReviewService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +42,8 @@ class ReviewServiceTest {
     private ReviewRequestDto reviewRequestDto1;
     private ReviewRequestDto reviewRequestDto2;
     private ReviewUpdateRequestDto reviewUpdateRequestDto1;
+    private Location location1;
+    private Location location2;
     private User user1;
     private User user2;
     private User user3;
@@ -51,6 +52,8 @@ class ReviewServiceTest {
     private Restaurant restaurant1;
     private Restaurant restaurant2;
     private Restaurant restaurant3;
+    private RestaurantLikes restaurantLikes1;
+    private RestaurantLikes restaurantLikes2;
     private String content;
     private int spicy;
     private String restaurantTags;
@@ -58,10 +61,11 @@ class ReviewServiceTest {
     private Review review1;
     private Review review2;
     private Review review3;
+    private Pageable pageable;
 
     @BeforeEach
     void setup() {
-        Location location1 = new Location("강서구", 12.23, 34.21);
+        location1 = new Location("강서구", 12.23, 34.21);
         user1 = new User(
                 "백정수",
                 "a111",
@@ -76,7 +80,7 @@ class ReviewServiceTest {
         userRepository.save(user1);
         userDetails1 = new UserDetailsImpl(user1);
 
-        Location location2 = new Location("강북구", 34.31, 34.21);
+         location2 = new Location("강북구", 34.31, 34.21);
         user2 = new User(
                 "이한울",
                 "a111",
@@ -101,9 +105,9 @@ class ReviewServiceTest {
                 "허파만",
                 "밀떡"
         );
-        restaurant1 = new Restaurant(restaurantSaveRequestDto1, null, user1, location1);
+        restaurant1 = new Restaurant(restaurantSaveRequestDto1, null, user1);
         restaurantRepository.save(restaurant1);
-
+        restaurantLikes1 = new RestaurantLikes(restaurantLikes1.getId(), user1,restaurant1);
         RestaurantSaveRequestDto restaurantSaveRequestDto2 = new RestaurantSaveRequestDto(
                 "안돼",
                 22.33,
@@ -114,7 +118,7 @@ class ReviewServiceTest {
                 "허파만",
                 "밀떡"
         );
-        restaurant2 = new Restaurant(restaurantSaveRequestDto2, null, user1, location1);
+        restaurant2 = new Restaurant(restaurantSaveRequestDto2, null, user1);
         restaurantRepository.save(restaurant2);
         //리뷰저장
         reviewRequestDto1 = new ReviewRequestDto(
@@ -209,7 +213,7 @@ class ReviewServiceTest {
         void review() {
             //given
 
-            List<Review> reviewList = reviewRepository.findAllByUserId(user1.getId());
+            List<Review> reviewList = reviewRepository.findAllByUserId(user1.getId(),pageable);
 
             assertThat(reviewList.size()).isEqualTo(2);
 
@@ -223,7 +227,7 @@ class ReviewServiceTest {
         void reviewList() {
             //given
 
-            List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurant1.getId());
+            List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurant1.getId(),pageable);
 
             assertThat(reviewList.size()).isEqualTo(2);
 
@@ -259,6 +263,18 @@ class ReviewServiceTest {
 
             assertThat(exception.getErrorCode().getDetail()).isEqualTo("해당 리뷰가 존재하지 않습니다.");
         }
+
+//        @Test
+//        @DisplayName("리뷰 수정 - 식당이 없을 때")
+//        void 수정식당없음() {
+//            //given
+//            restaurant1 = new Restaurant(12L,user1,"실패식당",location1,"1","튀김있음","순대만","밀떡","test.jpg",restaurant1.getRestaurantLikes(), restaurant1.getReviews(), 0);
+//            //when
+//            CustomException exception = assertThrows(CustomException.class,
+//                    ()->reviewService.updateReview(restaurant1.getId(),reviewUpdateRequestDto1,user1,null));
+//
+//            assertThat(exception.getErrorCode().getDetail()).isEqualTo("해당 음식점이 존재하지 않습니다.");
+//        }
 
         @Test
         @DisplayName("리뷰 삭제 - 사용자가 다를 때")
