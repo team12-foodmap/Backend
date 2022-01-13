@@ -1,0 +1,44 @@
+2022-01-13 16:59:02.308  INFO 42986 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/user/kakao/callback
+2022-01-13 16:59:02.308  INFO 42986 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/user/kakao/callback
+2022-01-13 16:59:10.182  INFO 42986 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/1
+2022-01-13 16:59:10.184  INFO 42986 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants/1
+2022-01-13 16:59:10.362  INFO 42986 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 16:59:10.365  INFO 42986 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/error
+2022-01-13 16:59:15.005  INFO 42986 --- [http-nio-8080-exec-6] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants
+2022-01-13 16:59:15.006  INFO 42986 --- [http-nio-8080-exec-6] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants
+2022-01-13 17:04:58.232  INFO 43663 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/user/kakao/callback
+2022-01-13 17:04:58.232  INFO 43663 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/user/kakao/callback
+2022-01-13 17:05:02.767  INFO 43663 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/1
+2022-01-13 17:05:02.769  INFO 43663 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants/1
+2022-01-13 17:05:02.950  INFO 43663 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 17:05:02.952  INFO 43663 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/error
+2022-01-13 17:08:45.771  INFO 44060 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/user/kakao/callback
+2022-01-13 17:08:45.772  INFO 44060 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/user/kakao/callback
+2022-01-13 17:08:51.633  INFO 44060 --- [http-nio-8080-exec-3] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/1
+2022-01-13 17:08:51.635  INFO 44060 --- [http-nio-8080-exec-3] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants/1
+2022-01-13 17:08:51.818  INFO 44060 --- [http-nio-8080-exec-3] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 17:08:51.819  INFO 44060 --- [http-nio-8080-exec-3] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/error
+2022-01-13 17:14:47.781  INFO 44761 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/user/kakao/callback
+2022-01-13 17:14:47.782  INFO 44761 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/user/kakao/callback
+2022-01-13 17:14:56.542  INFO 44761 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/1
+2022-01-13 17:14:56.544  INFO 44761 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants/1
+2022-01-13 17:14:56.729  INFO 44761 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 17:14:56.732  INFO 44761 --- [http-nio-8080-exec-4] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/error
+2022-01-13 17:15:41.697  INFO 44878 --- [http-nio-8080-exec-2] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/1
+2022-01-13 17:15:41.698  INFO 44878 --- [http-nio-8080-exec-2] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants/1
+2022-01-13 17:15:41.989  INFO 44878 --- [http-nio-8080-exec-2] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 17:15:41.990  INFO 44878 --- [http-nio-8080-exec-2] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/error
+2022-01-13 17:18:10.863  INFO 45135 --- [http-nio-8080-exec-2] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/1
+2022-01-13 17:18:10.864  INFO 45135 --- [http-nio-8080-exec-2] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/restaurants/1
+2022-01-13 17:19:15.896  INFO 45135 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/wish/1
+2022-01-13 17:19:15.900  INFO 45135 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : request : POST response : http://localhost:8080/restaurants/wish/1
+2022-01-13 17:19:16.170  INFO 45135 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 17:19:16.170  INFO 45135 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : request : POST response : http://localhost:8080/error
+2022-01-13 17:20:36.534  INFO 45427 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/restaurants/wish/1
+2022-01-13 17:20:36.534  INFO 45427 --- [http-nio-8080-exec-1] DEFAULT_FILE_LOGGER                      : request : POST response : http://localhost:8080/restaurants/wish/1
+2022-01-13 17:20:51.436  INFO 45427 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/reviewLikes/3
+2022-01-13 17:20:51.441  INFO 45427 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : request : POST response : http://localhost:8080/reviewLikes/3
+2022-01-13 17:20:51.580  INFO 45427 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/error
+2022-01-13 17:20:51.582  INFO 45427 --- [http-nio-8080-exec-5] DEFAULT_FILE_LOGGER                      : request : POST response : http://localhost:8080/error
+2022-01-13 17:27:43.246  INFO 45427 --- [http-nio-8080-exec-7] DEFAULT_FILE_LOGGER                      : url : http://localhost:8080/home
+2022-01-13 17:27:43.250  INFO 45427 --- [http-nio-8080-exec-7] DEFAULT_FILE_LOGGER                      : request : GET response : http://localhost:8080/home
