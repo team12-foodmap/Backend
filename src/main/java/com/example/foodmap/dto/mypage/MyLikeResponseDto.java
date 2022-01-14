@@ -8,27 +8,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class MyLikeResponseDto {
     private Long restaurantLikeId;
+    private Long restaurantId;
     private String restaurantName;
     private Location location;
-    private double distance;
-    private int reviewCount;
+    private String fried;
+    private String sundae;
+    private String tteokbokkiType;
+    private int spicy;
     private int restaurantLikesCount;
     private String image;
-
-    public MyLikeResponseDto(RestaurantLikes restaurantLikes) {
-        this.restaurantLikeId = restaurantLikes.getId();
-        this.restaurantName = restaurantLikes.getRestaurant().getRestaurantName();
-        this.location = restaurantLikes.getRestaurant().getLocation();
-        this.distance = getDistance();
-        this.reviewCount = getReviewCount();
-        this.restaurantLikesCount = getReviewCount();
-        this.image = restaurantLikes.getRestaurant().getImage();
-    }
 
 }
