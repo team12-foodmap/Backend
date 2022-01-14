@@ -134,9 +134,7 @@ public class UserService {
             if (!profileImage.isEmpty()) {
                 profileImagePath = storageService.uploadFile(profileImage, "profile");
                 String oldImageUrl = decode(
-                        foundUser.getProfileImage().replace(
-                                "https://team12-images.s3.ap-northeast-2.amazonaws.com/", ""
-                        ),
+                        foundUser.getProfileImage(),
                         StandardCharsets.UTF_8
                 );
                 storageService.deleteFile(oldImageUrl);
