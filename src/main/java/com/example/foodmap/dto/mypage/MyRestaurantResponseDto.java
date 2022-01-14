@@ -15,6 +15,10 @@ public class MyRestaurantResponseDto {
     private Long restaurantId;
     private String restaurantName;
     private Location location;
+    private String fried;
+    private String sundae;
+    private String tteokbokkiTyp;
+    private String spicy;
     private double distance;
     private int reviewCount;
     private int restaurantLikesCount;
