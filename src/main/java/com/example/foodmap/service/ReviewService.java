@@ -124,24 +124,33 @@ public class ReviewService {
 
     }
 
-    //region 리뷰 조회
-    public List<ReviewResponseDto> showReview(Long userId,int page, int size) {
+    //region 다른 사람이 쓴 리뷰 조회
+    public ReviewResponseDto showReview(Long reviewId) {
 
-        PageRequest pageable = PageRequest.of(page, size);
-
-        List<ReviewResponseDto> reviewLists = new ArrayList<>();
-        List<Review> reviewList = reviewRepository.findAllByUserId(userId,pageable);
-        for (Review review : reviewList) {
-            ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
-                    .reviewId(review.getId())
-                    .userId(review.getUser().getId())
-                    .restaurantId(review.getRestaurant().getId())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
-                    .build();
-            reviewLists.add(reviewResponseDto);
+        Review review = reviewRepository.findAllById(reviewId);
+        if (review == null) {
+            reviewRepository.findById(reviewId).orElseThrow(
+                    () -> new CustomException(REVIEW_NOT_FOUND));
         }
-        return reviewLists;
-    }
+
+        assert review != null;
+        return ReviewResponseDto.builder()
+                .restaurantId(review.getRestaurant().getId())
+                .reviewId(review.getId())
+                .userId(review.getUser().getId())
+                .reviewLikes(review.getReviewLike())
+                .content(review.getContent())
+                .location(review.getRestaurant().getLocation())
+                .nickname(review.getUser().getNickname())
+                .restaurantName(review.getRestaurant().getRestaurantName())
+                .createdAt(review.getCreatedAt())
+                .modifiedAt(review.getModifiedAt())
+                .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
+                .build();
+        }
+
+
+
 
     // endregion
 

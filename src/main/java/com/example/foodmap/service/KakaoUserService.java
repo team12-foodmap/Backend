@@ -65,11 +65,11 @@ public class KakaoUserService {
         body.add("grant_type", "authorization_code");
 //        body.add("client_id", "ca4aaaf3918b25c2334089d9a1d1e8ce");
 //        body.add("redirect_uri", "http://13.125.148.51:8080/user/kakao/callback");
-//        body.add("client_id", "c0e66cf5516530d16e6aa5105af69ae9");
-//        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
+        body.add("client_id", "c0e66cf5516530d16e6aa5105af69ae9");
+        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
 //        body.add("client_id", "b70f4e2d805f84002174ac1aa5b2f11a");
-        body.add("client_id", "96226a61dfa74ab382d1603dde61b318");
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+//        body.add("client_id", "96226a61dfa74ab382d1603dde61b318");
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
         body.add("code", code);
 
 // HTTP 요청 보내기

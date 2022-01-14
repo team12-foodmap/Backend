@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByUser(User user,Pageable pageable);
-    List<Review> findAllByUserId(Long userId, Pageable pageable);
+    Review findAllById(Long reviewId);
 
     @Modifying
     @Query(value = "update Review a set a.reviewLike= a.reviewLike + 1 where a.id = :id")
@@ -31,4 +31,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByRestaurantIdOrderByReviewLikeDesc(Long restaurantId, Pageable pageable);
 
     Review findAllByUserAndId(User user, Long id);
+
+
 }

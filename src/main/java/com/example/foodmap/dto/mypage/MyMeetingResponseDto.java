@@ -14,16 +14,11 @@ import java.time.LocalDateTime;
 @Getter
 public class MyMeetingResponseDto {
     private String meetingTitle;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
     private LocalDateTime meetingDate;
     private String location;
     private int limitPeople;
     private int nowPeople;
     private String content;
-    private String restaurant;
-    private int viewCount;
-    private LocalDateTime modifiedAt;
     private Long userId;
     private Long meetingId;
 
