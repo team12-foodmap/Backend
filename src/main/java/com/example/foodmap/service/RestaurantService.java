@@ -212,7 +212,7 @@ public class RestaurantService {
                     .restaurantId(restaurantList.getId())
                     .restaurantName(restaurantList.getRestaurantName())
                     .restaurantLikesCount(restaurantList.getRestaurantLikesCount())
-                    .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
+                    .image(restaurantList.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
                     .distance(distance)
                     .build();
 
