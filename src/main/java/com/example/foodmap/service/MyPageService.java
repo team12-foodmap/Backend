@@ -91,7 +91,7 @@ public class MyPageService {
                     .tteokbokkiType(restaurantLikes.getRestaurant().getTteokbokkiType())
                     .spicy(spicyAvg)
                     .restaurantLikesCount(restaurantLikes.getRestaurant().getRestaurantLikesCount())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantLikes.getRestaurant().getImage())
+                    .image(restaurantLikes.getRestaurant().getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantLikes.getRestaurant().getImage())
                     .build();
             myLikeList.add(myLikeResponseDto);
         }
@@ -136,7 +136,7 @@ public class MyPageService {
                     .sundae(restaurant.getSundae())
                     .tteokbokkiType(restaurant.getTteokbokkiType())
                     .spicy(spicyAvg)
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                    .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                     .build();
             myRestaurantList.add(myRestaurantResponseDto);
         }

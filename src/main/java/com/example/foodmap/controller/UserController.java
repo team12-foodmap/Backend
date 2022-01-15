@@ -29,14 +29,6 @@ public class UserController {
         return ResponseEntity.ok().body(kakaoUserResponseDto);
     }
 
-//    //유저위치 저장(주소, 위도, 경도)
-//    @ApiOperation("유저위치 등록")
-//    @PutMapping("/user/location")
-//    public Location saveLocation(@RequestBody UserLocationDto locationDto,
-//                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return userService.saveUserLocation(locationDto, userDetails.getUser());
-//    }
-
     //유저정보
     @GetMapping("/userInfo")
     public KakaoInfoResponseDto userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {

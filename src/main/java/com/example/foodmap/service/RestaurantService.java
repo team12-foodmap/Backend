@@ -96,7 +96,7 @@ public class RestaurantService {
                         .restaurantLikesCount(restaurant.getRestaurantLikesCount())
                         .distance(distance)
                         .reviewCount(reviews.size())
-                        .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                        .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                         .build();
 
                 restaurants.add(responseDto);
@@ -161,7 +161,7 @@ public class RestaurantService {
                 .restaurantLikesList(restaurantLikesDtoList)
                 .restaurantReviews(restaurantReviewResponseDtos)
                 .distance(distance)
-                .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                 .build();
     }
 
@@ -212,7 +212,7 @@ public class RestaurantService {
                     .restaurantId(restaurantList.getId())
                     .restaurantName(restaurantList.getRestaurantName())
                     .restaurantLikesCount(restaurantList.getRestaurantLikesCount())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
+                    .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
                     .distance(distance)
                     .build();
 
