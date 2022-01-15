@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 public class MyMeetingResponseDto {
     private String meetingTitle;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private LocalDateTime meetingDate;
     private String location;
     private int limitPeople;

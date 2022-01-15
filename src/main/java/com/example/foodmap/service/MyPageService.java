@@ -2,6 +2,7 @@ package com.example.foodmap.service;
 
 import com.example.foodmap.dto.Restaurant.RestaurantReviewResponseDto;
 import com.example.foodmap.dto.mypage.*;
+import com.example.foodmap.dto.review.ReviewLikesDto;
 import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.MeetingParticipateRepository;
@@ -57,12 +58,6 @@ public class MyPageService {
         List<MyLikeResponseDto> myLikeList = new ArrayList<>();
         List<RestaurantLikes> restaurantLikesList = restaurantLikesRepository.findAllByUser(user,pageable);
         for (RestaurantLikes restaurantLikes : restaurantLikesList) {
-            double userLat = user.getLocation().getLatitude();
-            double userLon = user.getLocation().getLongitude();
-
-            double restLat = restaurantLikes.getRestaurant().getLocation().getLatitude();
-            double restLon = restaurantLikes.getRestaurant().getLocation().getLongitude();
-            double distance = getDistance(userLat, userLon, restLat, restLon);
 
             List<Review> reviews = restaurantLikes.getRestaurant().getReviews();
             List<RestaurantReviewResponseDto> restaurantReviewResponseDtos = new ArrayList<>();
@@ -91,7 +86,7 @@ public class MyPageService {
                     .tteokbokkiType(restaurantLikes.getRestaurant().getTteokbokkiType())
                     .spicy(spicyAvg)
                     .restaurantLikesCount(restaurantLikes.getRestaurant().getRestaurantLikesCount())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantLikes.getRestaurant().getImage())
+                    .image(restaurantLikes.getRestaurant().getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantLikes.getRestaurant().getImage())
                     .build();
             myLikeList.add(myLikeResponseDto);
         }
@@ -136,7 +131,7 @@ public class MyPageService {
                     .sundae(restaurant.getSundae())
                     .tteokbokkiType(restaurant.getTteokbokkiType())
                     .spicy(spicyAvg)
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                    .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                     .build();
             myRestaurantList.add(myRestaurantResponseDto);
         }
@@ -158,6 +153,8 @@ public class MyPageService {
             MyMeetingResponseDto myMeetingResponseDto = MyMeetingResponseDto.builder()
                     .meetingId(meetingParticipate.getMeeting().getId())
                     .userId(meetingParticipate.getUser().getId())
+                    .startDate(meetingParticipate.getMeeting().getStartDate())
+                    .endDate(meetingParticipate.getMeeting().getEndDate())
                     .meetingDate(meetingParticipate.getMeeting().getMeetingDate())
                     .meetingTitle(meetingParticipate.getMeeting().getMeetingTitle())
                     .content(meetingParticipate.getMeeting().getContent())
@@ -183,6 +180,7 @@ public class MyPageService {
         }
 
         assert review != null;
+        List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
         return MyReviewDetailResponseDto.builder()
                 .restaurantId(review.getRestaurant().getId())
                 .reviewId(review.getId())
@@ -195,8 +193,22 @@ public class MyPageService {
                 .createdAt(review.getCreatedAt())
                 .modifiedAt(review.getModifiedAt())
                 .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
+                .reviewLikesDto(reviewLikesDto)
                 .build();
 
+    }
+
+    private List<ReviewLikesDto> getReviewLikes(Review review) {
+        List<ReviewLikesDto> reviewLikesDtoList = new ArrayList<>();
+
+        if (review.getReviewLikes().size() != 0) {
+            List<ReviewLikes> reviewLikesList = review.getReviewLikes();
+            for (ReviewLikes reviewLikes : reviewLikesList) {
+                ReviewLikesDto reviewLikesDto = new ReviewLikesDto(reviewLikes.getUser().getId());
+                reviewLikesDtoList.add(reviewLikesDto);
+            }
+        }
+        return reviewLikesDtoList;
     }
 
     private static double getDistance(double lat1, double lon1, double lat2, double lon2) {
