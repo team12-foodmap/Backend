@@ -1,5 +1,6 @@
 package com.example.foodmap.service;
 
+import com.example.foodmap.dto.Restaurant.RestaurantReviewResponseDto;
 import com.example.foodmap.dto.mypage.*;
 import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
@@ -64,12 +65,31 @@ public class MyPageService {
             double distance = getDistance(userLat, userLon, restLat, restLon);
 
             List<Review> reviews = restaurantLikes.getRestaurant().getReviews();
+            List<RestaurantReviewResponseDto> restaurantReviewResponseDtos = new ArrayList<>();
+
+            int spicySum = 0;
+            int spicyAvg = 0;
+            if (!reviews.isEmpty()) {
+                for (Review review : reviews) {
+                    spicySum += review.getSpicy();
+
+                    RestaurantReviewResponseDto responseDto = RestaurantReviewResponseDto.builder()
+                            .reviewId(review.getId())
+                            .build();
+
+                    restaurantReviewResponseDtos.add(responseDto);
+                }
+                spicyAvg = Math.round(spicySum / restaurantReviewResponseDtos.size()); //맵기 평균값
+            }
             MyLikeResponseDto myLikeResponseDto = MyLikeResponseDto.builder()
                     .restaurantLikeId(restaurantLikes.getId())
+                    .restaurantId(restaurantLikes.getRestaurant().getId())
                     .restaurantName(restaurantLikes.getRestaurant().getRestaurantName())
                     .location(restaurantLikes.getRestaurant().getLocation())
-                    .distance(distance)
-                    .reviewCount(reviews.size())
+                    .fried(restaurantLikes.getRestaurant().getFried())
+                    .sundae(restaurantLikes.getRestaurant().getSundae())
+                    .tteokbokkiType(restaurantLikes.getRestaurant().getTteokbokkiType())
+                    .spicy(spicyAvg)
                     .restaurantLikesCount(restaurantLikes.getRestaurant().getRestaurantLikesCount())
                     .image(restaurantLikes.getRestaurant().getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantLikes.getRestaurant().getImage())
                     .build();
@@ -88,21 +108,34 @@ public class MyPageService {
         List<MyRestaurantResponseDto> myRestaurantList = new ArrayList<>();
         List<Restaurant> restaurantList = restaurantRepository.findAllByUser(user,pageable);
         for (Restaurant restaurant : restaurantList) {
-            double userLat = user.getLocation().getLatitude();
-            double userLon = user.getLocation().getLongitude();
-
-            double restLat = restaurant.getLocation().getLatitude();
-            double restLon = restaurant.getLocation().getLongitude();
-            double distance = getDistance(userLat, userLon, restLat, restLon);
 
             List<Review> reviews = restaurant.getReviews();
+            List<RestaurantReviewResponseDto> restaurantReviewResponseDtos = new ArrayList<>();
+
+            int spicySum = 0;
+            int spicyAvg = 0;
+            if (!reviews.isEmpty()) {
+                for (Review review : reviews) {
+                    spicySum += review.getSpicy();
+
+                    RestaurantReviewResponseDto responseDto = RestaurantReviewResponseDto.builder()
+                            .reviewId(review.getId())
+                            .build();
+
+                    restaurantReviewResponseDtos.add(responseDto);
+                }
+                spicyAvg = Math.round(spicySum / restaurantReviewResponseDtos.size()); //맵기 평균값
+            }
+
+
             MyRestaurantResponseDto myRestaurantResponseDto = MyRestaurantResponseDto.builder()
                     .restaurantId(restaurant.getId())
                     .restaurantName(restaurant.getRestaurantName())
                     .location(restaurant.getLocation())
-                    .distance(distance)
-                    .reviewCount(reviews.size())
-                    .restaurantLikesCount(restaurant.getRestaurantLikesCount())
+                    .fried(restaurant.getFried())
+                    .sundae(restaurant.getSundae())
+                    .tteokbokkiType(restaurant.getTteokbokkiType())
+                    .spicy(spicyAvg)
                     .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                     .build();
             myRestaurantList.add(myRestaurantResponseDto);
@@ -125,17 +158,12 @@ public class MyPageService {
             MyMeetingResponseDto myMeetingResponseDto = MyMeetingResponseDto.builder()
                     .meetingId(meetingParticipate.getMeeting().getId())
                     .userId(meetingParticipate.getUser().getId())
-                    .startDate(meetingParticipate.getMeeting().getStartDate())
-                    .endDate(meetingParticipate.getMeeting().getEndDate())
                     .meetingDate(meetingParticipate.getMeeting().getMeetingDate())
                     .meetingTitle(meetingParticipate.getMeeting().getMeetingTitle())
                     .content(meetingParticipate.getMeeting().getContent())
                     .nowPeople(meetingParticipate.getMeeting().getNowPeople())
                     .limitPeople(meetingParticipate.getMeeting().getLimitPeople())
                     .location(meetingParticipate.getMeeting().getLocation())
-                    .modifiedAt(meetingParticipate.getMeeting().getModifiedAt())
-                    .viewCount(meetingParticipate.getMeeting().getViewCount())
-                    .restaurant(meetingParticipate.getMeeting().getRestaurant())
                     .build();
             myMeetingList.add(myMeetingResponseDto);
         }
@@ -159,10 +187,13 @@ public class MyPageService {
                 .restaurantId(review.getRestaurant().getId())
                 .reviewId(review.getId())
                 .userId(review.getUser().getId())
-                .restaurantTags(review.getRestaurantTags())
                 .reviewLikes(review.getReviewLike())
-                .spicy(review.getSpicy())
                 .content(review.getContent())
+                .location(review.getRestaurant().getLocation())
+                .nickname(review.getUser().getNickname())
+                .restaurantName(review.getRestaurant().getRestaurantName())
+                .createdAt(review.getCreatedAt())
+                .modifiedAt(review.getModifiedAt())
                 .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
                 .build();
 

@@ -62,13 +62,12 @@ public class ReviewController {
     }
 
     @ApiOperation(value = "다른 사람이 쓴 리뷰 조회")
-    @GetMapping("/reviews/{userId}")
-    public ResponseEntity<List<ReviewResponseDto>> showReview(@PathVariable Long userId,
-                                                              @RequestParam int page,
-                                                              @RequestParam int size) {
+    @GetMapping("/reviews/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> showReview(@PathVariable Long reviewId
+                                                             ) {
 
 
-        List<ReviewResponseDto> requestDto = reviewService.showReview(userId,page,size);
+        ReviewResponseDto requestDto = reviewService.showReview(reviewId);
 
         return ResponseEntity.ok()
                 .body(requestDto);
