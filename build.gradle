@@ -56,7 +56,12 @@ dependencies {
 
     //S3 Mock Server
     implementation 'io.findify:s3mock_2.13:0.2.6'
+
+    //sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:5.5.2'
+    implementation 'io.sentry:sentry-logback:5.4.2'
 }
+
 
 test {
     useJUnitPlatform()
