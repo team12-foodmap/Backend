@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -24,4 +25,5 @@ public class ReviewResponseDto {
     private String restaurantName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<ReviewLikesDto> reviewLikesDtoList;
 }

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,6 +41,9 @@ public class Review extends Timestamped {
 
     @ColumnDefault(value="0")
     private int reviewLike ;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    List<ReviewLikes> reviewLikes = new ArrayList<>();
 
     @Builder
     public Review(ReviewRequestDto reviewRequestDto, User user,Restaurant restaurant,String imagePath) {

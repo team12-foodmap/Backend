@@ -1,13 +1,9 @@
 package com.example.foodmap.service;
 
-import com.example.foodmap.dto.review.ReviewAllResponseDto;
-import com.example.foodmap.dto.review.ReviewRequestDto;
-import com.example.foodmap.dto.review.ReviewResponseDto;
-import com.example.foodmap.dto.review.ReviewUpdateRequestDto;
+import com.example.foodmap.dto.Restaurant.RestaurantLikesDto;
+import com.example.foodmap.dto.review.*;
 import com.example.foodmap.exception.CustomException;
-import com.example.foodmap.model.Restaurant;
-import com.example.foodmap.model.Review;
-import com.example.foodmap.model.User;
+import com.example.foodmap.model.*;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.validator.ReviewValidator;
@@ -132,8 +128,10 @@ public class ReviewService {
             reviewRepository.findById(reviewId).orElseThrow(
                     () -> new CustomException(REVIEW_NOT_FOUND));
         }
-
         assert review != null;
+        List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
+
+
         return ReviewResponseDto.builder()
                 .restaurantId(review.getRestaurant().getId())
                 .reviewId(review.getId())
@@ -146,10 +144,22 @@ public class ReviewService {
                 .createdAt(review.getCreatedAt())
                 .modifiedAt(review.getModifiedAt())
                 .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
+                .reviewLikesDtoList(reviewLikesDto)
                 .build();
         }
 
+    private List<ReviewLikesDto> getReviewLikes(Review review) {
+        List<ReviewLikesDto> reviewLikesDtoList = new ArrayList<>();
 
+        if (review.getReviewLikes().size() != 0) {
+            List<ReviewLikes> reviewLikesList = review.getReviewLikes();
+            for (ReviewLikes reviewLikes : reviewLikesList) {
+                ReviewLikesDto reviewLikesDto = new ReviewLikesDto(reviewLikes.getUser().getId());
+                reviewLikesDtoList.add(reviewLikesDto);
+            }
+        }
+        return reviewLikesDtoList;
+    }
 
 
     // endregion
@@ -158,19 +168,27 @@ public class ReviewService {
 
     public List<ReviewAllResponseDto> showAllReview(Long restaurantId,int page, int size) {
 
+
         PageRequest pageable = PageRequest.of(page, size);
 
         List<ReviewAllResponseDto> reviewLists = new ArrayList<>();
         List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurantId,pageable);
+
         for (Review review : reviewList) {
+            List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
             ReviewAllResponseDto reviewResponseDto = ReviewAllResponseDto.builder()
+                    .restaurantId(review.getRestaurant().getId())
                     .reviewId(review.getId())
                     .userId(review.getUser().getId())
-                    .restaurantId(review.getRestaurant().getId())
-                    .content(review.getContent())
                     .reviewLikes(review.getReviewLike())
-                    .restaurantTags(review.getRestaurantTags())
-                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
+                    .content(review.getContent())
+                    .location(review.getRestaurant().getLocation())
+                    .nickname(review.getUser().getNickname())
+                    .restaurantName(review.getRestaurant().getRestaurantName())
+                    .createdAt(review.getCreatedAt())
+                    .modifiedAt(review.getModifiedAt())
+                    .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
+                    .reviewLikesDtoList(reviewLikesDto)
                     .build();
             reviewLists.add(reviewResponseDto);
         }

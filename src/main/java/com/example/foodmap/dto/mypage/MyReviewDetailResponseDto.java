@@ -1,9 +1,11 @@
 package com.example.foodmap.dto.mypage;
 
+import com.example.foodmap.dto.review.ReviewLikesDto;
 import com.example.foodmap.model.Location;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,6 +24,7 @@ public class MyReviewDetailResponseDto {
     private String restaurantName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<ReviewLikesDto> reviewLikesDto;
 
 
 }
