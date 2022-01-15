@@ -81,7 +81,7 @@ public class MeetingService {
                 meeting.getRestaurant(),
                 meeting.getViewCount(),
                 meeting.getModifiedAt(),
-                StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + meeting.getUser().getProfileImage(),
+                meeting.getUser().getProfileImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +meeting.getUser().getProfileImage(),
                 meeting.getRestaurantId(),
                 meeting.getUser().getId(),
                 meeting.getId()
@@ -103,7 +103,7 @@ public class MeetingService {
     public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){
         return new MeetingCommentResponseDto(
                 comment.getId(),comment.getContent(),
-                StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
+                comment.getUser().getProfileImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
                 comment.getUser().getId(),
                 comment.getUser().getNickname(),
                 comment.getModifiedAt()
