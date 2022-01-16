@@ -7,14 +7,15 @@ import lombok.Getter;
 import java.lang.reflect.Field;
 
 @Getter
-public class RestaurantTagResponseDto {
-    private int tagId; //0,1,2,3
+public class RestaurantTagResponseDto{
+    private String tagId;
     private int count;
 
     @Builder
-    public RestaurantTagResponseDto(int tagId, int count) {
+    public RestaurantTagResponseDto(String tagId, int count) {
         this.tagId = tagId;
         this.count = count;
     }
+
 
 }

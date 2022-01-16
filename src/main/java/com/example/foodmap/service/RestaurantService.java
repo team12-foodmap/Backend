@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -178,19 +179,21 @@ public class RestaurantService {
         return restaurantLikesDtoList;
     }
 
+    //태그값 내림차순 정렬
     private List<RestaurantTagResponseDto> getTagList(Restaurant restaurant) {
         List<RestaurantTagResponseDto> taglist = new ArrayList<>();
+        String[] array = {"👍인생맛집이에요", "😇서비스가 좋아요", "💸가성비가 좋아요", "🥉아쉬워요"};
 
-        for (int i = 1; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             int sum = reviewRepository.countRestaurantTags(restaurant.getId(), i);
             RestaurantTagResponseDto tagsDto = RestaurantTagResponseDto.builder()
-                    .tagId(i)
+                    .tagId(array[i])
                     .count(sum)
                     .build();
             taglist.add(tagsDto);
-            System.out.println(tagsDto.toString());
+
         }
-        return taglist;
+        return taglist.stream().sorted(Comparator.comparing(RestaurantTagResponseDto::getCount).reversed()).collect(Collectors.toList());
     }
     //endregion
 
