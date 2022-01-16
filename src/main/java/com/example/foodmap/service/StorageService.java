@@ -28,7 +28,6 @@ public class StorageService {
     public static final String CLOUD_FRONT_DOMAIN_NAME = "https://djefjounyx85c.cloudfront.net";
 
     public String uploadFile(MultipartFile file, String dirName) {
-        log.info(file.getName());
 
         File fileObj = convertMultiPartFileToFile(file);
         String originalFilename = file.getOriginalFilename();
@@ -38,6 +37,19 @@ public class StorageService {
         s3Client.putObject(new PutObjectRequest(bucket, fileName, fileObj)); //s3로 업로드
         fileObj.delete();
         return fileName;
+    }
+
+    //이미지 삭제 및 업로드
+    public String updateFile(String oldUrl, MultipartFile file, String dirName) {
+
+        if(oldUrl != null && !oldUrl.isEmpty()) {
+            boolean isExistObject = s3Client.doesObjectExist(bucket, oldUrl);
+
+            if (isExistObject) {
+                deleteFile(oldUrl);
+            }
+        }
+        return uploadFile(file, dirName);
     }
 
     //s3에서 파일 삭제하기

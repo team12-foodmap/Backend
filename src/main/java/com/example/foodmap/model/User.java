@@ -72,9 +72,6 @@ public class User {
     public void updateUserInfo(String profileImagePath, String nickname, Location location) {
         this.nickname = nickname;
         this.location = location;
-
-        if (!profileImagePath.isEmpty()) {
-            this.profileImage = profileImagePath;
-        }
+        this.profileImage = profileImagePath;
     }
 }
