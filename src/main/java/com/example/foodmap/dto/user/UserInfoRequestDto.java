@@ -20,5 +20,4 @@ public class UserInfoRequestDto {
         this.longitude = longitude;
         this.address = address;
     }
-
 }

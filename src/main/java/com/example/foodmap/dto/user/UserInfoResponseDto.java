@@ -4,7 +4,6 @@ import com.example.foodmap.model.Location;
 import lombok.Builder;
 import lombok.Getter;
 
-
 @Getter
 public class UserInfoResponseDto {
     private String profileImage;

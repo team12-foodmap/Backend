@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static com.example.foodmap.exception.ErrorCode.*;
 import static java.net.URLDecoder.decode;
@@ -26,16 +27,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final StorageService storageService;
-//
-//    region 유저 위치 저장
-//    @Transactional
-//    public Location saveUserLocation(UserLocationDto locationDto, User user) {
-//
-//        Location location = new Location(locationDto);
-//        foundUser.saveLocation(location);
-//
-//        return foundUser.getLocation();
-//    }
 
     public KakaoInfoResponseDto userInfo(UserDetailsImpl userDetails) {
 
@@ -55,7 +46,8 @@ public class UserService {
 
     //region 로그인 후 사용자 프로필 등록
     @Transactional
-    public void saverUserInfo(UserInfoRequestDto requestDto, UserDetailsImpl userDetails,MultipartFile profileImage)   {
+    public void saverUserInfo(UserInfoRequestDto requestDto, UserDetailsImpl userDetails, MultipartFile profileImage)   {
+
         //회원만 이용 가능
         if (userDetails != null) {
             User foundUser = userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(
@@ -64,7 +56,7 @@ public class UserService {
             String nickname = requestDto.getNickname();
 
             //닉네임확인(필수, 10자 이내, 중복검사)
-            if (nickname ==null || nickname.trim().isEmpty()) {
+            if (nickname == null || nickname.trim().isEmpty()) {
                 throw new CustomException(NICKNAME_EMPTY);
             }else if (nickname.length() > 10) {
                 throw new CustomException(WRONG_NICKNAME_LENGTH);
@@ -73,79 +65,58 @@ public class UserService {
             }
 
             //주소 필수입력
-            if (requestDto.getAddress() == null || requestDto.getAddress().trim().isEmpty()) {
+            if (requestDto.getAddress().isBlank()) {
                 throw new CustomException(ADDRESS_EMPTY);
             }
-
-            Location location = Location.builder()
-                    .address(requestDto.getAddress())
-                    .latitude(requestDto.getLatitude())
-                    .longitude(requestDto.getLongitude())
-                    .build();
-
             //사진(선택사항)
+            String imagePath = "";
 
-
-            String profileImagePath = "";
             if (!profileImage.isEmpty()) {
-                profileImagePath = storageService.uploadFile(profileImage, "profile");
-                log.info(profileImagePath);
+                imagePath = storageService.uploadFile(profileImage, "profile");
             }
 
-            foundUser.updateUserInfo(profileImagePath, nickname, location);
+            foundUser.updateUserInfo(imagePath, nickname, new Location(requestDto));
 
         } else {
             throw new CustomException(UNAUTHORIZED_MEMBER); //비회원 이용불가
         }
     }
 
-    //region 사용자 프로필 수정
+    //region 사용자 프로필 수정(요청값은 기존 사용자 정보)
     @Transactional
-    public UserInfoResponseDto updateUserInfo(UserInfoRequestDto requestDto, UserDetailsImpl userDetails,MultipartFile profileImage)   {
+    public UserInfoResponseDto updateUserInfo(UserInfoRequestDto requestDto, UserDetailsImpl userDetails, MultipartFile profileImage)   {
         //회원만 이용 가능
         if (userDetails != null) {
             User foundUser = userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(
                     () -> new CustomException(USER_NOT_FOUND));
 
-            String nickname = requestDto.getNickname();
+           String nickname = requestDto.getNickname();
 
-            //닉네임확인(10자 이내, 중복검사)
-            if (nickname ==null || nickname.trim().isEmpty()) {
+            //닉네임확인(10자 이내, 중복검사(사용자가 현재 사용하고 있는 닉네임과 같은 닉네임 등록시에는 중복되어도 상관없음)
+            if (nickname.isEmpty()) {
                 nickname = foundUser.getNickname();
             } else if (nickname.length() > 10) {
                 throw new CustomException(WRONG_NICKNAME_LENGTH);
-            } else if (userRepository.existsByNickname(nickname)) {
+            } else if(!Objects.equals(nickname, foundUser.getNickname()) && userRepository.existsByNickname(nickname)){
                 throw new CustomException(DUPLICATE_NICKNAME);
             }
 
             //주소확인
-            Location location;
-           if (requestDto.getAddress() == null || requestDto.getAddress().trim().isEmpty()) {
-                location = Location.builder()
-                        .address(requestDto.getAddress())
-                        .latitude(requestDto.getLatitude())
-                        .longitude(requestDto.getLongitude()).build();
-            } else {
-                location = foundUser.getLocation();
+            Location location = foundUser.getLocation();
+            if(!Objects.equals(requestDto.getAddress(), foundUser.getLocation().getAddress()))  {
+                location = new Location(requestDto);
             }
-            
 
-            String profileImagePath ;
+            //사진확인
+            String imagePath = foundUser.getProfileImage();
             if (!profileImage.isEmpty()) {
-                profileImagePath = storageService.uploadFile(profileImage, "profile");
-                String oldImageUrl = decode(
-                        foundUser.getProfileImage(),
-                        StandardCharsets.UTF_8
-                );
-                storageService.deleteFile(oldImageUrl);
-            } else {
-                profileImagePath = foundUser.getProfileImage();
+                imagePath = storageService.updateFile(imagePath, profileImage, "profile");
             }
 
-            foundUser.updateUserInfo(profileImagePath, nickname, location);
+            foundUser.updateUserInfo(imagePath, nickname, location);
             return UserInfoResponseDto.builder()
                     .nickname(nickname)
-                    .profileImage(profileImagePath)
+                    .profileImage(imagePath)
                     .location(location)
                     .build();
         } else {
