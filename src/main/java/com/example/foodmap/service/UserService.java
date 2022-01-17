@@ -71,8 +71,10 @@ public class UserService {
             //사진(선택사항)
             String imagePath = "";
 
-            if (!profileImage.isEmpty()) {
+            if (profileImage != null) {
                 imagePath = storageService.uploadFile(profileImage, "profile");
+            } else {
+                imagePath = "";
             }
 
             foundUser.updateUserInfo(imagePath, nickname, new Location(requestDto));
@@ -109,8 +111,10 @@ public class UserService {
 
             //사진확인
             String imagePath = foundUser.getProfileImage();
-            if (!profileImage.isEmpty()) {
+            if (profileImage != null) {
                 imagePath = storageService.updateFile(imagePath, profileImage, "profile");
+            } else {
+                imagePath = foundUser.getProfileImage();
             }
 
             foundUser.updateUserInfo(imagePath, nickname, location);
