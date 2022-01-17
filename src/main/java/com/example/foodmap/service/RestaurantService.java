@@ -35,7 +35,7 @@ public class RestaurantService {
     private final StorageService storageService;
     private final UserRepository userRepository;
 
-    public static final int DISTANCE = 3;
+    public static final double DISTANCE = 1.5;
 
     //region 식당등록
     @Transactional
@@ -224,7 +224,6 @@ public class RestaurantService {
         }
 
         myLikeList.sort((a, b) -> b.getRestaurantLikesCount() - a.getRestaurantLikesCount());
-        myLikeList.removeIf((a) -> a.getDistance() > 3000);
         if (myLikeList.size() > 3) {
             return myLikeList.stream()
                     .limit(3)
