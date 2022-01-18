@@ -112,7 +112,7 @@ class MeetingControllerTest {
 
 
         meetingCreatRequestDto = new MeetingCreatRequestDto(
-                meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
+                meetingTitle, restaurant,restaurantId, startDate, endDate, meetingDate, location1, limitPeople, nowPeople, content
         );
         meeting = new Meeting(testUser, meetingCreatRequestDto);
 
@@ -144,7 +144,9 @@ class MeetingControllerTest {
     void test2() throws Exception {
         //given
         List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
-        MeetingInfoResponseDto meetingInfoResponseDto = new MeetingInfoResponseDto(meeting.getMeetingTitle(),
+        MeetingInfoResponseDto meetingInfoResponseDto = new MeetingInfoResponseDto(
+                meeting.getUser().getNickname(),
+                meeting.getMeetingTitle(),
                 meeting.getStartDate(),
                 meeting.getEndDate(),
                 meeting.getMeetingDate(),

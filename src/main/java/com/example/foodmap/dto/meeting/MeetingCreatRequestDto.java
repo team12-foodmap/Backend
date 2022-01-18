@@ -1,6 +1,7 @@
 package com.example.foodmap.dto.meeting;
 
 import com.example.foodmap.model.Location;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +15,13 @@ import java.time.LocalDateTime;
 public class MeetingCreatRequestDto {
 
     private String meetingTitle;
-    private LocalDateTime startDate;
     private String restaurant;
     private Long restaurantId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
+    private LocalDateTime startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
     private LocalDateTime endDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
     private LocalDateTime meetingDate;
     private String location;
     private int limitPeople;

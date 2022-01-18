@@ -70,6 +70,7 @@ public class MeetingService {
        }
 
         MeetingInfoResponseDto meetingInfoResponseDto = new MeetingInfoResponseDto(
+                meeting.getUser().getNickname(),
                 meeting.getMeetingTitle(),
                 meeting.getStartDate(),
                 meeting.getEndDate(),
