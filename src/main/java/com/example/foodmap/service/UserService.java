@@ -36,7 +36,7 @@ public class UserService {
 
         return new KakaoInfoResponseDto(
                 user.getNickname(),
-                StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + user.getProfileImage(),
+                user.getProfileImage() == null ? "" : StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + user.getProfileImage(),
                 user.getKakaoId(),
                 user.getId(),
                 user.getLevel(),
