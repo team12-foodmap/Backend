@@ -44,7 +44,7 @@ public class RestaurantService {
     private final RedisService redisService;
     private final RedisTemplate<String, RestaurantDetailResponseDto> detailRedisTemplate;
 
-    public static final double DISTANCE = 3;
+    public static final double DISTANCE = 1.5;
 
     //region 식당등록
     @Transactional
@@ -115,14 +115,14 @@ public class RestaurantService {
         }
         //캐시적용
         double lat1 = Math.floor(userLat * 1000) / 1000;
-        double lon2 = Math.floor(userLon * 1000) / 1000;
+        double lon1 = Math.floor(userLon * 1000) / 1000;
 
-        String key = "restaurant::" + lat1 +"/" + lon2 + "/"+page+"/"+size;
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if(restaurants.size() != 0) {
             redisService.setNearbyRestaurantDtoList(key, restaurants);
         }
 
-            return restaurants;
+        return restaurants;
     }
     //endregion
 
@@ -254,7 +254,9 @@ public class RestaurantService {
             redisService.setTop3(TOP3, collect);
             return collect;
         }
-        redisService.setTop3(TOP3, myLikeList);
+        if(myLikeList.size() != 0) {
+            redisService.setTop3(TOP3, myLikeList);
+        }
 
         return myLikeList;
     }
