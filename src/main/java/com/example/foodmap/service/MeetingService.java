@@ -200,7 +200,9 @@ public class MeetingService {
         }
 
         String key = "meeting::" + page + "/" + size;
-        redisService.setMeeting(key, meetingTotalListResponseDtoList);
+        if(meetingTotalListResponseDtoList.size()!= 0) {
+            redisService.setMeeting(key, meetingTotalListResponseDtoList);
+        }
         return meetingTotalListResponseDtoList;
     }
     //모임 음식점 검색

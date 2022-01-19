@@ -122,7 +122,7 @@ public class RestaurantService {
             redisService.setNearbyRestaurantDtoList(key, restaurants);
         }
 
-            return restaurants;
+        return restaurants;
     }
     //endregion
 
@@ -254,7 +254,9 @@ public class RestaurantService {
             redisService.setTop3(TOP3, collect);
             return collect;
         }
-        redisService.setTop3(TOP3, myLikeList);
+        if(myLikeList.size() != 0) {
+            redisService.setTop3(TOP3, myLikeList);
+        }
 
         return myLikeList;
     }
