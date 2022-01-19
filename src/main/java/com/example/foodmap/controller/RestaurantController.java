@@ -35,7 +35,6 @@ public class RestaurantController {
                                                  @RequestParam(name = "image",required = false) MultipartFile image,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails)   {
 
-        log.info("식당 등록 들어오나요 여기는 controller");
         User user = userDetails.getUser();
 
         return ResponseEntity.ok().body(restaurantService.saveRestaurant(requestDto, user,image));
@@ -55,6 +54,13 @@ public class RestaurantController {
         double userLat = userLocation.getLatitude();
         double userLon = userLocation.getLongitude();
 
+        double lat1 = Math.floor(userLat * 1000) / 1000;
+        double lon1 = Math.floor(userLon * 1000) / 1000;
+
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
+        if (redisService.isExist(key)) {
+            return redisService.getNearbyRestaurantDtoList(key);
+        }
         return restaurantService.getRestaurants(userLat, userLon, page, size);
     }
 
@@ -89,9 +95,9 @@ public class RestaurantController {
         double lon = 37.559187621837744;
 
         double lat1 = Math.floor(lat * 1000) / 1000;
-        double lon2 = Math.floor(lon * 1000) / 1000;
+        double lon1 = Math.floor(lon * 1000) / 1000;
 
-        String key = "restaurant::" + lat1 +"/" + lon2 + "/"+page+"/"+size;
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if (redisService.isExist(key)) {
             return redisService.getNearbyRestaurantDtoList(key);
         }
@@ -110,9 +116,9 @@ public class RestaurantController {
            ) {
 
         double lat1 = Math.floor(lat * 1000) / 1000;
-        double lon2 = Math.floor(lon * 1000) / 1000;
+        double lon1 = Math.floor(lon * 1000) / 1000;
 
-        String key = "restaurant::" + lat1 +"/" + lon2 + "/"+page+"/"+size;
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if (redisService.isExist(key)) {
             return redisService.getNearbyRestaurantDtoList(key);
         }
