@@ -64,11 +64,11 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
 //        body.add("client_id", "ca4aaaf3918b25c2334089d9a1d1e8ce");
-//        body.add("redirect_uri", "https://www.everybokki.com/user/kakao/callback");
+        body.add("redirect_uri", "https://www.everybokki.com/user/kakao/callback");
         body.add("client_id", "c0e66cf5516530d16e6aa5105af69ae9");
 //        body.add("client_id", "b70f4e2d805f84002174ac1aa5b2f11a");
 //        body.add("client_id", "96226a61dfa74ab382d1603dde61b318");
-       body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
+//        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
         body.add("code", code);
 
 // HTTP 요청 보내기
@@ -111,8 +111,14 @@ public class KakaoUserService {
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
         Long id = jsonNode.get("id").asLong();
-        String email = jsonNode.get("kakao_account")
+        String email;
+        if(jsonNode.get("kakao_account").get("has_email").asBoolean(false)&&
+                jsonNode.get("kakao_account").get("email_needs_agreement").asBoolean(true)){
+            email="";
+        }else {
+            email = jsonNode.get("kakao_account")
                 .get("email").asText();
+        }
         String profileImage = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
 
 
