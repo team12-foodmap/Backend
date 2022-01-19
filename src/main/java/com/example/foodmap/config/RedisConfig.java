@@ -35,14 +35,7 @@ public class RedisConfig {
     @Value("${spring.redis.port}")
     private int redisPort;
 
-//    @Bean
-//    public ObjectMapper objectMapper() {
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
-//        JavaTimeModule javaTimeModule = new JavaTimeModule();
-//        mapper.registerModule(new JavaTimeModule());
-//        return mapper;
-//    }
+
 
     // jackson LocalDateTime mapper
     @Bean public ObjectMapper objectMapper() {
@@ -69,11 +62,11 @@ public class RedisConfig {
     }
 
 //    @Bean(value = "cacheManager")
-//    public CacheManager userCacheManager(RedisConnectionFactory connectionFactory) {
+//    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 //        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
 //                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
 //                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-//                .entryTtl(Duration.ofMinutes(5L));
+//                .entryTtl(Duration.ofDays(1L));
 //
 //        return RedisCacheManager
 //                .RedisCacheManagerBuilder

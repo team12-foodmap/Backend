@@ -79,5 +79,4 @@ public class RedisService {
         return redisTemplate.hasKey(key);
     }
 
-
 }
