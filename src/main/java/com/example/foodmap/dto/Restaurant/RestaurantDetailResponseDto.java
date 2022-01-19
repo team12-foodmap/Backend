@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class RestaurantDetailResponseDto {
+public class RestaurantDetailResponseDto implements Serializable {
     //식당 상세페이지 responseDto
     private Long restaurantId;
     private String restaurantName;
@@ -28,4 +29,5 @@ public class RestaurantDetailResponseDto {
     private List<RestaurantTagResponseDto> restaurantTags;
     private List<RestaurantLikesDto> restaurantLikesList;
     private List<RestaurantReviewResponseDto> restaurantReviews;
+
 }

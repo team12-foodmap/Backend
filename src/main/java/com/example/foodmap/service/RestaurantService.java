@@ -1,6 +1,7 @@
 package com.example.foodmap.service;
 
 
+import com.example.foodmap.config.CacheKey;
 import com.example.foodmap.dto.Restaurant.*;
 import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
@@ -10,7 +11,11 @@ import com.example.foodmap.repository.UserRepository;
 import com.example.foodmap.validator.RestaurantValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,12 +26,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.foodmap.config.CacheKey.*;
 import static com.example.foodmap.exception.ErrorCode.POST_NOT_FOUND;
 import static com.example.foodmap.exception.ErrorCode.USER_NOT_FOUND;
 
 
 
 @Slf4j
+@EnableCaching
 @RequiredArgsConstructor
 @Service
 public class RestaurantService {
@@ -34,8 +41,10 @@ public class RestaurantService {
     private final ReviewRepository reviewRepository;
     private final StorageService storageService;
     private final UserRepository userRepository;
+    private final RedisService redisService;
+    private final RedisTemplate<String, RestaurantDetailResponseDto> detailRedisTemplate;
 
-    public static final double DISTANCE = 1.5;
+    public static final double DISTANCE = 3;
 
     //region 식당등록
     @Transactional
@@ -102,7 +111,17 @@ public class RestaurantService {
 
                 restaurants.add(responseDto);
             }
+
         }
+        //캐시적용
+        double lat1 = Math.floor(userLat * 1000) / 1000;
+        double lon2 = Math.floor(userLon * 1000) / 1000;
+
+        String key = "restaurant::" + lat1 +"/" + lon2 + "/"+page+"/"+size;
+        if(restaurants.size() != 0) {
+            redisService.setNearbyRestaurantDtoList(key, restaurants);
+        }
+
             return restaurants;
     }
     //endregion
@@ -148,7 +167,7 @@ public class RestaurantService {
         //식당 즐겨찾기 리스트
         List<RestaurantLikesDto> restaurantLikesDtoList = getRestaurantLikesDtos(restaurant);
 
-        return RestaurantDetailResponseDto.builder()
+        RestaurantDetailResponseDto restaurantDetailResponseDto = RestaurantDetailResponseDto.builder()
                 .restaurantId(restaurantId)
                 .restaurantName(restaurant.getRestaurantName())
                 .location(restaurant.getLocation())
@@ -162,8 +181,15 @@ public class RestaurantService {
                 .restaurantLikesList(restaurantLikesDtoList)
                 .restaurantReviews(restaurantReviewResponseDtos)
                 .distance(distance)
-                .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                .image(restaurant.getImage().isEmpty() ? "" : StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                 .build();
+
+
+        //캐시
+        ValueOperations<String, RestaurantDetailResponseDto> op = detailRedisTemplate.opsForValue();
+        String key = "restaurant::" +restaurantId;
+                op.set(key, restaurantDetailResponseDto);
+        return restaurantDetailResponseDto;
     }
 
     private List<RestaurantLikesDto> getRestaurantLikesDtos(Restaurant restaurant) {
@@ -225,10 +251,15 @@ public class RestaurantService {
 
         myLikeList.sort((a, b) -> b.getRestaurantLikesCount() - a.getRestaurantLikesCount());
         if (myLikeList.size() > 3) {
-            return myLikeList.stream()
+            List<RankingResponseDto> collect = myLikeList.stream()
                     .limit(3)
                     .collect(Collectors.toList());
+
+            redisService.setTop3(TOP3, collect);
+            return collect;
         }
+        redisService.setTop3(TOP3, myLikeList);
+
         return myLikeList;
     }
 
