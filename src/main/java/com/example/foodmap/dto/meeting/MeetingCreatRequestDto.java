@@ -17,9 +17,7 @@ public class MeetingCreatRequestDto {
     private String meetingTitle;
     private String restaurant;
     private Long restaurantId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
     private LocalDateTime startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
     private LocalDateTime endDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
     private LocalDateTime meetingDate;
