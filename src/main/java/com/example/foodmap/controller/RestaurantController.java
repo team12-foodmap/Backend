@@ -91,7 +91,7 @@ public class RestaurantController {
         double lat1 = Math.floor(lat * 1000) / 1000;
         double lon2 = Math.floor(lon * 1000) / 1000;
 
-        String key = "restaurant::" + lat1 +"/" + lon2;
+        String key = "restaurant::" + lat1 +"/" + lon2 + "/"+page+"/"+size;
         if (redisService.isExist(key)) {
             return redisService.getNearbyRestaurantDtoList(key);
         }

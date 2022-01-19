@@ -68,19 +68,19 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    @Bean(value = "cacheManager")
-    public CacheManager userCacheManager(RedisConnectionFactory connectionFactory) {
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofMinutes(5L));
-
-        return RedisCacheManager
-                .RedisCacheManagerBuilder
-                .fromConnectionFactory(connectionFactory)
-                .cacheDefaults(redisCacheConfiguration)
-                .build();
-    }
+//    @Bean(value = "cacheManager")
+//    public CacheManager userCacheManager(RedisConnectionFactory connectionFactory) {
+//        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+//                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+//                .entryTtl(Duration.ofMinutes(5L));
+//
+//        return RedisCacheManager
+//                .RedisCacheManagerBuilder
+//                .fromConnectionFactory(connectionFactory)
+//                .cacheDefaults(redisCacheConfiguration)
+//                .build();
+//    }
 
     }
 

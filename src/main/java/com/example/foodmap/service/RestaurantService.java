@@ -185,10 +185,6 @@ public class RestaurantService {
                 .build();
 
 
-        //캐시
-        ValueOperations<String, RestaurantDetailResponseDto> op = detailRedisTemplate.opsForValue();
-        String key = "restaurant::" +restaurantId;
-                op.set(key, restaurantDetailResponseDto);
         return restaurantDetailResponseDto;
     }
 

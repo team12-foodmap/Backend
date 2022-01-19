@@ -7,6 +7,7 @@ import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 import com.example.foodmap.security.UserDetailsImpl;
 import com.example.foodmap.service.MeetingService;
 
+import com.example.foodmap.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,8 @@ import java.util.List;
 public class MeetingController {
 
     private final MeetingService meetingService;
+    private final RedisService redisService;
+
     //모임게시글등록
     @PostMapping("/meetings")
     public ResponseEntity<String> creatMeeting(@RequestBody MeetingCreatRequestDto meetingCreatRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -55,8 +58,13 @@ public class MeetingController {
             @RequestParam int page,
             @RequestParam int size,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return meetingService.getMeetingList(userDetails,page,size);
 
+
+        String key = "meeting::" + page + "/" + size;
+        if (redisService.isExist(key)) {
+            return redisService.getMeeting(key);
+        }
+        return meetingService.getMeetingList(userDetails,page,size);
     }
 
     //모임 음식점 search

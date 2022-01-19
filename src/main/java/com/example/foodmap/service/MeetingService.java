@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,6 +34,8 @@ public class MeetingService {
     private final MeetingParticipateRepository meetingParticipateRepository;
     private final MeetingCommentRepository meetingCommentRepository;
     private final RestaurantRepository restaurantRepository;
+    private final RedisService redisService;
+
     //모임등록글
     @Transactional
     public void creatMeeting(MeetingCreatRequestDto meetingCreatRequestDto, UserDetailsImpl userDetails) {
@@ -195,6 +198,9 @@ public class MeetingService {
             meetingTotalListResponseDtoList.add(meetingTotalDto);
 
         }
+
+        String key = "meeting::" + page + "/" + size;
+        redisService.setMeeting(key, meetingTotalListResponseDtoList);
         return meetingTotalListResponseDtoList;
     }
     //모임 음식점 검색
