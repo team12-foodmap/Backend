@@ -111,8 +111,14 @@ public class KakaoUserService {
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
         Long id = jsonNode.get("id").asLong();
-        String email = jsonNode.get("kakao_account")
+        String email;
+        if(jsonNode.get("kakao_account").get("has_email").asBoolean(false)&&
+                jsonNode.get("kakao_account").get("email_needs_agreement").asBoolean(true)){
+            email="";
+        }else {
+            email = jsonNode.get("kakao_account")
                 .get("email").asText();
+        }
         String profileImage = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
 
 
