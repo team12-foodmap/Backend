@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import static com.example.foodmap.exception.ErrorCode.DUPLICATE_RESOURCE;
 
-@Slf4j(topic = "ERROR_FILE_LOGGER")
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 

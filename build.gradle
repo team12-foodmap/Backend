@@ -60,8 +60,16 @@ dependencies {
     //sentry
     implementation 'io.sentry:sentry-spring-boot-starter:5.5.2'
     implementation 'io.sentry:sentry-logback:5.4.2'
-}
 
+    // spring-data-redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.ehcache:ehcache:3.8.0'
+    implementation 'javax.cache:cache-api:1.0.0'
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+}
 
 test {
     useJUnitPlatform()
