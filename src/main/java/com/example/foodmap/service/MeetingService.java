@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -176,8 +174,8 @@ public class MeetingService {
 
 
         //반환 목록에 들어갈 데이터 찾을 리스트
-        Pageable pageable = PageRequest.of(page,size, Sort.unsorted());
-        Page <Meeting> meetingList = meetingRepository.findAllByOrderByModifiedAtDesc(pageable);
+        Pageable pageable = PageRequest.of(page,size);
+        Page <Meeting> meetingList = meetingRepository.findAllByOrderByMeetingDateAsc(pageable);
 
         for(Meeting meeting:meetingList){
             MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
@@ -200,7 +198,7 @@ public class MeetingService {
         }
 
         String key = "meeting::" + page + "/" + size;
-        if(meetingTotalListResponseDtoList.size()!= 0) {
+        if(meetingTotalListResponseDtoList.size() != 0) {
             redisService.setMeeting(key, meetingTotalListResponseDtoList);
         }
         return meetingTotalListResponseDtoList;
@@ -222,6 +220,7 @@ public class MeetingService {
 
         return meetingSearchDtoList;
     }
+
     //유저 정보 확인
     private void loginCheck(UserDetailsImpl userDetails) {
         userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(
