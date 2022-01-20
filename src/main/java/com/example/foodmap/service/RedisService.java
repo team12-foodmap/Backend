@@ -28,7 +28,9 @@ public class RedisService {
         redisTemplate.delete(key);
         ListOperations<String, RestaurantResponseDto> list = redisNearbyRestaurantListDtoTemplate.opsForList();
         list.rightPushAll(key, nearbyRestaruantList);
+      
         redisTemplate.expire(key, Duration.ofMinutes(5L));
+
     }
 
     public List<RestaurantResponseDto> getNearbyRestaurantDtoList(String key) {
@@ -42,6 +44,7 @@ public class RedisService {
         redisTemplate.delete(key);
         ListOperations<String, RankingResponseDto> list = top3ListTemplate.opsForList();
         list.rightPushAll(key, value);
+
         redisTemplate.expire(key, Duration.ofHours(12L));
     }
 
@@ -57,6 +60,7 @@ public class RedisService {
         redisTemplate.delete(key);
         ListOperations<String, MeetingTotalListResponseDto> list = meetingLIstTemplate.opsForList();
         list.rightPushAll(key, value);
+      
         redisTemplate.expire(key, Duration.ofMinutes(5L));
     }
 

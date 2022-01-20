@@ -73,8 +73,8 @@ public class Meeting extends Timestamped {
         this.meetingTitle=meetingCreatRequestDto.getMeetingTitle();
         this.content=meetingCreatRequestDto.getContent();
         this.location=meetingCreatRequestDto.getLocation();
-        this.startDate=meetingCreatRequestDto.getStartDate();
-        this.endDate=meetingCreatRequestDto.getEndDate();
+        this.startDate=meetingCreatRequestDto.getStartDate().plusHours(9);
+        this.endDate=meetingCreatRequestDto.getEndDate().plusHours(9);
         this.meetingDate=meetingCreatRequestDto.getMeetingDate();
         this.limitPeople=meetingCreatRequestDto.getLimitPeople();
         this.nowPeople=meetingCreatRequestDto.getNowPeople();
