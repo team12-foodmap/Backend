@@ -3,6 +3,7 @@ package com.example.foodmap.service;
 
 import com.example.foodmap.config.CacheKey;
 import com.example.foodmap.dto.Restaurant.*;
+import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.RestaurantRepository;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,7 @@ public class RestaurantService {
     private final StorageService storageService;
     private final UserRepository userRepository;
     private final RedisService redisService;
-    private final RedisTemplate<String, RestaurantDetailResponseDto> detailRedisTemplate;
+    private final RedisTemplate<String, RestaurantResponseDto> redisNearbyRestaurantListDtoTemplate;
 
     public static final double DISTANCE = 1.5;
 
@@ -63,6 +65,22 @@ public class RestaurantService {
 
         Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser);
 
+        //cache적용
+        double userlat = user.getLocation().getLatitude();
+        double userlon = user.getLocation().getLongitude();
+
+        RestaurantResponseDto restaurantResponseDto = getRestaurantResponseDto(userlat, userlon, restaurant);
+
+        double lat1 = Math.floor(requestDto.getLatitude() * 1000) / 1000;
+        double lon1 = Math.floor(requestDto.getLongitude() * 1000) / 1000;
+
+        //등록한 식당이 리스트 맨 위에 올라오도록?
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+0+"/"+10;
+        if(redisService.isExist(key)) {
+            ListOperations<String, RestaurantResponseDto> listOperations = redisNearbyRestaurantListDtoTemplate.opsForList();
+            listOperations.rightPush(key, restaurantResponseDto);
+        }
+
         return restaurantRepository.save(restaurant).getId();
     }
 
@@ -78,41 +96,12 @@ public class RestaurantService {
 
             for (Restaurant restaurant : restaurantList) {
 
-                double restLat = restaurant.getLocation().getLatitude();
-                double restLon = restaurant.getLocation().getLongitude();
-
-                double distance = getDistance(userLat, userLon, restLat, restLon);
-
-                List<Review> reviews = restaurant.getReviews();
-
-                int spicySum = 0;
-                int spicyAvg = 0;
-                for (Review review : reviews) {
-                    spicySum += review.getSpicy();
-
-                }
-                if (spicySum != 0) {
-                    spicyAvg = Math.round(spicySum / reviews.size()); //맵기 평균값
-                }
-
-                RestaurantResponseDto responseDto = RestaurantResponseDto.builder()
-                        .restaurantId(restaurant.getId())
-                        .restaurantName(restaurant.getRestaurantName())
-                        .location(restaurant.getLocation())
-                        .fried(restaurant.getFried())
-                        .sundae(restaurant.getSundae())
-                        .tteokbokkiType(restaurant.getTteokbokkiType())
-                        .spicy(spicyAvg)
-                        .restaurantLikesCount(restaurant.getRestaurantLikesCount())
-                        .distance(distance)
-                        .reviewCount(reviews.size())
-                        .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
-                        .build();
+                RestaurantResponseDto responseDto = getRestaurantResponseDto(userLat, userLon, restaurant);
 
                 restaurants.add(responseDto);
             }
-
         }
+
         //캐시적용
         double lat1 = Math.floor(userLat * 1000) / 1000;
         double lon1 = Math.floor(userLon * 1000) / 1000;
@@ -122,7 +111,47 @@ public class RestaurantService {
             redisService.setNearbyRestaurantDtoList(key, restaurants);
         }
 
+//        if(meetingTotalDto != null) {
+//            ListOperations<String, MeetingTotalListResponseDto> listOperations = meetingLIstTemplate.opsForList();
+//            listOperations.rightPush(key, meetingTotalDto);
+//        }
+
         return restaurants;
+    }
+
+
+    private RestaurantResponseDto getRestaurantResponseDto(double userLat, double userLon, Restaurant restaurant) {
+        double restLat = restaurant.getLocation().getLatitude();
+        double restLon = restaurant.getLocation().getLongitude();
+
+        double distance = getDistance(userLat, userLon, restLat, restLon);
+
+        List<Review> reviews = restaurant.getReviews();
+
+        int spicySum = 0;
+        int spicyAvg = 0;
+        for (Review review : reviews) {
+            spicySum += review.getSpicy();
+
+        }
+        if (spicySum != 0) {
+            spicyAvg = Math.round(spicySum / reviews.size()); //맵기 평균값
+        }
+
+        RestaurantResponseDto responseDto = RestaurantResponseDto.builder()
+                .restaurantId(restaurant.getId())
+                .restaurantName(restaurant.getRestaurantName())
+                .location(restaurant.getLocation())
+                .fried(restaurant.getFried())
+                .sundae(restaurant.getSundae())
+                .tteokbokkiType(restaurant.getTteokbokkiType())
+                .spicy(spicyAvg)
+                .restaurantLikesCount(restaurant.getRestaurantLikesCount())
+                .distance(distance)
+                .reviewCount(reviews.size())
+                .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                .build();
+        return responseDto;
     }
     //endregion
 
@@ -290,5 +319,7 @@ public class RestaurantService {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
+
+
 
 }

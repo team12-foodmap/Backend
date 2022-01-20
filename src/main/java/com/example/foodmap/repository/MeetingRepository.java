@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting,Long> {
-    Page <Meeting> findAllByOrderByModifiedAtDesc(Pageable pageable);
+    Page <Meeting> findAllByOrderByMeetingDateAsc(Pageable pageable);
 
     // 게시판 조회수 기능 추가
     @Modifying
