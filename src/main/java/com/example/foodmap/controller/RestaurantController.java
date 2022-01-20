@@ -54,8 +54,8 @@ public class RestaurantController {
         double userLat = userLocation.getLatitude();
         double userLon = userLocation.getLongitude();
 
-        double lat1 = Math.floor(userLat * 1000) / 1000;
-        double lon1 = Math.floor(userLon * 1000) / 1000;
+        double lat1 = Math.floor(userLat * 100) / 100;
+        double lon1 = Math.floor(userLon * 100) / 100;
 
         String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if (redisService.isExist(key)) {
@@ -94,8 +94,8 @@ public class RestaurantController {
         double lat = 126.97260868381068;
         double lon = 37.559187621837744;
 
-        double lat1 = Math.floor(lat * 1000) / 1000;
-        double lon1 = Math.floor(lon * 1000) / 1000;
+        double lat1 = Math.floor(lat * 100) / 100;
+        double lon1 = Math.floor(lon * 100) / 100;
 
         String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if (redisService.isExist(key)) {
@@ -115,8 +115,8 @@ public class RestaurantController {
             @RequestParam int size
            ) {
 
-        double lat1 = Math.floor(lat * 1000) / 1000;
-        double lon1 = Math.floor(lon * 1000) / 1000;
+        double lat1 = Math.floor(lat * 100) / 100;
+        double lon1 = Math.floor(lon * 100) / 100;
 
         String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if (redisService.isExist(key)) {
