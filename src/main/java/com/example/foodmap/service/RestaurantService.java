@@ -71,14 +71,14 @@ public class RestaurantService {
 
         RestaurantResponseDto restaurantResponseDto = getRestaurantResponseDto(userlat, userlon, restaurant);
 
-        double lat1 = Math.floor(requestDto.getLatitude() * 1000) / 1000;
-        double lon1 = Math.floor(requestDto.getLongitude() * 1000) / 1000;
+        double lat1 = Math.floor(requestDto.getLatitude() * 100) / 100;
+        double lon1 = Math.floor(requestDto.getLongitude() * 100) / 100;
 
         //등록한 식당이 리스트 맨 위에 올라오도록?
         String key = "restaurant::" + lat1 +"/" + lon1 + "/"+0+"/"+10;
         if(redisService.isExist(key)) {
             ListOperations<String, RestaurantResponseDto> listOperations = redisNearbyRestaurantListDtoTemplate.opsForList();
-            listOperations.rightPush(key, restaurantResponseDto);
+            listOperations.leftPush(key, restaurantResponseDto);
         }
 
         return restaurantRepository.save(restaurant).getId();
@@ -103,18 +103,13 @@ public class RestaurantService {
         }
 
         //캐시적용
-        double lat1 = Math.floor(userLat * 1000) / 1000;
-        double lon1 = Math.floor(userLon * 1000) / 1000;
+        double lat1 = Math.floor(userLat * 100) / 100;
+        double lon1 = Math.floor(userLon * 100) / 100;
 
         String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if(restaurants.size() != 0) {
             redisService.setNearbyRestaurantDtoList(key, restaurants);
         }
-
-//        if(meetingTotalDto != null) {
-//            ListOperations<String, MeetingTotalListResponseDto> listOperations = meetingLIstTemplate.opsForList();
-//            listOperations.rightPush(key, meetingTotalDto);
-//        }
 
         return restaurants;
     }
@@ -319,7 +314,5 @@ public class RestaurantService {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
-
-
 
 }
