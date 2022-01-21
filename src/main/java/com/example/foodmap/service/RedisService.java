@@ -29,7 +29,7 @@ public class RedisService {
         ListOperations<String, RestaurantResponseDto> list = redisNearbyRestaurantListDtoTemplate.opsForList();
         list.rightPushAll(key, nearbyRestaruantList);
       
-        redisTemplate.expire(key, Duration.ofMinutes(5L));
+        redisTemplate.expire(key, Duration.ofMinutes(2L));
 
     }
 

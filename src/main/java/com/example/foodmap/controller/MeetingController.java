@@ -59,11 +59,6 @@ public class MeetingController {
             @RequestParam int size,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-
-        String key = "meeting::" + page + "/" + size;
-        if (redisService.isExist(key)) {
-            return redisService.getMeeting(key);
-        }
         return meetingService.getMeetingList(userDetails,page,size);
     }
 

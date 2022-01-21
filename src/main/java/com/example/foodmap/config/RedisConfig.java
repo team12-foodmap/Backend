@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.ehcache.config.CacheConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.jcache.config.JCacheConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,14 +29,13 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 @EnableRedisRepositories
-public class RedisConfig {
+public class RedisConfig extends JCacheConfigurerSupport {
 
     @Value("${spring.redis.host}")
     private String redisHost;
 
     @Value("${spring.redis.port}")
     private int redisPort;
-
 
 
     // jackson LocalDateTime mapper
@@ -61,19 +62,19 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-//    @Bean(value = "cacheManager")
-//    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-//        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-//                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-//                .entryTtl(Duration.ofDays(1L));
-//
-//        return RedisCacheManager
-//                .RedisCacheManagerBuilder
-//                .fromConnectionFactory(connectionFactory)
-//                .cacheDefaults(redisCacheConfiguration)
-//                .build();
-//    }
+    @Bean(value = "cacheManager")
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .entryTtl(Duration.ofDays(1L));
+
+        return RedisCacheManager
+                .RedisCacheManagerBuilder
+                .fromConnectionFactory(connectionFactory)
+                .cacheDefaults(redisCacheConfiguration)
+                .build();
+    }
 
     }
 

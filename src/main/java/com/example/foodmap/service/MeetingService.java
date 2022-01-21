@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,6 +34,7 @@ public class MeetingService {
     private final MeetingCommentRepository meetingCommentRepository;
     private final RestaurantRepository restaurantRepository;
     private final RedisService redisService;
+    private final RedisTemplate<String, MeetingTotalListResponseDto> meetingLIstTemplate;
 
     //모임등록글
     @Transactional
@@ -46,6 +48,26 @@ public class MeetingService {
         MeetingParticipate meetingParticipate = new MeetingParticipate(meeting, userDetails);
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
+
+        //cache
+        String key = "meeting::" + 0 + "/" + 10;
+        MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
+                meeting.getMeetingTitle(),
+                meeting.getStartDate(),
+                meeting.getEndDate(),
+                meeting.getMeetingDate(),
+                meeting.getLocation(),
+                meeting.getLimitPeople(),
+                meeting.getNowPeople(),
+                meeting.getContent(),
+                meeting.getRestaurant(),
+                meeting.getViewCount(),
+                meeting.getModifiedAt(),
+                meeting.getUser().getId(),
+                meeting.getId()
+        );
+
+        meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
 
     }
 
@@ -168,6 +190,12 @@ public class MeetingService {
     //모임전체 조회리스트
     @Transactional
     public List<MeetingTotalListResponseDto> getMeetingList(UserDetailsImpl userDetails,int page,int size) {
+        //cache
+        String key = "meeting::" + page + "/" + size;
+        if (redisService.isExist(key)) {
+            return redisService.getMeeting(key);
+        }
+
         loginCheck(userDetails);
         //반환할 리스트
         List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = new ArrayList<>();
@@ -197,7 +225,6 @@ public class MeetingService {
 
         }
 
-        String key = "meeting::" + page + "/" + size;
         if(meetingTotalListResponseDtoList.size() != 0) {
             redisService.setMeeting(key, meetingTotalListResponseDtoList);
         }

@@ -43,7 +43,7 @@ public class RestaurantController {
     //내 근처 식당
     @ApiOperation("내 근처 식당 리스트 조회")
     @GetMapping("/restaurants")
-    public List<RestaurantResponseDto> getRestaurants(
+    public ResponseEntity<?> getRestaurants(
             @RequestParam int page,
             @RequestParam int size,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -53,15 +53,7 @@ public class RestaurantController {
 
         double userLat = userLocation.getLatitude();
         double userLon = userLocation.getLongitude();
-
-        double lat1 = Math.floor(userLat * 100) / 100;
-        double lon1 = Math.floor(userLon * 100) / 100;
-
-        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
-        if (redisService.isExist(key)) {
-            return redisService.getNearbyRestaurantDtoList(key);
-        }
-        return restaurantService.getRestaurants(userLat, userLon, page, size);
+        return ResponseEntity.ok().body( restaurantService.getRestaurants(userLat, userLon, page, size));
     }
 
     @ApiOperation("식당 상세페이지 조회")
@@ -94,14 +86,6 @@ public class RestaurantController {
         double lat = 126.97260868381068;
         double lon = 37.559187621837744;
 
-        double lat1 = Math.floor(lat * 100) / 100;
-        double lon1 = Math.floor(lon * 100) / 100;
-
-        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
-        if (redisService.isExist(key)) {
-            return redisService.getNearbyRestaurantDtoList(key);
-        }
-
         List<RestaurantResponseDto> restaurants = restaurantService.getRestaurants(lat, lon, page, size);
         return restaurants;
     }
@@ -115,13 +99,6 @@ public class RestaurantController {
             @RequestParam int size
            ) {
 
-        double lat1 = Math.floor(lat * 100) / 100;
-        double lon1 = Math.floor(lon * 100) / 100;
-
-        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
-        if (redisService.isExist(key)) {
-            return redisService.getNearbyRestaurantDtoList(key);
-        }
         return restaurantService.getRestaurants(lat, lon, page, size);
     }
 }
