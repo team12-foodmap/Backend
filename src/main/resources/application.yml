@@ -1,0 +1,54 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      maxRequestSize: 10MB
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        use_sql_comments: true
+
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(Bi1v5DaqTlr+0i/bPCqsxS8Cj2inqak73cEBPw3pnvlmFw2I72NV8g/1JEkB+/h/f4416w8EKPtRnmEBkFNPOMCQgZRVZ+xWhXT/Z9FvGhyy2OjuVlmMvFVEradUyP0rJVPE6ITj0q49zYWbHlYIv94dN5lk5k4F)
+    username: ENC(5gN0xCP1cerMEaKjTVZdJA==)
+    password: ENC(9Zq4XdFSxyYZAHmVq4VpFZ8qaXElPKzw)
+
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ENC(gR7VO/FKDH6ZGhRL1TH5cLxTdMtR3hwfwe8iFEoS95o=)
+      secretKey: ENC(PuCujecFsXKRtbLe1y+wDPK3LdZW/J1c3Nc92/f2/WbNuRLlQdm6O2VUz+no7TaN8JAnDpbdXvo=)
+    s3:
+      bucket: team12-images
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+sentry:
+  dsn: ENC(taxBRRRkdx8Xb9KmhKHz2Ur0K4JpakFO68wkVsnNN0bUzka5Z/AgXsQ5TQsIFbUrb1dOirUTAL5TINZ3KWgQHFc7Su5Uds6zLBgvxwHbbUR61s7ar1gP/A==)
+  traces-sample-rate: 1.0
+  logging:
+    minimum-event-level: info
+    minimum-breadcrumb-level: info
+  exception-resolver-order: 2147483647
+
+jasypt:
+   encryptor:
+     bean: jasyptStringEncryptor # Bean 이름
+     password: ${JASYPT_ENCRYPTOR_PASSWORD}

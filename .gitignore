@@ -40,9 +40,7 @@ out/
 ### VS Code ###
 .vscode/
 
-application.yml
 secret.yml
-src/main/resources/application.yml
 
 ### macOS ###
 # General
