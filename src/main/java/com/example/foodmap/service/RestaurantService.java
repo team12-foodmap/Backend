@@ -45,6 +45,7 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private final RedisService redisService;
     private final RedisTemplate<String, RestaurantResponseDto> redisNearbyRestaurantListDtoTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public static final double DISTANCE = 1.5;
 
@@ -76,16 +77,23 @@ public class RestaurantService {
 
         //등록한 식당이 리스트 맨 위에 올라오도록?
         String key = "restaurant::" + lat1 +"/" + lon1 + "/"+0+"/"+10;
-        if(redisService.isExist(key)) {
-            ListOperations<String, RestaurantResponseDto> listOperations = redisNearbyRestaurantListDtoTemplate.opsForList();
-            listOperations.leftPush(key, restaurantResponseDto);
-        }
+        redisNearbyRestaurantListDtoTemplate.opsForList().leftPushIfPresent(key, restaurantResponseDto);
 
         return restaurantRepository.save(restaurant).getId();
     }
 
     //내 근처 식당 조회 -> 추가: 위치기반으로 조회해서 가까운 순으로 정렬
     public List<RestaurantResponseDto> getRestaurants(double userLat, double userLon, int page, int size) {
+
+        //cache
+        double lat1 = Math.floor(userLat * 100) / 100;
+        double lon1 = Math.floor(userLon * 100) / 100;
+
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
+        if (redisService.isExist(key)) {
+//           return redisNearbyRestaurantListDtoTemplate.opsForList().range(key, 0, -1);
+            return redisService.getNearbyRestaurantDtoList(key);
+        }
 
         List<RestaurantResponseDto> restaurants = new ArrayList<>();
 
@@ -102,11 +110,6 @@ public class RestaurantService {
             }
         }
 
-        //캐시적용
-        double lat1 = Math.floor(userLat * 100) / 100;
-        double lon1 = Math.floor(userLon * 100) / 100;
-
-        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
         if(restaurants.size() != 0) {
             redisService.setNearbyRestaurantDtoList(key, restaurants);
         }
