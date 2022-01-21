@@ -233,10 +233,10 @@ public class RestaurantService {
         List<RestaurantTagResponseDto> taglist = new ArrayList<>();
         String[] array = {"👍인생맛집이에요", "😇서비스가 좋아요", "💸가성비가 좋아요", "🥉아쉬워요"};
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 1; i < 5; i++) {
             int sum = reviewRepository.countRestaurantTags(restaurant.getId(), i);
             RestaurantTagResponseDto tagsDto = RestaurantTagResponseDto.builder()
-                    .tagId(array[i])
+                    .tagId(array[i-1])
                     .count(sum)
                     .build();
             taglist.add(tagsDto);
