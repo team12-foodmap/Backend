@@ -53,12 +53,6 @@ public class Meeting extends Timestamped {
     @Column
     private int limitPeople;
 
-    @OneToMany(mappedBy = "meeting",cascade = CascadeType.ALL)
-    List<MeetingParticipate> meetingParticipates = new ArrayList<>();
-
-    @OneToMany(mappedBy = "meeting",cascade = CascadeType.ALL)
-    List<MeetingComment>meetingComments = new ArrayList<>();
-
     @ColumnDefault(value = "0")
     private int nowPeople;
 
@@ -80,18 +74,7 @@ public class Meeting extends Timestamped {
         this.nowPeople=meetingCreatRequestDto.getNowPeople();
 
     }
-//    //모임수정(취소예정)
-//    public void update(MeetingCreatRequestDto meetingCreatRequestDto) {
-//        this.restaurant=meetingCreatRequestDto.getRestaurant();
-//        this.meetingTitle=meetingCreatRequestDto.getMeetingTitle();
-//        this.content=meetingCreatRequestDto.getContent();
-//        this.location=meetingCreatRequestDto.getLocation();
-//        this.startDate=meetingCreatRequestDto.getStartDate();
-//        this.endDate=meetingCreatRequestDto.getEndDate();
-//        this.meetingDate=meetingCreatRequestDto.getMeetingDate();
-//        this.limitPeople=meetingCreatRequestDto.getLimitPeople();
-//        this.nowPeople=meetingCreatRequestDto.getNowPeople();
-//    }
+
 
     public void addnowPeople() {
         this.nowPeople = nowPeople+1;
