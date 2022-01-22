@@ -48,7 +48,6 @@ public class Restaurant extends Timestamped {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     List<RestaurantLikes> restaurantLikes = new ArrayList<>();
 
-    @org.hibernate.annotations.BatchSize(size = 100)
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     List<Review> reviews = new ArrayList<>();
 

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<Meeting,Long> {
     Page <Meeting> findAllByOrderByMeetingDateAsc(Pageable pageable);
@@ -20,5 +20,8 @@ public interface MeetingRepository extends JpaRepository<Meeting,Long> {
     int updateView(@Param("id") Long id);
 
     void deleteAllByMeetingDateLessThan(LocalDateTime daytime);
+
+    @Query("select m from Meeting m join fetch m.meetingComments join fetch m.user where m.id = :id")
+   Optional<Meeting> findById(Long id);
 
 }
