@@ -87,3 +87,4 @@ jacocoTestReport {
     }
     finalizedBy 'jacocoTestCoverageVerification' // 추가
 }
+
