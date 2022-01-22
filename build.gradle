@@ -85,4 +85,3 @@ jacocoTestReport {
         html.required = false
     }
 }
-check.dependsOn jacocoTestReport
