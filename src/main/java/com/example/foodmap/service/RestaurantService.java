@@ -64,7 +64,7 @@ public class RestaurantService {
              imagePath = storageService.uploadFile(image, "restaurant");
         }
 
-        Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser);
+        Restaurant restaurant = requestDto.toEntity();
 
         //cache적용
         double userlat = user.getLocation().getLatitude();

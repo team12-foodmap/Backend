@@ -1,6 +1,8 @@
 package com.example.foodmap.dto.meeting;
 
 import com.example.foodmap.model.Location;
+import com.example.foodmap.model.Meeting;
+import com.example.foodmap.model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,4 +27,20 @@ public class MeetingCreatRequestDto {
     private int limitPeople;
     private int nowPeople;
     private String content;
+
+    public Meeting toEntity(User user) {
+        return Meeting.builder()
+                .user(user)
+                .meetingTitle(meetingTitle)
+                .restaurant(restaurant)
+                .restaurantId(restaurantId)
+                .startDate(startDate)
+                .endDate(endDate)
+                .meetingDate(meetingDate)
+                .location(location)
+                .limitPeople(limitPeople)
+                .nowPeople(nowPeople)
+                .content(content)
+                .build();
+    }
 }

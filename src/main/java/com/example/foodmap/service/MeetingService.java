@@ -40,7 +40,10 @@ public class MeetingService {
     //모임등록글
     @Transactional
     public void creatMeeting(MeetingCreatRequestDto meetingCreatRequestDto, UserDetailsImpl userDetails) {
+
         UserValidator.isValidUser(userDetails.getUser());
+        Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
+
         Meeting meeting = new Meeting(userDetails.getUser(), meetingCreatRequestDto);
 
         meetingRepository.save(meeting);
@@ -75,19 +78,19 @@ public class MeetingService {
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
+        loginCheck(userDetails);
+
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
                 ()->new CustomException(POST_NOT_FOUND)
         );
 
 
-        //참여자 정보
-        List<MeetingParticipate> participates =meetingParticipateRepository.findAllByMeetingId(meetingId);
-
+        List<MeetingParticipate> participates = meeting.getMeetingParticipates(); //추가
         List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
-       for(MeetingParticipate participate: participates){
 
-
+        for(MeetingParticipate participate: participates){
            participateInfoDtoList.add(new ParticipateInfoDto(participate.getUser().getId()));
        }
 
@@ -109,18 +112,11 @@ public class MeetingService {
                 meeting.getUser().getId(),
                 meeting.getId()
         );
-        //반환할 객체 생성
 
-        return new MeetingDetailResponseDto(participateInfoDtoList,meetingInfoResponseDto,commentAll(meetingId,userDetails));
-    }
+        List<MeetingComment> meetingComments = meeting.getMeetingComments();
+        List<MeetingCommentResponseDto> meetingCommentResponseDtos = convertNestedStructure(meetingComments);
 
-
-    //댓글 조회
-    public List<MeetingCommentResponseDto> commentAll(Long meetingId,UserDetailsImpl userDetails) {
-
-        UserValidator.isValidUser(userDetails.getUser());
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        return convertNestedStructure(meetingCommentRepository.findMeetingCommentByMeeting(meeting));
+        return new MeetingDetailResponseDto(participateInfoDtoList, meetingInfoResponseDto,meetingCommentResponseDtos);
     }
 
     public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){
@@ -131,9 +127,7 @@ public class MeetingService {
                 comment.getUser().getNickname(),
                 comment.getModifiedAt()
                 );
-
     }
-
 
     //댓글 계층구조만들기
     private List<MeetingCommentResponseDto> convertNestedStructure(List<MeetingComment> comments) { //계층형 구조 만들기
@@ -148,12 +142,10 @@ public class MeetingService {
         return result;
     }
 
-
-
     //모임글 삭제
     @Transactional
     public void deleteMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        UserValidator.isValidUser(userDetails.getUser());
+        loginCheck(userDetails);
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
                 ()->new CustomException(POST_NOT_FOUND)
         );
@@ -209,6 +201,7 @@ public class MeetingService {
         }
         return meetingTotalListResponseDtoList;
     }
+
     //모임 음식점 검색
     @Transactional
     public List<MeetingSearchDto>searchPaging(String restaurantName,String location,int page,int size,UserDetailsImpl userDetails) {
