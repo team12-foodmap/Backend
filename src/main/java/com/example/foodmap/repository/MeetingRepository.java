@@ -17,7 +17,7 @@ public interface MeetingRepository extends JpaRepository<Meeting,Long> {
 
     void deleteAllByMeetingDateLessThan(LocalDateTime daytime);
 
-    @Query("select m from Meeting m join fetch m.meetingComments join fetch m.user where m.id = :id")
-   Optional<Meeting> findById(Long id);
+    @Query("select distinct m from Meeting m left join fetch m.meetingComments where m.id = :id")
+   Optional<Meeting> findById(@Param("id")Long id);
 
 }
