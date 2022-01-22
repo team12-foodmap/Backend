@@ -27,6 +27,9 @@ cache:
 # 프로젝트 내에 권한이 추가된 gradlew를 활용하여 clean, build를 진행한다.
 script: "./gradlew clean build"
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
 before_deploy:
   - zip -r springboot-webservice *
   - mkdir -p deploy
