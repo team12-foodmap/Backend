@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -15,7 +16,6 @@ import java.util.List;
 
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Restaurant extends Timestamped {
@@ -57,16 +57,18 @@ public class Restaurant extends Timestamped {
     private int restaurantLikesCount;
 
     @Builder
-    public Restaurant(RestaurantSaveRequestDto requestDto, String imagePath, User foundUser) {
-        this.user = foundUser;
-        this.restaurantName = requestDto.getRestaurantName();
-        this.location =  new Location(requestDto.getAddress(), requestDto.getLatitude(), requestDto.getLongitude());
-        this.restaurantType = requestDto.getRestaurantType();
-        this.fried = requestDto.getFried();
-        this.sundae = requestDto.getSundae();
-        this.tteokbokkiType = requestDto.getTteokbokkiType();
-        this.image = imagePath;
+    public Restaurant(Long id, User user, String restaurantName, Location location, String restaurantType, String fried, String sundae, String tteokbokkiType, String image, List<RestaurantLikes> restaurantLikes, List<Review> reviews, int restaurantLikesCount) {
+        this.id = id;
+        this.user = user;
+        this.restaurantName = restaurantName;
+        this.location = location;
+        this.restaurantType = restaurantType;
+        this.fried = fried;
+        this.sundae = sundae;
+        this.tteokbokkiType = tteokbokkiType;
+        this.image = image;
+        this.restaurantLikes = restaurantLikes;
+        this.reviews = reviews;
+        this.restaurantLikesCount = restaurantLikesCount;
     }
-
-
 }

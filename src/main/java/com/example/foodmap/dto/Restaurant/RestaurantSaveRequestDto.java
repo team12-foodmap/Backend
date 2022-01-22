@@ -1,12 +1,11 @@
 package com.example.foodmap.dto.Restaurant;
 
+import com.example.foodmap.model.Location;
+import com.example.foodmap.model.Restaurant;
 import lombok.*;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 public class RestaurantSaveRequestDto {
 
         private String restaurantName;
@@ -18,4 +17,15 @@ public class RestaurantSaveRequestDto {
         private String sundae;
         private String tteokbokkiType; //밀떡,살떡
 
+        //Dto -> Entity
+        public Restaurant toEntity() {
+                return Restaurant.builder()
+                        .restaurantName(restaurantName)
+                        .location(new Location(address, latitude, longitude))
+                        .restaurantType(restaurantType)
+                        .fried(fried)
+                        .sundae(sundae)
+                        .tteokbokkiType(tteokbokkiType)
+                        .build();
+        }
 }
