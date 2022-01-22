@@ -53,6 +53,12 @@ public class Meeting extends Timestamped {
     @Column
     private int limitPeople;
 
+    @OneToMany(mappedBy = "meeting",cascade = CascadeType.ALL)
+    List<MeetingParticipate> meetingParticipates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "meeting",cascade = CascadeType.ALL)
+    List<MeetingComment>meetingComments = new ArrayList<>();
+
     @ColumnDefault(value = "0")
     private int nowPeople;
 

@@ -40,6 +40,8 @@ public class ReviewService {
         String imagePath = storageService.uploadFile(image, "review"); //s3 review 폴더에 업로드
 
         Review review = new Review(reviewRequestDto, user, restaurant, imagePath);
+
+        review.addRestaurant(restaurant);
         reviewRepository.save(review);
     }
     //endregion

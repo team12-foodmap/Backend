@@ -30,6 +30,7 @@ public class RestaurantLikesService {
                     .user(user)
                     .restaurant(restaurant)
                     .build();
+            restaurantLikes.addRestaurant(restaurant);
             restaurantLikesRepository.save(restaurantLikes);
             restaurantRepository.upLikeCnt(restaurantId);
         }

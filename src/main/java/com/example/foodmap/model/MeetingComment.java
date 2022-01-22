@@ -56,4 +56,10 @@ public class MeetingComment extends Timestamped{
     public void updateMeeting (MeetingUpdateRequestDto meetingUpdateRequestDto) {
         this.content=meetingUpdateRequestDto.getContent();
     }
+
+    public void addMeeting(Meeting meeting){
+        this.meeting=meeting;
+        meeting.meetingComments.add(this);
+    }
+
 }
