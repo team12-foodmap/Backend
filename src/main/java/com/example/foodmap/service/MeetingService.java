@@ -52,6 +52,11 @@ public class MeetingService {
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
 
+        meetingCache(meeting);
+
+    }
+
+    private void meetingCache(Meeting meeting) {
         //cache
         String key = "meeting::" + 0 + "/" + 10;
         MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
@@ -69,18 +74,16 @@ public class MeetingService {
                 meeting.getUser().getId(),
                 meeting.getId()
         );
-
         meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
-
     }
 
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
 
-
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
         UserValidator.isValidUser(userDetails.getUser());
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
+
 
 
 
