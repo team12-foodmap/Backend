@@ -1,61 +1,51 @@
-# 언어와 jdk의 버전을 지정한다.
 language: java
 version:
-  - openjdk11
-
-# 어느 브랜치가 push 될 때 수행할지 지정한다.
-# 오직 main 브랜치가 push될 때 수행하도록 지정하였다.
+- openjdk11
 branches:
   only:
-    - develop
-
-# 빌드 전에 gradlew의 권한을 추가한다.
+  - develop
 before_install:
-  - chmod +x gradlew
-
-# Travis CI 서버의 Home
-# gradle을 통하여 의존성을 받게 되면 이를 캐시하여 배포할 때 마다 다시 받지 않도록 설정한다.
+- openssl aes-256-cbc -K $encrypted_1116e8e6e492_key -iv $encrypted_1116e8e6e492_iv
+  -in application.yml.enc -out application.yml -d
+- chmod +x gradlew
 cache:
   directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.gradle'
-
-# main 브랜치에 push 되면 수행되는 명령어이다.
-# 프로젝트 내에 권한이 추가된 gradlew를 활용하여 clean, build를 진행한다.
+  - "$HOME/.m2/repository"
+  - "$HOME/.gradle"
 script: "./gradlew clean build"
-
+  - ./gradlew check
+  - ./gradlew codeCoverageReport
 before_deploy:
-  - zip -r springboot-webservice *
-  - mkdir -p deploy
-  - mv springboot-webservice.zip deploy/springboot-webservice.zip
+- zip -r springboot-webservice *
+- mkdir -p deploy
+- mv springboot-webservice.zip deploy/springboot-webservice.zip
+-after_success:
+    - bash <(curl -s https://codecov.io/bash)
 deploy:
-  - provider: s3
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: team12-ci
-    region: ap-northeast-2
-    skip_cleanup: true
-    acl: private
-    local_dir: deploy
-    wait_until_deployed : true
-    on:
-      branch: develop
-
-  - provider: codedeploy
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: team12-ci
-    key: springboot-webservice.zip
-    bundle_type: zip
-    application: springboot-webservice
-    deployment_group: springboot-webservice-group
-    region: ap-northeast-2
-    wait-until-deployed: true
-    on:
-      branch: develop
-
-# CI 실행 완료 시 작성한 이메일로 알람
+- provider: s3
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
+  bucket: team12-ci
+  region: ap-northeast-2
+  skip_cleanup: true
+  acl: private
+  local_dir: deploy
+  wait_until_deployed: true
+  on:
+    branch: develop
+- provider: codedeploy
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
+  bucket: team12-ci
+  key: springboot-webservice.zip
+  bundle_type: zip
+  application: springboot-webservice
+  deployment_group: springboot-webservice-group
+  region: ap-northeast-2
+  wait-until-deployed: true
+  on:
+    branch: develop
 notifications:
   email:
     recipients:
-      - hanuli920@gmail.com
+    - hanuli920@gmail.com
