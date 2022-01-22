@@ -44,7 +44,6 @@ public class MeetingService {
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
 
-        Meeting meeting = new Meeting(userDetails.getUser(), meetingCreatRequestDto);
 
         meetingRepository.save(meeting);
 
@@ -78,13 +77,11 @@ public class MeetingService {
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+
 
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
         UserValidator.isValidUser(userDetails.getUser());
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
-                ()->new CustomException(POST_NOT_FOUND)
-        );
+
 
 
         List<MeetingParticipate> participates = meeting.getMeetingParticipates(); //추가
@@ -145,7 +142,7 @@ public class MeetingService {
     //모임글 삭제
     @Transactional
     public void deleteMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
                 ()->new CustomException(POST_NOT_FOUND)
         );
