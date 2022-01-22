@@ -40,7 +40,8 @@ public class MeetingService {
     @Transactional
     public void creatMeeting(MeetingCreatRequestDto meetingCreatRequestDto, UserDetailsImpl userDetails) {
         loginCheck(userDetails);
-        Meeting meeting = new Meeting(userDetails.getUser(), meetingCreatRequestDto);
+
+        Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
 
         meetingRepository.save(meeting);
 
