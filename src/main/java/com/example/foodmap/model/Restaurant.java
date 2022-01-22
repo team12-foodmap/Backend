@@ -1,7 +1,5 @@
 package com.example.foodmap.model;
 
-import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,6 +48,7 @@ public class Restaurant extends Timestamped {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     List<RestaurantLikes> restaurantLikes = new ArrayList<>();
 
+    @org.hibernate.annotations.BatchSize(size = 100)
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     List<Review> reviews = new ArrayList<>();
 
