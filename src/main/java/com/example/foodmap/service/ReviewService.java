@@ -2,6 +2,7 @@ package com.example.foodmap.service;
 
 import com.example.foodmap.dto.review.*;
 import com.example.foodmap.exception.CustomException;
+import com.example.foodmap.exception.ErrorCode;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
@@ -17,13 +18,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.foodmap.exception.ErrorCode.RESTAURANT_NOT_FOUND;
-import static com.example.foodmap.exception.ErrorCode.REVIEW_NOT_FOUND;
+import static com.example.foodmap.exception.ErrorCode.*;
 import static java.net.URLDecoder.decode;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
+
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
     private final StorageService storageService;
@@ -58,10 +59,9 @@ public class ReviewService {
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
 
-        Restaurant restaurant = restaurantRepository.findById(reviewId).orElseThrow(
-                () -> new CustomException(RESTAURANT_NOT_FOUND)
-        );
-
+        if(!(review.getUser().getId().equals(user.getId()))){
+            throw new CustomException(UNAUTHORIZED_UPDATE);
+        }
         String imagePath;
         if (image.isEmpty()) {
             imagePath = review.getImage();
@@ -111,8 +111,8 @@ public class ReviewService {
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
 
-        if (!user.getId().equals(review.getUser().getId())) {
-            throw new IllegalArgumentException(("댓글의 작성자만 삭제가 가능합니다."));
+        if(!(review.getUser().getId().equals(user.getId()))){
+            throw new CustomException(UNAUTHORIZED_UPDATE);
         }
         reviewRepository.deleteById(reviewId);
 
