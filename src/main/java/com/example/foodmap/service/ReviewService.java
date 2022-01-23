@@ -1,5 +1,6 @@
 package com.example.foodmap.service;
 
+import com.example.foodmap.dto.Restaurant.RestaurantLikesDto;
 import com.example.foodmap.dto.review.*;
 import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.exception.ErrorCode;

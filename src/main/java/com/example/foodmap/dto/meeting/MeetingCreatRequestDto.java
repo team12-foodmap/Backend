@@ -1,6 +1,5 @@
 package com.example.foodmap.dto.meeting;
 
-import com.example.foodmap.model.Location;
 import com.example.foodmap.model.Meeting;
 import com.example.foodmap.model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
