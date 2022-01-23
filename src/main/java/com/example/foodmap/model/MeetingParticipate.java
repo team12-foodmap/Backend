@@ -1,6 +1,7 @@
 package com.example.foodmap.model;
 
 import com.example.foodmap.security.UserDetailsImpl;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,10 +24,13 @@ public class MeetingParticipate {
     @JoinColumn(nullable = false)
     private Meeting meeting;
 
+    @Builder
     public MeetingParticipate(Meeting meeting, UserDetailsImpl userDetails) {
         this.meeting=meeting;
         this.user=userDetails.getUser();
     }
+
+
 
     public void addMeeting(Meeting meeting){
         this.meeting=meeting;

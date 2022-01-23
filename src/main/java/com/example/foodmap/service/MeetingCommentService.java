@@ -30,13 +30,11 @@ public class MeetingCommentService {
     public  MeetingComment createComment(MeetingCommentCreateRequestDto meetingCommentCreateRequestDto,Long meetingId, UserDetailsImpl userDetails) {
 
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        MeetingComment comment = Optional.ofNullable(meetingCommentCreateRequestDto.getParentId())
+                .map(id -> meetingCommentRepository.findById(id).orElseThrow(IllegalArgumentException::new))
+                .orElse(null);
 
-        MeetingComment meetingComment = new MeetingComment(meetingCommentCreateRequestDto.getContent(),
-                        userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(() -> new CustomException(USER_NOT_FOUND)),
-                        meeting,
-                        Optional.ofNullable(meetingCommentCreateRequestDto.getParentId())
-                                .map(id -> meetingCommentRepository.findById(id).orElseThrow(IllegalArgumentException::new))
-                                .orElse(null));
+        MeetingComment meetingComment = meetingCommentCreateRequestDto.toEntity(userDetails.getUser(),meeting,comment);
 
         meetingComment.addMeeting(meeting);
         return meetingCommentRepository.save(meetingComment);
@@ -48,7 +46,7 @@ public class MeetingCommentService {
     @Transactional
     public Long deleteComment(Long commentId, UserDetailsImpl userDetails) {
         MeetingComment comment = meetingCommentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
-        if (!comment.getUser().getId().equals(userDetails.getUser().getId())) throw new CustomException(UNAUTHORIZED_DELETE);
+        if (!comment.getUser().getUsername().equals(userDetails.getUsername())) throw new CustomException(UNAUTHORIZED_DELETE);
         meetingCommentRepository.delete(comment);
 
         return commentId;
