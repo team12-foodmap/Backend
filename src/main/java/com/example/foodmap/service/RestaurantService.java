@@ -66,18 +66,18 @@ public class RestaurantService {
 
         Restaurant restaurant = requestDto.toEntity(user, imagePath);
 
-        //cache적용
-        double userlat = user.getLocation().getLatitude();
-        double userlon = user.getLocation().getLongitude();
-
-        RestaurantResponseDto restaurantResponseDto = getRestaurantResponseDto(userlat, userlon, restaurant);
-
-        double lat1 = Math.floor(requestDto.getLatitude() * 100) / 100;
-        double lon1 = Math.floor(requestDto.getLongitude() * 100) / 100;
-
-        //등록한 식당이 리스트 맨 위에 올라오도록?
-        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+0+"/"+10;
-        redisNearbyRestaurantListDtoTemplate.opsForList().leftPushIfPresent(key, restaurantResponseDto);
+//        //cache적용
+//        double userlat = user.getLocation().getLatitude();
+//        double userlon = user.getLocation().getLongitude();
+//
+//        RestaurantResponseDto restaurantResponseDto = getRestaurantResponseDto(userlat, userlon, restaurant);
+//
+//        double lat1 = Math.floor(requestDto.getLatitude() * 100) / 100;
+//        double lon1 = Math.floor(requestDto.getLongitude() * 100) / 100;
+//
+//        //등록한 식당이 리스트 맨 위에 올라오도록?
+//        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+0+"/"+10;
+//        redisNearbyRestaurantListDtoTemplate.opsForList().leftPushIfPresent(key, restaurantResponseDto);
 
         return restaurantRepository.save(restaurant).getId();
     }
