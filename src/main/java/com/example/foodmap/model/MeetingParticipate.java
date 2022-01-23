@@ -27,4 +27,9 @@ public class MeetingParticipate {
         this.meeting=meeting;
         this.user=userDetails.getUser();
     }
+
+    public void addMeeting(Meeting meeting){
+        this.meeting=meeting;
+        meeting.meetingParticipates.add(this);
+    }
 }

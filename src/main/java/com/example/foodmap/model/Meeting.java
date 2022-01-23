@@ -77,18 +77,6 @@ public class Meeting extends Timestamped {
         this.nowPeople = nowPeople;
     }
 
-//    //모임수정(취소예정)
-//    public void update(MeetingCreatRequestDto meetingCreatRequestDto) {
-//        this.restaurant=meetingCreatRequestDto.getRestaurant();
-//        this.meetingTitle=meetingCreatRequestDto.getMeetingTitle();
-//        this.content=meetingCreatRequestDto.getContent();
-//        this.location=meetingCreatRequestDto.getLocation();
-//        this.startDate=meetingCreatRequestDto.getStartDate();
-//        this.endDate=meetingCreatRequestDto.getEndDate();
-//        this.meetingDate=meetingCreatRequestDto.getMeetingDate();
-//        this.limitPeople=meetingCreatRequestDto.getLimitPeople();
-//        this.nowPeople=meetingCreatRequestDto.getNowPeople();
-//    }
 
     public void addnowPeople() {
         this.nowPeople = nowPeople+1;

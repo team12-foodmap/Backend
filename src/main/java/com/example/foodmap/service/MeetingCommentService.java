@@ -3,6 +3,7 @@ package com.example.foodmap.service;
 import com.example.foodmap.dto.meeting.MeetingCommentCreateRequestDto;
 import com.example.foodmap.dto.meeting.MeetingUpdateRequestDto;
 import com.example.foodmap.exception.CustomException;
+import com.example.foodmap.model.Meeting;
 import com.example.foodmap.model.MeetingComment;
 import com.example.foodmap.repository.MeetingCommentRepository;
 import com.example.foodmap.repository.MeetingRepository;
@@ -27,13 +28,18 @@ public class MeetingCommentService {
     //모임 댓글 등록
     @Transactional
     public  MeetingComment createComment(MeetingCommentCreateRequestDto meetingCommentCreateRequestDto,Long meetingId, UserDetailsImpl userDetails) {
-          return meetingCommentRepository.save(
-                  new MeetingComment(meetingCommentCreateRequestDto.getContent(),
-                      userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow( () -> new CustomException(USER_NOT_FOUND)),
-                      meetingRepository.findById(meetingId).orElseThrow(()->new CustomException(POST_NOT_FOUND)),
-                          Optional.ofNullable(meetingCommentCreateRequestDto.getParentId())
-                                  .map(id -> meetingCommentRepository.findById(id).orElseThrow(IllegalArgumentException::new))
-                                  .orElse(null)));
+
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        MeetingComment meetingComment = new MeetingComment(meetingCommentCreateRequestDto.getContent(),
+                        userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(() -> new CustomException(USER_NOT_FOUND)),
+                        meeting,
+                        Optional.ofNullable(meetingCommentCreateRequestDto.getParentId())
+                                .map(id -> meetingCommentRepository.findById(id).orElseThrow(IllegalArgumentException::new))
+                                .orElse(null));
+
+        meetingComment.addMeeting(meeting);
+        return meetingCommentRepository.save(meetingComment);
 
 
     }

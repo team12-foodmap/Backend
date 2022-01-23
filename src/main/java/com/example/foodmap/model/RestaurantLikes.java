@@ -30,4 +30,10 @@ public class RestaurantLikes {
         this.user = user;
         this.restaurant = restaurant;
     }
+
+    public void addRestaurant(Restaurant restaurant){
+        this.restaurant=restaurant;
+        restaurant.getRestaurantLikes().add(this);
+    }
+
 }

@@ -9,6 +9,7 @@ import com.example.foodmap.model.MeetingParticipate;
 import com.example.foodmap.model.Restaurant;
 import com.example.foodmap.repository.*;
 import com.example.foodmap.security.UserDetailsImpl;
+import com.example.foodmap.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,9 +40,10 @@ public class MeetingService {
     //모임등록글
     @Transactional
     public void creatMeeting(MeetingCreatRequestDto meetingCreatRequestDto, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
 
+        UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
+
 
         meetingRepository.save(meeting);
 
@@ -50,6 +52,11 @@ public class MeetingService {
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
 
+        meetingCache(meeting);
+
+    }
+
+    private void meetingCache(Meeting meeting) {
         //cache
         String key = "meeting::" + 0 + "/" + 10;
         MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
@@ -67,17 +74,18 @@ public class MeetingService {
                 meeting.getUser().getId(),
                 meeting.getId()
         );
-
         meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
-
     }
 
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
 
+        UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
+
+
+
 
         List<MeetingParticipate> participates = meeting.getMeetingParticipates(); //추가
         List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
@@ -137,7 +145,7 @@ public class MeetingService {
     //모임글 삭제
     @Transactional
     public void deleteMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
                 ()->new CustomException(POST_NOT_FOUND)
         );
@@ -152,20 +160,21 @@ public class MeetingService {
     //모임전체 조회리스트
     @Transactional
     public List<MeetingTotalListResponseDto> getMeetingList(UserDetailsImpl userDetails,int page,int size) {
+        UserValidator.isValidUser(userDetails.getUser());
         //cache
         String key = "meeting::" + page + "/" + size;
         if (redisService.isExist(key)) {
             return redisService.getMeeting(key);
         }
 
-        loginCheck(userDetails);
+
         //반환할 리스트
         List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = new ArrayList<>();
 
 
         //반환 목록에 들어갈 데이터 찾을 리스트
         Pageable pageable = PageRequest.of(page,size);
-        Page <Meeting> meetingList = meetingRepository.findAllByOrderByMeetingDateAsc(pageable);
+        Page <Meeting> meetingList = meetingRepository.findByOrderByModifiedAtDesc(pageable);
 
         for(Meeting meeting:meetingList){
             MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
@@ -196,7 +205,7 @@ public class MeetingService {
     //모임 음식점 검색
     @Transactional
     public List<MeetingSearchDto>searchPaging(String restaurantName,String location,int page,int size,UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+        UserValidator.isValidUser(userDetails.getUser());
 
         Pageable pageable = PageRequest.of(page,size);
         Page<Restaurant> restaurants = restaurantRepository.findAllSearch(restaurantName,location,pageable);
@@ -209,12 +218,5 @@ public class MeetingService {
         }
 
         return meetingSearchDtoList;
-    }
-
-    //유저 정보 확인
-    private void loginCheck(UserDetailsImpl userDetails) {
-        userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(
-                ()-> new CustomException(USER_NOT_FOUND)
-        );
     }
 }
