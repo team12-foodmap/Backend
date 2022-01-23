@@ -13,7 +13,7 @@ public interface RestaurantLikesRepository extends JpaRepository<RestaurantLikes
     Boolean existsByUserAndRestaurant(User user, Restaurant restaurant);
 
     @Query("select r from RestaurantLikes r join fetch r.restaurant where r.user = :user")
-    List<RestaurantLikes> findAllByUser(User user, Pageable pageable);
+    List<RestaurantLikes> findAllByUser(@Param(value = "user")User user, Pageable pageable);
 
     RestaurantLikes findByUserAndRestaurant(User user, Restaurant restaurant);
 
