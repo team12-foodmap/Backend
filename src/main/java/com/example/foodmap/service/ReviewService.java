@@ -114,8 +114,8 @@ public class ReviewService {
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
 
-        if (!user.getId().equals(review.getUser().getId())) {
-            throw new IllegalArgumentException(("댓글의 작성자만 삭제가 가능합니다."));
+        if(!(review.getUser().getId().equals(user.getId()))){
+            throw new CustomException(UNAUTHORIZED_UPDATE);
         }
         reviewRepository.deleteById(reviewId);
 
