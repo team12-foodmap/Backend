@@ -2,10 +2,7 @@
 //
 //package com.example.foodmap.service;
 //
-//import com.example.foodmap.dto.meeting.MeetingCommentCreateRequestDto;
-//import com.example.foodmap.dto.meeting.MeetingCommentResponseDto;
-//import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
-//import com.example.foodmap.dto.meeting.MeetingUpdateRequestDto;
+//import com.example.foodmap.dto.meeting.*;
 //import com.example.foodmap.exception.CustomException;
 //import com.example.foodmap.model.*;
 //import com.example.foodmap.repository.MeetingCommentRepository;
@@ -18,12 +15,9 @@
 //import org.junit.jupiter.api.TestInstance;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
-//
 //import javax.transaction.Transactional;
-//
 //import java.time.LocalDateTime;
 //import java.util.List;
-//
 //import static org.assertj.core.api.Assertions.*;
 //import static org.junit.jupiter.api.Assertions.*;
 //
@@ -60,6 +54,7 @@
 //    private int limitPeople;
 //    private int nowPeople;
 //    private String content;
+//    private int viewCount;
 //
 //
 //    @BeforeEach
@@ -99,7 +94,7 @@
 //        nowPeople = 1;
 //        restaurantId = 1L;
 //        content = "졸맛집";
-//
+//        viewCount=1;
 //        userRepository.save(user1);
 //        userRepository.save(user2);
 //
@@ -107,11 +102,11 @@
 //        userDetails2 = new UserDetailsImpl(user2);
 //
 //        meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                meetingTitle, startDate, restaurant, restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
+//                meetingTitle, restaurant, restaurantId, endDate, startDate, meetingDate, location1, limitPeople, nowPeople, content
 //        );
 //
 //
-//        meeting1 = new Meeting(user1, meetingCreatRequestDto);
+//        meeting1 = new Meeting(user1,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //        //모집등록
 //        meetingRepository.save(meeting1);
 //
@@ -228,14 +223,16 @@
 //        //given
 //        MeetingCommentCreateRequestDto meetingCommentCreateRequestDto =
 //                new MeetingCommentCreateRequestDto("모임 참가합니다.", null);
-//
-//        MeetingComment meetingComment = new MeetingComment(meetingCommentCreateRequestDto.getContent(), user1, meeting1, null);
+//        MeetingComment comment1 = meetingCommentService.createComment(new MeetingCommentCreateRequestDto("1번", null), meeting1.getId(), userDetails1);
+//        MeetingComment meetingComment = new MeetingComment(1L,user1,meeting1,meetingCommentCreateRequestDto.getContent(),comment1,null);
 //        meetingCommentRepository.save(meetingComment);
 //
 //        //when
-//        meetingCommentService.deleteComment(meetingComment.getId(), userDetails1);
-//
+//        CustomException exception = assertThrows(CustomException.class, () -> {
+//            meetingCommentService.deleteComment(meetingComment.getId(), userDetails1);
+//        });
 //        //then
+//        assertThat(exception.getErrorCode().getDetail()).isEqualTo("해당 댓글을 찾을 수 없습니다.");
 //
 //    }
 //
@@ -257,7 +254,7 @@
 //    }
 //
 //    @Test
-//    @DisplayName("계층댓글")
+//    @DisplayName("계층댓글 조회")
 //    void 계층댓글() {
 //        //given
 //
@@ -284,10 +281,10 @@
 //
 //
 //        //when
-//        List<MeetingCommentResponseDto> result = meetingService.commentAll(meeting1.getId(), userDetails1);
-//
+//        MeetingDetailResponseDto meeting = meetingService.getMeeting(meeting1.getId(), userDetails1);
+//        List<MeetingCommentResponseDto> result = meeting.getComment();
 //        //then
-//        assertThat(result.size()).isEqualTo(2); // 최상위 댓글
+//        assertThat(meeting.getComment().size()).isEqualTo(2); // 최상위 댓글
 //        assertThat(result.get(0).getChildren().size()).isEqualTo(2); // 1의 children
 //        assertThat(result.get(0).getChildren().get(0).getChildren().size()).isEqualTo(2); // 2의 children
 //        assertThat(result.get(0).getChildren().get(0).getChildren().get(0).getChildren().size()).isEqualTo(1); // 4의 children
@@ -342,11 +339,13 @@
 //        MeetingComment comment3 = meetingCommentService.createComment(new MeetingCommentCreateRequestDto("3번", comment1.getId()), meeting1.getId(), userDetails1);
 //        MeetingComment comment4 = meetingCommentService.createComment(new MeetingCommentCreateRequestDto("4번", comment2.getId()), meeting1.getId(), userDetails1);
 //
+//
 //        //when
-//        Long commentId = meetingCommentService.deleteComment(comment2.getId(), userDetails2);
+//        meetingCommentService.deleteComment(comment1.getId(),userDetails2);
 //
 //        //then
-//        List<MeetingCommentResponseDto> result = meetingService.commentAll(meeting1.getId(), userDetails1);
+//        MeetingDetailResponseDto meeting = meetingService.getMeeting(meeting1.getId(), userDetails1);
+//        List<MeetingCommentResponseDto> result = meeting.getComment();
 //
 //        assertThat(result.get(0).getChildren().size()).isEqualTo(1); //1의 children
 //        assertThat(result.get(0).getChildren().get(0).getChildren().size()).isEqualTo(0); // 2의 children

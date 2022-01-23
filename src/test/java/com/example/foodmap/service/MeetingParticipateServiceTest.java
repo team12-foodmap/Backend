@@ -60,6 +60,7 @@
 //    private int limitPeople;
 //    private int nowPeople;
 //    private String content;
+//    private int viewCount;
 //
 //
 //    @BeforeEach
@@ -121,6 +122,7 @@
 //        nowPeople=0;
 //        content= "졸맛집";
 //        restaurantId = 1L;
+//        viewCount=1;
 //
 //        userRepository.save(user1);
 //        userRepository.save(user2);
@@ -134,12 +136,11 @@
 //        userDetails4 = new UserDetailsImpl(user4);
 //
 //        meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                meetingTitle,startDate,restaurant,restaurantId,endDate,meetingDate,location1,limitPeople,nowPeople,content
+//                meetingTitle, restaurant, restaurantId, endDate, startDate, meetingDate, location1, limitPeople, nowPeople, content
 //        );
 //
 //
-//
-//        meeting1 = new Meeting(user1,meetingCreatRequestDto);
+//        meeting1 = new Meeting(user1,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //        //모집등록
 //        meetingRepository.save(meeting1);
 //        MeetingParticipate meetingParticipate1 = new MeetingParticipate(meeting1, userDetails1);
@@ -175,13 +176,13 @@
 //        meeting1.addnowPeople();
 //
 //        //when
-//        ParticipateResponseDto participateResponseDto2 = meetingParticipateService.participateMeeting(meeting1.getId(),userDetails2);
+//        meetingParticipateService.participateMeeting(meeting1.getId(),userDetails2);
 //
 //
 //
 //        //then
-//        List<MeetingParticipate> result = meetingParticipateRepository.findAll();
-//        assertThat(result.size()).isEqualTo(4);
+//
+//
 //        assertThat(meeting1.getNowPeople()).isEqualTo(1);
 //
 //    }
@@ -214,6 +215,9 @@
 //        MeetingParticipate meetingParticipate2 = new MeetingParticipate(meeting1, userDetails2);
 //        meetingParticipateRepository.save(meetingParticipate2);
 //        meeting1.addnowPeople();
+//        MeetingParticipate meetingParticipate3 = new MeetingParticipate(meeting1, userDetails3);
+//        meetingParticipateRepository.save(meetingParticipate3);
+//        meeting1.addnowPeople();
 //
 //
 //
@@ -221,10 +225,7 @@
 //
 //
 //        //when
-//        List<MeetingParticipate> result = meetingParticipateRepository.findAll();
-//
-//
-//
+//        assertThat(meeting1.getNowPeople()).isEqualTo(2);
 //
 //    }
 //

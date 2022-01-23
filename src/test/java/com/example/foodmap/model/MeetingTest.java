@@ -30,6 +30,7 @@
 //    private int limitPeople;
 //    private int nowPeople;
 //    private String content;
+//    private int viewCount;
 //
 //
 //    @BeforeEach
@@ -58,6 +59,8 @@
 //        restaurantId= 1L;
 //        nowPeople = 1;
 //        content = "졸맛집";
+//        viewCount=1;
+//
 //
 //    }
 //
@@ -69,12 +72,9 @@
 //        @DisplayName("정상케이스")
 //        void 정상케이스() {
 //            //given
-//            MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                    meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//            );
 //
-//            //when
-//            Meeting meeting = new Meeting(user, meetingCreatRequestDto);
+//
+//            Meeting meeting = new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //
 //            //then
 //
@@ -105,13 +105,13 @@
 //                //given
 //                user = null;
 //
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
+//               MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
+//                        meetingTitle, restaurant, restaurantId, endDate, startDate, meetingDate, location1, limitPeople, nowPeople, content
 //                );
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(null,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //
 //                //then
@@ -131,8 +131,9 @@
 //                meetingTitle = null;
 //
 //                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
+//                        meetingTitle, restaurant, restaurantId, endDate, startDate, meetingDate, location1, limitPeople, nowPeople, content
 //                );
+//                meetingCreatRequestDto.toEntity(user);
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
