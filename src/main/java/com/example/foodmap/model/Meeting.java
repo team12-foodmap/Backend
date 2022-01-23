@@ -1,5 +1,6 @@
 package com.example.foodmap.model;
 
+import com.example.foodmap.validator.MeetingValidator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
@@ -63,6 +64,7 @@ public class Meeting extends Timestamped {
 
     @Builder
     public Meeting(User user, String restaurant, Long restaurantId, String meetingTitle, String content, String location, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime meetingDate, int viewCount, int limitPeople, int nowPeople) {
+        MeetingValidator.isValidMeeting(user,restaurant,  restaurantId,  meetingTitle, content, location, startDate,endDate,meetingDate,  limitPeople, nowPeople);
         this.user = user;
         this.restaurant = restaurant;
         this.restaurantId = restaurantId;

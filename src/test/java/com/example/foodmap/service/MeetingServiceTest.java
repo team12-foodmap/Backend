@@ -23,6 +23,7 @@
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
 //import org.springframework.data.domain.*;
+//import org.springframework.data.redis.core.RedisTemplate;
 //
 //import java.time.LocalDateTime;
 //import java.util.ArrayList;
@@ -30,6 +31,7 @@
 //import java.util.Optional;
 //
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+//import static org.assertj.core.api.AssertionsForClassTypes.in;
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.junit.jupiter.api.Assertions.assertThrows;
 //import static org.mockito.Mockito.*;
@@ -49,7 +51,7 @@
 //    @Mock
 //    MeetingCommentRepository meetingCommentRepository;
 //    @Mock
-//    RedisService redisService;
+//    RedisTemplate redisTemplate;
 //
 //
 //
@@ -91,8 +93,8 @@
 //
 //        meetingTitle="악어떡볶기 가실분?";
 //        startDate = LocalDateTime.of(2021,12,24,05,00);
-//        endDate = LocalDateTime.of(2021,12,25,12,00);
-//        meetingDate = LocalDateTime.of(2021,12,28,14,00);
+//        endDate = LocalDateTime.of(2021,12,28,12,00);
+//        meetingDate = LocalDateTime.of(2021,12,31,14,00);
 //        restaurant="악어떡볶이";
 //        limitPeople=5;
 //        location1="강남역";
@@ -103,7 +105,7 @@
 //
 //
 //        meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                meetingTitle, restaurant, restaurantId, endDate, startDate, meetingDate, location1, limitPeople, nowPeople, content
+//                meetingTitle, restaurant, restaurantId, startDate, endDate, meetingDate, location1, limitPeople, nowPeople, content
 //        );
 //
 //
@@ -219,26 +221,29 @@
 //
 //        assertThat(exception.getErrorCode().getDetail()).isEqualTo("삭제할 수 있는 권한이 없습니다.");
 //    }
-////    @Test
-////    @DisplayName("모임전체 조회리스트")
-////    void getMeetingLsit() {
-////        //given
-////        List<Meeting> meetings = new ArrayList<>();
-////        meetings.add(meeting);
-////
-////        Page<Meeting> meetingList =new PageImpl<>(meetings);
-////
-////        when(userRepository.findByKakaoId(userDetails.getUser().getKakaoId())).thenReturn(Optional.of(user1));
-////        Pageable pageable = PageRequest.of(1,2, Sort.unsorted());
-////        lenient().when(meetingRepository.findAllByOrderByModifiedAtDesc(pageable)).thenReturn(meetingList);
-////
-////        //when
-////        List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = meetingService.getMeetingList(userDetails,1,2);
-////
-////        //then
-////        assertThat(meetingTotalListResponseDtoList.size()).isEqualTo(1);
-////
-////    }
+//    @Test
+//    @DisplayName("모임전체 조회리스트")
+//    void getMeetingLsit() {
+//        //given
+//        List<Meeting> meetings = new ArrayList<>();
+//        meetings.add(meeting);
+//
+//
+//
+//
+//        Pageable pageable = PageRequest.of(0,2,Sort.by("modifiedAt").descending());
+//        int start = (int) pageable.getOffset();
+//        int end = Math.min((start+pageable.getPageSize()),meetings.size());
+//        Page<Meeting> meetingList =new PageImpl<>(meetings.subList(start,end),pageable,meetings.size());
+//        when(meetingRepository.findByOrderByModifiedAtDesc(any())).thenReturn(meetingList);
+//
+//        //when
+//        List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = meetingService.getMeetingList(userDetails,1,2);
+//
+//        //then
+//        assertThat(meetingTotalListResponseDtoList.size()).isEqualTo(1);
+//
+//    }
 //
 //}
 //
