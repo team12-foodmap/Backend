@@ -1,5 +1,6 @@
 package com.example.foodmap.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,8 @@ import java.util.List;
 
 
 @Getter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Entity
 public class Restaurant extends Timestamped {
@@ -54,19 +57,4 @@ public class Restaurant extends Timestamped {
     @ColumnDefault(value="0")
     private int restaurantLikesCount;
 
-    @Builder
-    public Restaurant(Long id, User user, String restaurantName, Location location, String restaurantType, String fried, String sundae, String tteokbokkiType, String image, List<RestaurantLikes> restaurantLikes, List<Review> reviews, int restaurantLikesCount) {
-        this.id = id;
-        this.user = user;
-        this.restaurantName = restaurantName;
-        this.location = location;
-        this.restaurantType = restaurantType;
-        this.fried = fried;
-        this.sundae = sundae;
-        this.tteokbokkiType = tteokbokkiType;
-        this.image = image;
-        this.restaurantLikes = restaurantLikes;
-        this.reviews = reviews;
-        this.restaurantLikesCount = restaurantLikesCount;
-    }
 }
