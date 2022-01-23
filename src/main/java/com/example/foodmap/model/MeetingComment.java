@@ -2,9 +2,12 @@ package com.example.foodmap.model;
 
 import com.example.foodmap.dto.meeting.MeetingUpdateRequestDto;
 import com.example.foodmap.validator.MeetingValidator;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
-@AllArgsConstructor
 @Entity
 public class MeetingComment extends Timestamped{
 

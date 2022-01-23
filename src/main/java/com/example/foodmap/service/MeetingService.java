@@ -77,15 +77,21 @@ public class MeetingService {
                 meeting.getUser().getId(),
                 meeting.getId()
         );
+
         meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
+
     }
 
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
+        loginCheck(userDetails);
 
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
+
+
+
 
 
         List<MeetingParticipate> participates = meeting.getMeetingParticipates(); //추가
@@ -114,15 +120,15 @@ public class MeetingService {
                 meeting.getId()
         );
 
-
-        List<MeetingCommentResponseDto> meetingCommentResponseDtos = convertNestedStructure(meeting.getMeetingComments());
+        List<MeetingComment> meetingComments = meeting.getMeetingComments();
+        List<MeetingCommentResponseDto> meetingCommentResponseDtos = convertNestedStructure(meetingComments);
 
         return new MeetingDetailResponseDto(participateInfoDtoList, meetingInfoResponseDto,meetingCommentResponseDtos);
     }
 
 
     //댓글 계층구조만들기
-    public List<MeetingCommentResponseDto> convertNestedStructure(List<MeetingComment> comments) { //계층형 구조 만들기
+    private List<MeetingCommentResponseDto> convertNestedStructure(List<MeetingComment> comments) { //계층형 구조 만들기
         List<MeetingCommentResponseDto> result = new ArrayList<>();
         Map<Long, MeetingCommentResponseDto> map = new HashMap<>();
         comments.forEach(c -> {
@@ -169,6 +175,7 @@ public class MeetingService {
         List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = new ArrayList<>();
 
 
+        //반환 목록에 들어갈 데이터 찾을 리스트
         Pageable pageable = PageRequest.of(page,size);
         Page <Meeting> meetingList = meetingRepository.findByOrderByModifiedAtDesc(pageable);
 
