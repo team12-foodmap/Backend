@@ -61,4 +61,9 @@ public class Review extends Timestamped {
         this.spicy = Integer.parseInt(spicy);
         this.restaurantTags =Integer.parseInt(tag);
     }
+
+    public void addRestaurant(Restaurant restaurant){
+        this.restaurant=restaurant;
+        restaurant.getReviews().add(this);
+    }
 }

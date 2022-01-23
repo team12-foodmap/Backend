@@ -12,16 +12,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<Meeting,Long> {
-    Page <Meeting> findAllByOrderByMeetingDateAsc(Pageable pageable);
+    Page <Meeting> findByOrderByModifiedAtDesc(Pageable pageable);
 
-    // 게시판 조회수 기능 추가
-    @Modifying
-    @Query("update Meeting b set b.viewCount = b.viewCount + 1 where b.id = :id")
-    int updateView(@Param("id") Long id);
 
     void deleteAllByMeetingDateLessThan(LocalDateTime daytime);
 
-    @Query("select m from Meeting m join fetch m.meetingComments join fetch m.user where m.id = :id")
-   Optional<Meeting> findById(Long id);
+    @Query("select distinct m from Meeting m left join fetch m.meetingComments where m.id = :id")
+   Optional<Meeting> findById(@Param("id")Long id);
 
 }

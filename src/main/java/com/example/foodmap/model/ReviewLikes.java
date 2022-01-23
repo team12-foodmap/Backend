@@ -21,4 +21,9 @@ public class ReviewLikes {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Review review;
+
+    public void addReview(Review review){
+        this.review=review;
+        review.getReviewLikes().add(this);
+    }
 }

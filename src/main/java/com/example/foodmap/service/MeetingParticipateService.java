@@ -30,6 +30,7 @@ public class MeetingParticipateService {
         );
 
         Optional<MeetingParticipate> participate = meetingParticipateRepository.findByMeetingAndUser(meeting, userDetails.getUser());
+
         //참가 인원수 확인
         if(checkLimitPeople(meetingId)){
             //Db에 참가되어 있는지 확인
@@ -37,6 +38,7 @@ public class MeetingParticipateService {
                 //DB에 참여 데이터 없음
                 MeetingParticipate meetingParticipate = new MeetingParticipate(meeting,userDetails);
                 //참여상태로 변환(저장)
+                meetingParticipate.addMeeting(meeting);
                 meetingParticipateRepository.save(meetingParticipate);
                 meeting.addnowPeople();
 
