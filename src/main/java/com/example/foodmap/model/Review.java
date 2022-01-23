@@ -46,13 +46,16 @@ public class Review extends Timestamped {
     List<ReviewLikes> reviewLikes = new ArrayList<>();
 
     @Builder
-    public Review(ReviewRequestDto reviewRequestDto, User user,Restaurant restaurant,String imagePath) {
-        this.user =user;
+    public Review(Long id, String content, int spicy, int restaurantTags, String image, User user, Restaurant restaurant, int reviewLike, List<ReviewLikes> reviewLikes) {
+        this.id = id;
+        this.content = content;
+        this.spicy = spicy;
+        this.restaurantTags = restaurantTags;
+        this.image = image;
+        this.user = user;
         this.restaurant = restaurant;
-        this.content = reviewRequestDto.getContent();
-        this.spicy = Integer.parseInt(reviewRequestDto.getSpicy());
-        this.restaurantTags = Integer.parseInt(reviewRequestDto.getRestaurantTags());
-        this.image = imagePath;
+        this.reviewLike = reviewLike;
+        this.reviewLikes = reviewLikes;
     }
 
     public void updateReview(String content, String imagePath, String spicy, String tag) {

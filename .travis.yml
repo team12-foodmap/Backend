@@ -1,3 +1,4 @@
+
 # 언어와 jdk의 버전을 지정한다.
 language: java
 version:
@@ -8,7 +9,6 @@ version:
 branches:
   only:
     - develop
-    - /.*/
 
 # 빌드 전에 gradlew의 권한을 추가한다.
 before_install:
@@ -26,9 +26,6 @@ cache:
 # main 브랜치에 push 되면 수행되는 명령어이다.
 # 프로젝트 내에 권한이 추가된 gradlew를 활용하여 clean, build를 진행한다.
 script: "./gradlew clean build"
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
   - zip -r springboot-webservice *

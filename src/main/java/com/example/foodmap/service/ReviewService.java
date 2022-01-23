@@ -1,6 +1,5 @@
 package com.example.foodmap.service;
 
-import com.example.foodmap.dto.Restaurant.RestaurantLikesDto;
 import com.example.foodmap.dto.review.*;
 import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
@@ -10,6 +9,7 @@ import com.example.foodmap.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -30,26 +30,29 @@ public class ReviewService {
 
     //region 리뷰 작성
     @Transactional
-    public void createReview(Long restaurantId, ReviewRequestDto reviewRequestDto, User user, MultipartFile image)  {
+    public void createReview(Long restaurantId, ReviewRequestDto reviewRequestDto, User user, MultipartFile image) {
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
                 () -> new CustomException(RESTAURANT_NOT_FOUND)
         );
         ReviewValidator.isValidReview(reviewRequestDto); //리뷰 유효성검사
 
+
         String imagePath = storageService.uploadFile(image, "review"); //s3 review 폴더에 업로드
 
-        Review review = new Review(reviewRequestDto, user, restaurant, imagePath);
+        Review review = reviewRequestDto.toEntity(user, restaurant, imagePath);
 
         review.addRestaurant(restaurant);
-        reviewRepository.save(review);
+         reviewRepository.save(review);
+
+
     }
     //endregion
 
 
     //region 리뷰 수정
     @Transactional
-    public void updateReview(Long reviewId, ReviewUpdateRequestDto reviewUpdateRequestDto, User user,MultipartFile image)  {
+    public void updateReview(Long reviewId, ReviewUpdateRequestDto reviewUpdateRequestDto, User user, MultipartFile image) {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new CustomException(REVIEW_NOT_FOUND)
@@ -73,16 +76,16 @@ public class ReviewService {
             storageService.deleteFile(oldImageUrl);
         }
 
-        String content ;
+        String content;
         if (reviewUpdateRequestDto.getContent() == null || reviewUpdateRequestDto.getContent().trim().isEmpty()) {
             content = review.getContent();
         } else {
             content = reviewUpdateRequestDto.getContent();
         }
 
-        String spicy ;
+        String spicy;
         if (reviewUpdateRequestDto.getSpicy() == null || reviewUpdateRequestDto.getSpicy().trim().isEmpty()) {
-            spicy =Integer.toString(review.getSpicy());
+            spicy = Integer.toString(review.getSpicy());
         } else {
             spicy = reviewUpdateRequestDto.getSpicy();
         }
@@ -93,8 +96,10 @@ public class ReviewService {
         } else {
             tag = reviewUpdateRequestDto.getRestaurantTags();
         }
-
         review.updateReview(content, imagePath, spicy, tag);
+
+
+
     }
 
     // region 리뷰 삭제
@@ -106,7 +111,7 @@ public class ReviewService {
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
 
-        if(!user.getId().equals(review.getUser().getId())){
+        if (!user.getId().equals(review.getUser().getId())) {
             throw new IllegalArgumentException(("댓글의 작성자만 삭제가 가능합니다."));
         }
         reviewRepository.deleteById(reviewId);
@@ -148,7 +153,7 @@ public class ReviewService {
                 .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
                 .reviewLikesDtoList(reviewLikesDto)
                 .build();
-        }
+    }
 
     private List<ReviewLikesDto> getReviewLikes(Review review) {
         List<ReviewLikesDto> reviewLikesDtoList = new ArrayList<>();
@@ -168,13 +173,13 @@ public class ReviewService {
 
     //region 리뷰 전체 조회
 
-    public List<ReviewAllResponseDto> showAllReview(Long restaurantId,int page, int size) {
+    public List<ReviewAllResponseDto> showAllReview(Long restaurantId, int page, int size) {
 
 
         PageRequest pageable = PageRequest.of(page, size);
 
         List<ReviewAllResponseDto> reviewLists = new ArrayList<>();
-        List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurantId,pageable);
+        List<Review> reviewList = reviewRepository.findAllByRestaurantIdOrderByReviewLikeDesc(restaurantId, pageable);
 
         for (Review review : reviewList) {
             List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
