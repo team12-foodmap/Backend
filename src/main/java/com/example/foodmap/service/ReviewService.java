@@ -5,6 +5,7 @@ import com.example.foodmap.exception.CustomException;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
+import com.example.foodmap.repository.UserRepository;
 import com.example.foodmap.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.foodmap.exception.ErrorCode.RESTAURANT_NOT_FOUND;
-import static com.example.foodmap.exception.ErrorCode.REVIEW_NOT_FOUND;
+import static com.example.foodmap.exception.ErrorCode.*;
 import static java.net.URLDecoder.decode;
 
 @Service
@@ -26,6 +26,7 @@ import static java.net.URLDecoder.decode;
 public class ReviewService {
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
     private final StorageService storageService;
 
     //region 리뷰 작성
@@ -35,6 +36,8 @@ public class ReviewService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
                 () -> new CustomException(RESTAURANT_NOT_FOUND)
         );
+
+
         ReviewValidator.isValidReview(reviewRequestDto); //리뷰 유효성검사
 
 
@@ -58,9 +61,9 @@ public class ReviewService {
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
 
-        Restaurant restaurant = restaurantRepository.findById(reviewId).orElseThrow(
-                () -> new CustomException(RESTAURANT_NOT_FOUND)
-        );
+        if(!(review.getUser().getId().equals(user.getId()))){
+                 throw new CustomException(UNAUTHORIZED_UPDATE);
+        }
 
         String imagePath;
         if (image.isEmpty()) {
