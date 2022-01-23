@@ -3,6 +3,7 @@ package com.example.foodmap.service;
 import com.example.foodmap.dto.meeting.MeetingCommentCreateRequestDto;
 import com.example.foodmap.dto.meeting.MeetingUpdateRequestDto;
 import com.example.foodmap.exception.CustomException;
+import com.example.foodmap.model.Meeting;
 import com.example.foodmap.model.MeetingComment;
 import com.example.foodmap.repository.MeetingCommentRepository;
 import com.example.foodmap.repository.MeetingRepository;

@@ -85,7 +85,7 @@ public class MeetingService {
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+
 
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));

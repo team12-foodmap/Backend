@@ -18,8 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.foodmap.exception.ErrorCode.RESTAURANT_NOT_FOUND;
-import static com.example.foodmap.exception.ErrorCode.REVIEW_NOT_FOUND;
+import static com.example.foodmap.exception.ErrorCode.*;
 import static java.net.URLDecoder.decode;
 
 @Service
@@ -58,10 +57,9 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
-
-        Restaurant restaurant = restaurantRepository.findById(reviewId).orElseThrow(
-                () -> new CustomException(RESTAURANT_NOT_FOUND)
-        );
+        if(!(review.getUser().getId().equals(user.getId()))){
+            throw new CustomException(UNAUTHORIZED_UPDATE);
+        }
 
         String imagePath;
         if (image.isEmpty()) {
