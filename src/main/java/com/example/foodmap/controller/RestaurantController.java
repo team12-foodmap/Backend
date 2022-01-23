@@ -35,9 +35,8 @@ public class RestaurantController {
                                                  @RequestParam(name = "image",required = false) MultipartFile image,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails)   {
 
-        User user = userDetails.getUser();
 
-        return ResponseEntity.ok().body(restaurantService.saveRestaurant(requestDto, user,image));
+        return ResponseEntity.ok().body(restaurantService.saveRestaurant(requestDto, userDetails.getUser(),image));
     }
 
     //내 근처 식당
@@ -74,8 +73,7 @@ public class RestaurantController {
                                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
-//        List<RankingResponseDto> myLikeResponseDto = restaurantService.getTop3ByRestaurant(restaurant, user);
-//        return ResponseEntity.ok().body(myLikeResponseDto);
+//
         return ResponseEntity.ok().body(redisService.isExist(CacheKey.TOP3)? redisService.getTop3(CacheKey.TOP3): restaurantService.getTop3ByRestaurant(restaurant, user));
     }
 
@@ -92,13 +90,13 @@ public class RestaurantController {
 
     //변화하는 위치별 식당조회
     @GetMapping("/restaurants/search")
-    public List<RestaurantResponseDto> getRestaurantsInHome(
+    public ResponseEntity<?> getRestaurantsInHome(
             @RequestParam double lat,
             @RequestParam double lon,
             @RequestParam int page,
             @RequestParam int size
            ) {
 
-        return restaurantService.getRestaurants(lat, lon, page, size);
+        return ResponseEntity.ok().body(restaurantService.getRestaurants(lat, lon, page, size));
     }
 }
