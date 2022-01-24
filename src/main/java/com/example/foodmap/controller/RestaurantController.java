@@ -79,13 +79,12 @@ public class RestaurantController {
 
     //로그인하지 않은 사용자(둘러보기) - 서울역 근처 식당 조회
     @GetMapping("/home")
-    public List<RestaurantResponseDto> getRestaurantsInHome(@RequestParam int page,@RequestParam int size) {
+    public ResponseEntity<?> getRestaurantsInHome(@RequestParam int page,@RequestParam int size) {
 
         double lat = 126.97260868381068;
         double lon = 37.559187621837744;
 
-        List<RestaurantResponseDto> restaurants = restaurantService.getRestaurants(lat, lon, page, size);
-        return restaurants;
+        return ResponseEntity.ok().body(restaurantService.getRestaurants(lat, lon, page, size));
     }
 
     //변화하는 위치별 식당조회
