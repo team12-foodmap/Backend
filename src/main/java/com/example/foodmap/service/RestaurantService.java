@@ -89,11 +89,11 @@ public class RestaurantService {
         double lat1 = Math.floor(userLat * 100) / 100;
         double lon1 = Math.floor(userLon * 100) / 100;
 
-        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
-        if (redisService.isExist(key)) {
-//           return redisNearbyRestaurantListDtoTemplate.opsForList().range(key, 0, -1);
-            return redisService.getNearbyRestaurantDtoList(key);
-        }
+//        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
+//        if (redisService.isExist(key)) {
+////           return redisNearbyRestaurantListDtoTemplate.opsForList().range(key, 0, -1);
+//            return redisService.getNearbyRestaurantDtoList(key);
+//        }
 
         List<RestaurantResponseDto> restaurants = new ArrayList<>();
 
@@ -110,9 +110,9 @@ public class RestaurantService {
             }
         }
 
-        if(restaurants.size() != 0) {
-            redisService.setNearbyRestaurantDtoList(key, restaurants);
-        }
+//        if(restaurants.size() != 0) {
+//            redisService.setNearbyRestaurantDtoList(key, restaurants);
+//        }
 
         return restaurants;
     }
@@ -281,6 +281,7 @@ public class RestaurantService {
             redisService.setTop3(TOP3, collect);
             return collect;
         }
+
         if(myLikeList.size() != 0) {
             redisService.setTop3(TOP3, myLikeList);
         }

@@ -35,9 +35,8 @@ public class RestaurantController {
                                                  @RequestParam(name = "image",required = false) MultipartFile image,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails)   {
 
-        User user = userDetails.getUser();
 
-        return ResponseEntity.ok().body(restaurantService.saveRestaurant(requestDto, user,image));
+        return ResponseEntity.ok().body(restaurantService.saveRestaurant(requestDto, userDetails.getUser(),image));
     }
 
     //내 근처 식당
@@ -74,31 +73,29 @@ public class RestaurantController {
                                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
-//        List<RankingResponseDto> myLikeResponseDto = restaurantService.getTop3ByRestaurant(restaurant, user);
-//        return ResponseEntity.ok().body(myLikeResponseDto);
+//
         return ResponseEntity.ok().body(redisService.isExist(CacheKey.TOP3)? redisService.getTop3(CacheKey.TOP3): restaurantService.getTop3ByRestaurant(restaurant, user));
     }
 
     //로그인하지 않은 사용자(둘러보기) - 서울역 근처 식당 조회
     @GetMapping("/home")
-    public List<RestaurantResponseDto> getRestaurantsInHome(@RequestParam int page,@RequestParam int size) {
+    public ResponseEntity<?> getRestaurantsInHome(@RequestParam int page,@RequestParam int size) {
 
         double lat = 126.97260868381068;
         double lon = 37.559187621837744;
 
-        List<RestaurantResponseDto> restaurants = restaurantService.getRestaurants(lat, lon, page, size);
-        return restaurants;
+        return ResponseEntity.ok().body(restaurantService.getRestaurants(lat, lon, page, size));
     }
 
     //변화하는 위치별 식당조회
     @GetMapping("/restaurants/search")
-    public List<RestaurantResponseDto> getRestaurantsInHome(
+    public ResponseEntity<?> getRestaurantsInHome(
             @RequestParam double lat,
             @RequestParam double lon,
             @RequestParam int page,
             @RequestParam int size
            ) {
 
-        return restaurantService.getRestaurants(lat, lon, page, size);
+        return ResponseEntity.ok().body(restaurantService.getRestaurants(lat, lon, page, size));
     }
 }
