@@ -44,7 +44,6 @@ public class MeetingService {
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
 
-
         meetingRepository.save(meeting);
 
         //모임등록 한사람 자동참가인원+1 자기자신
@@ -55,7 +54,7 @@ public class MeetingService {
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
 
-        meetingCache(meeting);
+//        meetingCache(meeting);
 
     }
 
@@ -89,10 +88,6 @@ public class MeetingService {
 
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
-
-
-
-
 
         List<MeetingParticipate> participates = meeting.getMeetingParticipates(); //추가
         List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
@@ -199,14 +194,14 @@ public class MeetingService {
 
         }
 
-        //cache
-        String key = "meeting::" + page + "/" + size;
-        if (redisService.isExist(key)) {
-            return redisService.getMeeting(key);
-        }
-        if(meetingTotalListResponseDtoList.size() != 0) {
-            redisService.setMeeting(key, meetingTotalListResponseDtoList);
-        }
+//        //cache
+//        String key = "meeting::" + page + "/" + size;
+//        if (redisService.isExist(key)) {
+//            return redisService.getMeeting(key);
+//        }
+//        if(meetingTotalListResponseDtoList.size() != 0) {
+//            redisService.setMeeting(key, meetingTotalListResponseDtoList);
+//        }
         return meetingTotalListResponseDtoList;
     }
 
