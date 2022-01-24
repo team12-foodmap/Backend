@@ -1,174 +1,204 @@
-//
-//package com.example.foodmap.service;
-//
-//import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
-//import com.example.foodmap.dto.review.ReviewRequestDto;
-//import com.example.foodmap.dto.review.ReviewUpdateRequestDto;
-//import com.example.foodmap.exception.CustomException;
-//import com.example.foodmap.exception.ErrorCode;
-//import com.example.foodmap.model.*;
-//import com.example.foodmap.repository.RestaurantRepository;
-//import com.example.foodmap.repository.ReviewRepository;
-//import com.example.foodmap.repository.UserRepository;
-//import com.example.foodmap.security.UserDetailsImpl;
-//import org.junit.jupiter.api.*;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.mock.web.MockMultipartFile;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import javax.transaction.Transactional;
-//import java.util.List;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@Transactional
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//class ReviewServiceTest {
-//
-//    @Autowired
-//    ReviewRepository reviewRepository;
-//    @Autowired
-//    UserRepository userRepository;
-//    @Autowired
-//    RestaurantRepository restaurantRepository;
-//    @Autowired
-//    ReviewService reviewService;
-//
-//    private ReviewRequestDto reviewRequestDto1;
-//    private ReviewRequestDto reviewRequestDto2;
-//    private ReviewUpdateRequestDto reviewUpdateRequestDto1;
-//    private Location location1;
-//    private Location location2;
-//    private User user1;
-//    private User user2;
-//    private User user3;
-//    private UserDetailsImpl userDetails1;
-//    private UserDetailsImpl userDetails2;
-//    private Restaurant restaurant1;
-//    private Restaurant restaurant2;
-//    private Restaurant restaurant3;
-//    private RestaurantLikes restaurantLikes1;
-//    private RestaurantLikes restaurantLikes2;
-//    private String content;
-//    private int spicy;
-//    private String restaurantTags;
-//    private MultipartFile image;
-//    private Review review1;
-//    private Review review2;
-//    private Review review3;
-//    private Pageable pageable;
-//
-//    @BeforeEach
-//    void setup() {
-//        location1 = new Location("강서구", 12.23, 34.21);
-//        user1 = new User(
-//                "백정수",
-//                "a111",
-//                6L,
-//                "maxm@b123.com",
-//                UserRoleEnum.USER,
-//                1L,
-//                null,
-//                location1,
-//                "클린워터"
-//        );
-//        userRepository.save(user1);
-//        userDetails1 = new UserDetailsImpl(user1);
-//
-//         location2 = new Location("강북구", 34.31, 34.21);
-//        user2 = new User(
-//                "이한울",
-//                "a111",
-//                2L,
-//                "a@bs.com",
-//                UserRoleEnum.USER,
-//                2L,
-//                "default.png",
-//                location2,
-//                "별명이 뭔가요"
-//        );
-//        userRepository.save(user2);
-//        userDetails2 = new UserDetailsImpl(user2);
-//
-//        RestaurantSaveRequestDto restaurantSaveRequestDto1 = new RestaurantSaveRequestDto(
-//                "엽떡",
-//                22.33,
-//                33.44,
-//                "서울특별시 강동구",
-//                "분식",
-//                "판매",
-//                "허파만",
-//                "밀떡"
-//        );
-//        restaurant1 = new Restaurant(restaurantSaveRequestDto1, null, user1);
-//        restaurantRepository.save(restaurant1);
-//        restaurantLikes1 = new RestaurantLikes(restaurantLikes1.getId(), user1,restaurant1);
-//        RestaurantSaveRequestDto restaurantSaveRequestDto2 = new RestaurantSaveRequestDto(
-//                "안돼",
-//                22.33,
-//                33.44,
-//                "강동구",
-//                "분식",
-//                "판매안함",
-//                "허파만",
-//                "밀떡"
-//        );
-//        restaurant2 = new Restaurant(restaurantSaveRequestDto2, null, user1);
-//        restaurantRepository.save(restaurant2);
-//        //리뷰저장
-//        reviewRequestDto1 = new ReviewRequestDto(
-//                "이집 매우매우 잘하네요.",
-//                "1",
-//                "2"
-//        );
-//        review1 = new Review(reviewRequestDto1, user1, restaurant1, null);
-//        reviewRepository.save(review1);
-//
-//        reviewRequestDto2 = new ReviewRequestDto(
-//                "이집 매우매우 별로네요.",
-//                "5",
-//                "3"
-//        );
-//        review2 = new Review(reviewRequestDto2, user1, restaurant1, "image1");
-//        reviewRepository.save(review2);
-//
-//        reviewUpdateRequestDto1 = ReviewUpdateRequestDto.builder()
-//                .content("매우매우맛이없어졌네요왜이래요")
-//                .restaurantTags("1")
-//                .spicy("5")
-//                .build();
-//
-//    }
-//
-//    //region 성공케이스
-//    @Nested
-//    @DisplayName("성공케이스")
-//    class sucess {
-//        @Test
-//        @DisplayName("리뷰 등록")
-//        void reviewCreate() {
-//            //given
-//            ReviewRequestDto reviewRequestDto = new ReviewRequestDto(
-//                    "이집 매우매우 잘하네요.",
-//                    "1",
-//                    "2"
-//            );
-//            review3 = new Review(reviewRequestDto, user1, restaurant2, null);
-//            reviewRepository.save(review3);
-//            MockMultipartFile mockMultipartFile = new MockMultipartFile(
-//                    "image1", "image1", "application/doc", "image".getBytes()
-//            );
-//
-//            //when
-//            reviewService.createReview(restaurant2.getId(), reviewRequestDto, user1, mockMultipartFile);
-//            //then
-//        }
+
+package com.example.foodmap.service;
+
+import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
+import com.example.foodmap.dto.review.ReviewRequestDto;
+import com.example.foodmap.model.*;
+import com.example.foodmap.repository.*;
+import com.example.foodmap.security.UserDetailsImpl;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Transactional
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ReviewServiceTest {
+
+    @Autowired
+    ReviewRepository reviewRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    RestaurantRepository restaurantRepository;
+    @Autowired
+    MeetingRepository meetingRepository;
+    @Autowired
+    RestaurantLikesRepository restaurantLikesRepository;
+    @Autowired
+    MyPageRepository myPageRepository;
+    @Autowired
+    MyPageService myPageService;
+    @Autowired
+    StorageService storageService;
+    @Autowired
+    ReviewService reviewService;
+
+    private User user1;
+    private User user2;
+    private UserDetailsImpl userDetails1;
+    private UserDetailsImpl userDetails2;
+    private Restaurant restaurant1;
+    private Restaurant restaurant2;
+    private RestaurantSaveRequestDto restaurantSaveRequestDto;
+    private List<Review> review1;
+    private List<Review> review2;
+    private Review review3;
+    private Review review;
+    private Review review4;
+    private Review review5;
+    private Review review6;
+    private List<RestaurantLikes> restaurantLikes1;
+    private List<RestaurantLikes> restaurantLikes2;
+    private RestaurantLikes restaurantLikes3;
+    private RestaurantLikes restaurantLikes4;
+    private RestaurantLikes restaurantLikes5;
+    private Pageable pageable;
+    private ReviewRequestDto reviewRequestDto;
+    private MultipartFile image;
+
+    @BeforeEach
+    void setup() {
+        Location location1 = new Location("강서구", 12.23, 34.21);
+        user1 = new User(
+                "백정수",
+                "a111",
+                100L,
+                "a@b.com",
+                UserRoleEnum.USER,
+                1L,
+                null,
+                location1,
+                "클린워터"
+        );
+        userRepository.save(user1);
+        userDetails1 = new UserDetailsImpl(user1);
+
+        Location location2 = new Location("강북구", 34.31, 34.21);
+        user2 = new User(
+                "이한울",
+                "a111",
+                200L,
+                "a@bs.com",
+                UserRoleEnum.USER,
+                2L,
+                null,
+                location2,
+                "별명이 뭔가요"
+        );
+        userRepository.save(user2);
+        userDetails2 = new UserDetailsImpl(user2);
+
+        restaurant1 = new Restaurant(
+                1L,
+                user1,
+                "식당1",
+                location1,
+                "포장마차",
+                "튀김있음",
+                "순대만",
+                "밀떡",
+                null,
+                restaurantLikes1,
+                review1,
+                3
+        );
+        restaurantRepository.save(restaurant1);
+
+        restaurant2 = new Restaurant(
+                2L,
+                user2,
+                "식당2",
+                location2,
+                "포장마차",
+                "튀김있음",
+                "순대만",
+                "밀떡",
+                null,
+                restaurantLikes2,
+                review2,
+                2
+        );
+        restaurantRepository.save(restaurant2);
+
+        //리뷰저장
+        review3 = new Review(
+                1L,
+                "너무너무너무 맛있어요!",
+                3,
+                1,
+                null,
+                user1,
+                restaurant1,
+                3,
+                null
+        );
+        reviewRepository.save(review3);
+        review4 = new Review(
+                2L,
+                "너무너무너무 맛있어요!",
+                3,
+                1,
+                null,
+                user1,
+                restaurant1,
+                3,
+                null
+        );
+        reviewRepository.save(review4);
+        review5 = new Review(
+                3L,
+                "너무너무너무 맛있어요!",
+                3,
+                1,
+                null,
+                user2,
+                restaurant1,
+                3,
+                null
+        );
+        reviewRepository.save(review5);
+
+        //찜하기
+        restaurantLikes3 = new RestaurantLikes(
+                1L,
+                user2,
+                restaurant1
+        );
+        restaurantLikesRepository.save(restaurantLikes3);
+
+    }
+
+    //region 성공케이스
+    @Nested
+    @DisplayName("성공케이스")
+    class sucess {
+        @Test
+        @DisplayName("리뷰 등록")
+        void reviewCreate() {
+            //given
+            String imagePath = storageService.uploadFile(image, "review");
+            reviewRequestDto = ReviewRequestDto.builder()
+                    .content("정말정말별ㄹ로네요어어엉오오")
+                    .spicy("5")
+                    .restaurantTags("1")
+                    .build();
+
+            review = reviewRequestDto.toEntity(user1, restaurant1, imagePath);
+
+            review.addRestaurant(restaurant1);
+            reviewRepository.save(review);
+
+
+            //when
+
+            //then
+        }
 //
 //        @Test
 //        @DisplayName("리뷰 수정")
@@ -289,8 +319,9 @@
 //            assertThat(exception.getMessage()).isEqualTo("댓글의 작성자만 삭제가 가능합니다.");
 //        }
 //    }
-//    //endregion
-//
-//
-//}
-//
+        //endregion
+    }
+
+
+}
+

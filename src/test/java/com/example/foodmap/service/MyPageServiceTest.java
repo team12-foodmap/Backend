@@ -1,24 +1,21 @@
-/*
+
 package com.example.foodmap.service;
 
-import com.example.foodmap.dto.Restaurant.RestaurantReviewResponseDto;
 import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
-import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
 import com.example.foodmap.dto.mypage.MyLikeResponseDto;
 import com.example.foodmap.dto.mypage.MyReviewResponseDto;
-import com.example.foodmap.dto.review.ReviewRequestDto;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.*;
 import com.example.foodmap.security.UserDetailsImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.transaction.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 class MyPageServiceTest {
 
     @Autowired
@@ -372,4 +370,4 @@ class MyPageServiceTest {
 //    }
 
 }
-*/
+
