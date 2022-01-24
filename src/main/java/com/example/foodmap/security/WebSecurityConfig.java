@@ -84,6 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/kakao/**").permitAll()
                 .antMatchers("/userInfo/**").permitAll()
                 .antMatchers("/home").permitAll()
+                .antMatchers("/restaurants/*").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
