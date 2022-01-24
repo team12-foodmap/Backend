@@ -48,7 +48,10 @@ public class MeetingService {
         meetingRepository.save(meeting);
 
         //모임등록 한사람 자동참가인원+1 자기자신
-        MeetingParticipate meetingParticipate = new MeetingParticipate(meeting, userDetails);
+        MeetingParticipate meetingParticipate = MeetingParticipate.builder()
+                .meeting(meeting)
+                .userDetails(userDetails)
+                .build();
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
 
@@ -74,15 +77,19 @@ public class MeetingService {
                 meeting.getUser().getId(),
                 meeting.getId()
         );
+
         meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
+
     }
 
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
 
+
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
+
 
 
 
@@ -119,15 +126,6 @@ public class MeetingService {
         return new MeetingDetailResponseDto(participateInfoDtoList, meetingInfoResponseDto,meetingCommentResponseDtos);
     }
 
-    public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){
-        return new MeetingCommentResponseDto(
-                comment.getId(),comment.getContent(),
-                comment.getUser().getProfileImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
-                comment.getUser().getId(),
-                comment.getUser().getNickname(),
-                comment.getModifiedAt()
-                );
-    }
 
     //댓글 계층구조만들기
     private List<MeetingCommentResponseDto> convertNestedStructure(List<MeetingComment> comments) { //계층형 구조 만들기
@@ -141,6 +139,17 @@ public class MeetingService {
         });
         return result;
     }
+
+    public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){
+        return new MeetingCommentResponseDto(
+                comment.getId(),comment.getContent(),
+                comment.getUser().getProfileImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
+                comment.getUser().getId(),
+                comment.getUser().getNickname(),
+                comment.getModifiedAt()
+        );
+    }
+
 
     //모임글 삭제
     @Transactional
@@ -161,14 +170,8 @@ public class MeetingService {
     @Transactional
     public List<MeetingTotalListResponseDto> getMeetingList(UserDetailsImpl userDetails,int page,int size) {
         UserValidator.isValidUser(userDetails.getUser());
-        //cache
-        String key = "meeting::" + page + "/" + size;
-        if (redisService.isExist(key)) {
-            return redisService.getMeeting(key);
-        }
 
 
-        //반환할 리스트
         List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = new ArrayList<>();
 
 
@@ -196,6 +199,11 @@ public class MeetingService {
 
         }
 
+        //cache
+        String key = "meeting::" + page + "/" + size;
+        if (redisService.isExist(key)) {
+            return redisService.getMeeting(key);
+        }
         if(meetingTotalListResponseDtoList.size() != 0) {
             redisService.setMeeting(key, meetingTotalListResponseDtoList);
         }

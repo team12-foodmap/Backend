@@ -12,6 +12,7 @@
 //import com.example.foodmap.security.UserDetailsImpl;
 //import com.example.foodmap.security.WebSecurityConfig;
 //import com.example.foodmap.service.MeetingService;
+//import com.example.foodmap.service.RedisService;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;
@@ -69,11 +70,13 @@
 //    private int nowPeople;
 //    private String content;
 //    private Long restaurantId;
+//    private int viewCount;
 //    @Autowired
 //    private ObjectMapper objectMapper;
 //    @Autowired
 //    private WebApplicationContext context;
-//
+//    @MockBean
+//    RedisService redisService;
 //
 //    @MockBean
 //    MeetingService meetingService;
@@ -109,12 +112,14 @@
 //        location1 = "강남역";
 //        nowPeople = 1;
 //        content = "졸맛집";
-//
+//        viewCount =1;
 //
 //        meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                meetingTitle, restaurant,restaurantId, startDate, endDate, meetingDate, location1, limitPeople, nowPeople, content
+//                meetingTitle, restaurant, restaurantId, endDate, startDate, meetingDate, location1, limitPeople, nowPeople, content
 //        );
-//        meeting = new Meeting(testUser, meetingCreatRequestDto);
+//
+//
+//        meeting = new Meeting(testUser,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //
 //    }
 //

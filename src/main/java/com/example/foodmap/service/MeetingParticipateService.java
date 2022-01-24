@@ -32,11 +32,16 @@ public class MeetingParticipateService {
         Optional<MeetingParticipate> participate = meetingParticipateRepository.findByMeetingAndUser(meeting, userDetails.getUser());
 
         //참가 인원수 확인
+        return getParticipateResponseDto(meetingId, userDetails, meeting, participate);
+
+    }
+
+    private ParticipateResponseDto getParticipateResponseDto(Long meetingId, UserDetailsImpl userDetails, Meeting meeting, Optional<MeetingParticipate> participate) {
         if(checkLimitPeople(meetingId)){
             //Db에 참가되어 있는지 확인
             if(!participate.isPresent()){
                 //DB에 참여 데이터 없음
-                MeetingParticipate meetingParticipate = new MeetingParticipate(meeting,userDetails);
+                MeetingParticipate meetingParticipate = new MeetingParticipate(meeting, userDetails);
                 //참여상태로 변환(저장)
                 meetingParticipate.addMeeting(meeting);
                 meetingParticipateRepository.save(meetingParticipate);
@@ -50,7 +55,7 @@ public class MeetingParticipateService {
             }
             meetingRepository.save(meeting);
 
-            ParticipateResponseDto participateResponseDto = new ParticipateResponseDto(userDetails.getUser().getId(),meetingId);
+            ParticipateResponseDto participateResponseDto = new ParticipateResponseDto(userDetails.getUser().getId(), meetingId);
             return participateResponseDto;
         }else if(equalPeople(meetingId)){
 
@@ -59,7 +64,7 @@ public class MeetingParticipateService {
                 meeting.subnowPeople();
                 meetingRepository.save(meeting);
 
-                ParticipateResponseDto participateResponseDto = new ParticipateResponseDto(userDetails.getUser().getId(),meetingId);
+                ParticipateResponseDto participateResponseDto = new ParticipateResponseDto(userDetails.getUser().getId(), meetingId);
                 return participateResponseDto;
             }else {
                 throw new IllegalArgumentException("참가인원이 초과되었습니다.");
@@ -67,7 +72,6 @@ public class MeetingParticipateService {
         }else {
             throw new IllegalArgumentException("참가인원이 초과되었습니다.");
         }
-
     }
 
     //참가인원 제한수 확인

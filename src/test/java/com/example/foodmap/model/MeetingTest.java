@@ -30,6 +30,7 @@
 //    private int limitPeople;
 //    private int nowPeople;
 //    private String content;
+//    private int viewCount;
 //
 //
 //    @BeforeEach
@@ -58,6 +59,8 @@
 //        restaurantId= 1L;
 //        nowPeople = 1;
 //        content = "졸맛집";
+//        viewCount=1;
+//
 //
 //    }
 //
@@ -69,12 +72,9 @@
 //        @DisplayName("정상케이스")
 //        void 정상케이스() {
 //            //given
-//            MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                    meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//            );
 //
-//            //when
-//            Meeting meeting = new Meeting(user, meetingCreatRequestDto);
+//
+//            Meeting meeting = new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //
 //            //then
 //
@@ -105,13 +105,10 @@
 //                //given
 //                user = null;
 //
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //
 //                //then
@@ -130,13 +127,11 @@
 //                //given
 //                meetingTitle = null;
 //
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
+//
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("글제목은 필수 입력 값 입니다.", exception.getMessage());
@@ -148,13 +143,10 @@
 //            void fail2() {
 //                //given
 //                meetingTitle = "";
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("글제목은 필수 입력 값 입니다.", exception.getMessage());
@@ -171,13 +163,9 @@
 //                //given
 //                restaurant = null;
 //
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
-//
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("음식점은 필수 입력 값 입니다.", exception.getMessage());
@@ -189,16 +177,41 @@
 //            void fail2() {
 //                //given
 //                restaurant = "";
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("음식점은 필수 입력 값 입니다.", exception.getMessage());
+//
+//            }
+//            @Test
+//            @DisplayName("null")
+//            void fail3() {
+//                //given
+//                restaurantId = null;
+//
+//                //when
+//                Exception exception = assertThrows(NullPointerException.class, () -> {
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
+//                });
+//                //then
+//                assertEquals("식당정보가 없습니다.", exception.getMessage());
+//
+//            }
+//            @Test
+//            @DisplayName("null")
+//            void fail4() {
+//                //given
+//                location1 = null;
+//
+//                //when
+//                Exception exception = assertThrows(NullPointerException.class, () -> {
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
+//                });
+//                //then
+//                assertEquals("식당위치 정보가 없습니다.", exception.getMessage());
 //
 //            }
 //        }
@@ -212,13 +225,11 @@
 //                //given
 //                content = null;
 //
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
+//
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("소개글은 필수 입력 값 입니다.", exception.getMessage());
@@ -230,13 +241,11 @@
 //            void fail2() {
 //                //given
 //                content = "";
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
+//
 //
 //                //when
 //                Exception exception = assertThrows(NullPointerException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("소개글은 필수 입력 값 입니다.", exception.getMessage());
@@ -258,13 +267,9 @@
 //                //given
 //                limitPeople = 0;
 //
-//                MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                        meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                );
-//
 //                //when
 //                Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//                    new Meeting(user, meetingCreatRequestDto);
+//                    new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                });
 //                //then
 //                assertEquals("제한 인원수는 1명 이상 이어야 합니다.", exception.getMessage());
@@ -281,13 +286,11 @@
 //                    startDate = null;
 //
 //
-//                    MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                            meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                    );
+//
 //
 //                    //when
 //                    Exception exception = assertThrows(NullPointerException.class, () -> {
-//                        new Meeting(user, meetingCreatRequestDto);
+//                        new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                    });
 //                    //then
 //                    assertEquals("모집기간(시작)은 필수 입력 값 입니다.", exception.getMessage());
@@ -302,13 +305,11 @@
 //                    endDate = null;
 //
 //
-//                    MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                            meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                    );
+//
 //
 //                    //when
 //                    Exception exception = assertThrows(NullPointerException.class, () -> {
-//                        new Meeting(user, meetingCreatRequestDto);
+//                        new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                    });
 //                    //then
 //
@@ -323,13 +324,10 @@
 //
 //                    meetingDate = null;
 //
-//                    MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                            meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                    );
 //
 //                    //when
 //                    Exception exception = assertThrows(NullPointerException.class, () -> {
-//                        new Meeting(user, meetingCreatRequestDto);
+//                        new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                    });
 //                    //then
 //
@@ -344,13 +342,11 @@
 //                    startDate = LocalDateTime.of(2021, 12, 24, 05, 00);
 //                    endDate = LocalDateTime.of(2021, 12, 23, 04, 59);
 //
-//                    MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                            meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                    );
+//
 //
 //                    //when
 //                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//                        new Meeting(user, meetingCreatRequestDto);
+//                        new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                    });
 //                    //then
 //
@@ -362,17 +358,15 @@
 //                @DisplayName("모집마감보다 만나는 날짜 빠른날짜선택 시")
 //                void fail5() {
 //                    //given
-//                    startDate = LocalDateTime.of(2021, 12, 24, 05, 00);
-//                    endDate = LocalDateTime.of(2021, 12, 27, 05, 00);
-//                    meetingDate = LocalDateTime.of(2021, 12, 26, 05, 00);
+//                    startDate = LocalDateTime.of(2022, 12, 22, 05, 00);
+//                    endDate = LocalDateTime.of(2022, 12, 29, 04, 00);
+//                    meetingDate = LocalDateTime.of(2022, 12, 24, 03, 00);
 //
-//                    MeetingCreatRequestDto meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                            meetingTitle, startDate, restaurant,restaurantId, endDate, meetingDate, location1, limitPeople, nowPeople, content
-//                    );
+//
 //
 //                    //when
 //                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//                        new Meeting(user, meetingCreatRequestDto);
+//                        new Meeting(user,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //                    });
 //                    //then
 //

@@ -4,6 +4,7 @@
 //
 //import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
 //import com.example.foodmap.dto.meeting.MeetingDetailResponseDto;
+//import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 //import com.example.foodmap.exception.CustomException;
 //import com.example.foodmap.model.Location;
 //import com.example.foodmap.model.Meeting;
@@ -21,8 +22,12 @@
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
+//import org.springframework.data.domain.*;
+//import org.springframework.data.redis.core.RedisTemplate;
 //
 //import java.time.LocalDateTime;
+//import java.util.ArrayList;
+//import java.util.List;
 //import java.util.Optional;
 //
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -44,6 +49,8 @@
 //    MeetingParticipateRepository meetingParticipateRepository;
 //    @Mock
 //    MeetingCommentRepository meetingCommentRepository;
+//    @Mock
+//    RedisTemplate redisTemplate;
 //
 //
 //
@@ -64,6 +71,7 @@
 //    private int limitPeople;
 //    private int nowPeople;
 //    private String content;
+//    private int viewCount;
 //
 //
 //    @BeforeEach
@@ -84,22 +92,23 @@
 //
 //        meetingTitle="악어떡볶기 가실분?";
 //        startDate = LocalDateTime.of(2021,12,24,05,00);
-//        endDate = LocalDateTime.of(2021,12,25,12,00);
-//        meetingDate = LocalDateTime.of(2021,12,28,14,00);
+//        endDate = LocalDateTime.of(2021,12,28,12,00);
+//        meetingDate = LocalDateTime.of(2021,12,31,14,00);
 //        restaurant="악어떡볶이";
 //        limitPeople=5;
 //        location1="강남역";
 //        restaurantId = 1L;
 //        nowPeople=1;
 //        content= "졸맛집";
+//        viewCount =1;
 //
 //
 //        meetingCreatRequestDto = new MeetingCreatRequestDto(
-//                meetingTitle,startDate,restaurant,restaurantId,endDate,meetingDate,location1,limitPeople,nowPeople,content
+//                meetingTitle, restaurant, restaurantId, startDate, endDate, meetingDate, location1, limitPeople, nowPeople, content
 //        );
 //
-//        //user1 모임 등록
-//        meeting = new Meeting(user1,meetingCreatRequestDto);
+//
+//        meeting = new Meeting(user1,restaurant,restaurantId,meetingTitle,content,location1,startDate,endDate,  meetingDate,viewCount,  limitPeople, nowPeople);
 //        //user1 유저 정보
 //        userDetails = new UserDetailsImpl(user1);
 //
@@ -108,32 +117,18 @@
 //    @DisplayName("모임등록")
 //    void create(){
 //        //given
-//        when(userRepository.findByKakaoId(user1.getKakaoId()))
-//                .thenReturn(Optional.of(user1));
+//
 //
 //        //when-then
 //        meetingService.creatMeeting(meetingCreatRequestDto,userDetails);
 //
 //     }
-//    @Test
-//    @DisplayName("모임등록 - 사용자가 null일떄")
-//    void create1(){
-//        //given
 //
-//        //when
-//        CustomException exception = assertThrows(CustomException.class,
-//                () -> meetingService.creatMeeting(meetingCreatRequestDto,userDetails));
-//        //then
-//        assertThat(exception.getErrorCode().getDetail()).isEqualTo("사용자 정보를 찾을 수 없습니다.");
-//
-//
-//    }
 //    @Test
 //    @DisplayName("모임조회")
 //    void getMeeting(){
 //        //given
-//        when(userRepository.findByKakaoId(user1.getKakaoId()))
-//                .thenReturn(Optional.of(user1));
+//
 //        when(meetingRepository.findById(meeting.getId()))
 //                .thenReturn(Optional.of(meeting));
 //
@@ -155,7 +150,7 @@
 //    void getMeeting1(){
 //        //given
 //
-//        when(userRepository.findByKakaoId(userDetails.getUser().getKakaoId())).thenReturn(Optional.of(user1));
+//
 //
 //        //when
 //        CustomException exception = assertThrows(CustomException.class,
@@ -174,7 +169,7 @@
 //        CustomException exception = assertThrows(CustomException.class,
 //                () -> meetingService.getMeeting(meeting.getId(),userDetails));
 //        //then
-//        assertThat(exception.getErrorCode().getDetail()).isEqualTo("사용자 정보를 찾을 수 없습니다.");
+//        assertThat(exception.getErrorCode().getDetail()).isEqualTo("해당 게시글을 찾을 수 없습니다.");
 //    }
 //
 //
@@ -183,7 +178,7 @@
 //    void deleteMeeting(){
 //        //given
 //
-//        when(userRepository.findByKakaoId(userDetails.getUser().getKakaoId())).thenReturn(Optional.of(user1));
+//
 //        when(meetingRepository.findById(meeting.getId())).thenReturn(Optional.of(meeting));
 //
 //        //when
@@ -215,7 +210,7 @@
 //        );
 //        //user2 유저 정보
 //        UserDetailsImpl userDetails2 = new UserDetailsImpl(user2);
-//        when(userRepository.findByKakaoId(userDetails2.getUser().getKakaoId())).thenReturn(Optional.of(user2));
+//
 //        when(meetingRepository.findById(meeting.getId())).thenReturn(Optional.of(meeting));
 //
 //        // when
@@ -225,26 +220,29 @@
 //
 //        assertThat(exception.getErrorCode().getDetail()).isEqualTo("삭제할 수 있는 권한이 없습니다.");
 //    }
-////    @Test
-////    @DisplayName("모임전체 조회리스트")
-////    void getMeetingLsit() {
-////        //given
-////        List<Meeting> meetings = new ArrayList<>();
-////        meetings.add(meeting);
-////
-////        Page<Meeting>meetingList =new PageImpl<>(meetings);
-////
-////        when(userRepository.findByKakaoId(userDetails.getUser().getKakaoId())).thenReturn(Optional.of(user1));
-////        Pageable pageable = PageRequest.of(1,2,Sort.unsorted());
-////        lenient().when(meetingRepository.findAllByOrderByModifiedAtDesc(pageable)).thenReturn(meetingList);
-////
-////        //when
-////        List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = meetingService.getMeetingList(userDetails,1,2);
-////
-////        //then
-////        assertThat(meetingTotalListResponseDtoList.size()).isEqualTo(1);
-////
-////    }
+//    @Test
+//    @DisplayName("모임전체 조회리스트")
+//    void getMeetingLsit() {
+//        //given
+//        List<Meeting> meetings = new ArrayList<>();
+//        meetings.add(meeting);
+//
+//
+//
+//
+//        Pageable pageable = PageRequest.of(0,2,Sort.by("modifiedAt").descending());
+//        int start = (int) pageable.getOffset();
+//        int end = Math.min((start+pageable.getPageSize()),meetings.size());
+//        Page<Meeting> meetingList =new PageImpl<>(meetings.subList(start,end),pageable,meetings.size());
+//        when(meetingRepository.findByOrderByModifiedAtDesc(any())).thenReturn(meetingList);
+//
+//        //when
+//        List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = meetingService.getMeetingList(userDetails,1,2);
+//
+//        //then
+//        assertThat(meetingTotalListResponseDtoList.size()).isEqualTo(1);
+//
+//    }
 //
 //}
 //
