@@ -1,7 +1,6 @@
 package com.example.foodmap.model;
 
 import com.example.foodmap.dto.user.UserInfoRequestDto;
-import com.example.foodmap.dto.user.UserLocationDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

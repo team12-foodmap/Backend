@@ -62,7 +62,7 @@ dependencies {
 
     // spring-data-redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
+    testImplementation 'it.ozimov:embedded-redis:0.7.2'
     //cache
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.ehcache:ehcache:3.8.0'

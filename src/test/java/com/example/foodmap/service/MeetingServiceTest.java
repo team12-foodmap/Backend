@@ -2,6 +2,7 @@
 //
 //package com.example.foodmap.service;
 //
+//
 //import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
 //import com.example.foodmap.dto.meeting.MeetingDetailResponseDto;
 //import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
@@ -22,6 +23,7 @@
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
+//import org.springframework.context.annotation.Import;
 //import org.springframework.data.domain.*;
 //import org.springframework.data.redis.core.RedisTemplate;
 //
@@ -37,6 +39,7 @@
 //
 //
 //@ExtendWith(MockitoExtension.class)
+////@Import(EmbeddedRedisConfig.class)
 //class MeetingServiceTest {
 //
 //    @InjectMocks
@@ -51,6 +54,8 @@
 //    MeetingCommentRepository meetingCommentRepository;
 //    @Mock
 //    RedisTemplate redisTemplate;
+//    @Mock
+//    RedisService redisService;
 //
 //
 //
@@ -234,15 +239,22 @@
 //        int start = (int) pageable.getOffset();
 //        int end = Math.min((start+pageable.getPageSize()),meetings.size());
 //        Page<Meeting> meetingList =new PageImpl<>(meetings.subList(start,end),pageable,meetings.size());
-//        when(meetingRepository.findByOrderByModifiedAtDesc(any())).thenReturn(meetingList);
+//        when(meetingRepository.findByOrderByEndDateDesc(any())).thenReturn(meetingList);
 //
 //        //when
 //        List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = meetingService.getMeetingList(userDetails,1,2);
 //
 //        //then
 //        assertThat(meetingTotalListResponseDtoList.size()).isEqualTo(1);
+//        assertThat(meeting.getContent()).isEqualTo(meetingTotalListResponseDtoList.get(0).getContent());
 //
 //    }
+//    @Test
+//    @DisplayName("음식점 검색")
+//    void search() {
+//
+//    }
+//
 //
 //}
 //
