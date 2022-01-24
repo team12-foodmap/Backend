@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class RestaurantSaveRequestDto {
 
         private String restaurantName;
