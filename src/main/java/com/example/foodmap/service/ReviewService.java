@@ -44,7 +44,7 @@ public class ReviewService {
 
         Review review = reviewRequestDto.toEntity(user, restaurant, imagePath);
 
-        review.addRestaurant(restaurant);
+//        review.addRestaurant(restaurant);
         reviewRepository.save(review);
 
 
@@ -69,8 +69,8 @@ public class ReviewService {
             imagePath = storageService.updateFile(imagePath,image,"review");
         }else {
             imagePath = review.getImage();
-
         }
+
 
         String content;
         if (reviewUpdateRequestDto.getContent() == null || reviewUpdateRequestDto.getContent().trim().isEmpty()) {
