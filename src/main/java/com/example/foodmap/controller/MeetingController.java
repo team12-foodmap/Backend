@@ -7,6 +7,7 @@ import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 import com.example.foodmap.security.UserDetailsImpl;
 import com.example.foodmap.service.MeetingService;
 
+
 import com.example.foodmap.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +37,7 @@ public class MeetingController {
         return  meetingService.getMeeting(meetingId,userDetails);
 
     }
-//    //모임게시글 등록수정
-//    @PutMapping("/meetings/{meetingId}")
-//    public ResponseEntity<String> updateMeeting(@PathVariable Long meetingId,@RequestBody MeetingCreatRequestDto meetingCreatRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//
-//       meetingService.updateMeeting(meetingId,meetingCreatRequestDto,userDetails);
-//       return ResponseEntity.ok().body("모임글 수정 성공");
-//
-//    }
+
     //모임게시글 삭제
     @DeleteMapping("/meetings/{meetingId}")
     public ResponseEntity<String> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails){
