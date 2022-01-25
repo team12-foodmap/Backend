@@ -43,7 +43,7 @@ public class ReviewController {
     public ResponseEntity<String> updateReview(@PathVariable Long reviewId,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @ModelAttribute ReviewUpdateRequestDto reviewUpdateRequestDto,
-                                               @RequestParam MultipartFile image) {
+                                               @RequestParam(required = false) MultipartFile image) {
 
         reviewService.updateReview(reviewId, reviewUpdateRequestDto, userDetails.getUser(), image);
 

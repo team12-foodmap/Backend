@@ -39,8 +39,8 @@ public class Review extends Timestamped {
     @JoinColumn(nullable = false)
     private Restaurant restaurant;
 
-    @ColumnDefault(value="0")
-    private int reviewLike ;
+    @ColumnDefault(value = "0")
+    private int reviewLike;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     List<ReviewLikes> reviewLikes = new ArrayList<>();
@@ -62,11 +62,12 @@ public class Review extends Timestamped {
         this.content = content;
         this.image = imagePath;
         this.spicy = Integer.parseInt(spicy);
-        this.restaurantTags =Integer.parseInt(tag);
-    }
-
-    public void addRestaurant(Restaurant restaurant){
-        this.restaurant=restaurant;
-        restaurant.getReviews().add(this);
+        this.restaurantTags = Integer.parseInt(tag);
     }
 }
+
+//    public void addRestaurant(Restaurant restaurant){
+//        this.restaurant=restaurant;
+//        restaurant.getReviews().add(this);
+//    }
+//}
