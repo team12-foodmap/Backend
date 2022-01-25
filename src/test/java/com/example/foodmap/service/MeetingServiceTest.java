@@ -39,7 +39,6 @@
 //
 //
 //@ExtendWith(MockitoExtension.class)
-////@Import(EmbeddedRedisConfig.class)
 //class MeetingServiceTest {
 //
 //    @InjectMocks
