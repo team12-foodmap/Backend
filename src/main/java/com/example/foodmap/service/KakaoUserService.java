@@ -69,7 +69,7 @@ public class KakaoUserService {
 //        body.add("client_id", "b70f4e2d805f84002174ac1aa5b2f11a");
 //        body.add("client_id", "bb12684de559c620bf0153229d1621cb");
 //        body.add("client_id", "96226a61dfa74ab382d1603dde61b318");
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+//        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
         body.add("code", code);
 
 
