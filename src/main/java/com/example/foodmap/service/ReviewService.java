@@ -69,6 +69,7 @@ public class ReviewService {
             imagePath = storageService.updateFile(imagePath,image,"review");
         }else {
             imagePath = review.getImage();
+
         }
 
         String content;
