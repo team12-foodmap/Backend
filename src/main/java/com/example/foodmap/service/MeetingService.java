@@ -75,7 +75,7 @@ public class MeetingService {
                 meeting.getId()
         );
 
-        meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
+//        meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
 
     }
 

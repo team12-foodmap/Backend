@@ -179,7 +179,7 @@ public class MyPageService {
                     () -> new CustomException(REVIEW_NOT_FOUND));
         }
 
-        assert review != null;
+
         List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
         return MyReviewDetailResponseDto.builder()
                 .restaurantId(review.getRestaurant().getId())
