@@ -1,17 +1,16 @@
 package com.example.foodmap.service;
 
-import com.example.foodmap.dto.Restaurant.RestaurantLikesDto;
+
 import com.example.foodmap.dto.review.*;
 import com.example.foodmap.exception.CustomException;
-import com.example.foodmap.exception.ErrorCode;
 import com.example.foodmap.model.*;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
+import com.example.foodmap.repository.UserRepository;
 import com.example.foodmap.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -28,6 +27,7 @@ public class ReviewService {
 
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
     private final StorageService storageService;
 
     //region 리뷰 작성
@@ -45,7 +45,7 @@ public class ReviewService {
         Review review = reviewRequestDto.toEntity(user, restaurant, imagePath);
 
         review.addRestaurant(restaurant);
-         reviewRepository.save(review);
+        reviewRepository.save(review);
 
 
     }
@@ -56,6 +56,7 @@ public class ReviewService {
     @Transactional
     public void updateReview(Long reviewId, ReviewUpdateRequestDto reviewUpdateRequestDto, User user, MultipartFile image) {
 
+
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
@@ -63,18 +64,9 @@ public class ReviewService {
         if(!(review.getUser().getId().equals(user.getId()))){
             throw new CustomException(UNAUTHORIZED_UPDATE);
         }
-        String imagePath;
-        if (image.isEmpty()) {
-            imagePath = review.getImage();
-        } else {
-            imagePath = storageService.uploadFile(image, "review");
-            String oldImageUrl = decode(
-                    review.getImage().replace(
-                            "https://team12-images.s3.ap-northeast-2.amazonaws.com/", ""
-                    ),
-                    StandardCharsets.UTF_8
-            );
-            storageService.deleteFile(oldImageUrl);
+        String imagePath = review.getImage();
+        if (image != null) {
+            imagePath = storageService.updateFile(imagePath,image,"review");
         }
 
         String content;
@@ -131,14 +123,11 @@ public class ReviewService {
     //region 다른 사람이 쓴 리뷰 조회
     public ReviewResponseDto showReview(Long reviewId) {
 
-        Review review = reviewRepository.findAllById(reviewId);
-        if (review == null) {
-            reviewRepository.findById(reviewId).orElseThrow(
-                    () -> new CustomException(REVIEW_NOT_FOUND));
-        }
-        assert review != null;
-        List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new CustomException(REVIEW_NOT_FOUND)
+        );
 
+        List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
 
         return ReviewResponseDto.builder()
                 .restaurantId(review.getRestaurant().getId())
