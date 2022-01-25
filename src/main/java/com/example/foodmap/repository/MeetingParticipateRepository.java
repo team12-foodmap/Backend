@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MeetingParticipateRepository extends JpaRepository<MeetingParticipate,Long> {
-
-    Optional<MeetingParticipate> findByMeetingAndUser(Meeting meeting, User user);
+    Optional<MeetingParticipate> findByMeetingAndUser(Meeting meeting,User user);
 
     List<MeetingParticipate> findAllByUser(User user, Pageable pageable);
 

@@ -1,5 +1,6 @@
 package com.example.foodmap.controller;
 
+
 import com.example.foodmap.config.CacheKey;
 import com.example.foodmap.dto.Restaurant.RankingResponseDto;
 import com.example.foodmap.dto.Restaurant.RestaurantDetailResponseDto;
@@ -9,6 +10,8 @@ import com.example.foodmap.model.Location;
 import com.example.foodmap.model.Restaurant;
 import com.example.foodmap.model.User;
 import com.example.foodmap.security.UserDetailsImpl;
+
+
 import com.example.foodmap.service.RedisService;
 import com.example.foodmap.service.RestaurantService;
 import io.swagger.annotations.ApiOperation;
@@ -74,7 +77,9 @@ public class RestaurantController {
 
         User user = userDetails.getUser();
 //
-        return ResponseEntity.ok().body(redisService.isExist(CacheKey.TOP3)? redisService.getTop3(CacheKey.TOP3): restaurantService.getTop3ByRestaurant(restaurant, user));
+        return ResponseEntity.ok().body( restaurantService.getTop3ByRestaurant(restaurant, user));
+//        return ResponseEntity.ok().body(redisService.isExist(com.example.foodmap.config.CacheKey.TOP3)? redisService.getTop3(CacheKey.TOP3): restaurantService.getTop3ByRestaurant(restaurant, user));
+
     }
 
     //로그인하지 않은 사용자(둘러보기) - 서울역 근처 식당 조회

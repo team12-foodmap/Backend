@@ -20,6 +20,7 @@
 //import javax.transaction.Transactional;
 //import java.time.LocalDateTime;
 //import java.util.List;
+//import java.util.Optional;
 //
 //import static org.assertj.core.api.Assertions.*;
 //import static org.junit.jupiter.api.Assertions.*;
@@ -351,18 +352,14 @@
 //
 //
 //        //when
-//        meetingCommentService.deleteComment(comment1.getId(),userDetails1);
-//        meetingCommentRepository.delete(comment2);
+//        Long deleteId = meetingCommentService.deleteComment(comment2.getId(), userDetails2);
+//
 //
 //        //then
 //
+//        Optional<MeetingComment> comment = meetingCommentRepository.findById(deleteId);
 //
-//        MeetingDetailResponseDto meeting = meetingService.getMeeting(meeting1.getId(), userDetails1);
-//        List<MeetingCommentResponseDto> result = meeting.getComment();
-//
-//        assertThat(result.get(0).getChildren().size()).isEqualTo(1); //1의 children
-//        assertThat(result.get(0).getChildren().get(0).getChildren().size()).isEqualTo(1); // 2의 children
-//        assertThat(result.get(0).getChildren().get(0).getContent()).isEqualTo("2번");
+//        assertTrue(comment.isEmpty());
 //
 //
 //    }
