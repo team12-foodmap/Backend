@@ -18,10 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.foodmap.exception.ErrorCode.*;
 
@@ -43,6 +40,7 @@ public class MeetingService {
 
         UserValidator.isValidUser(userDetails.getUser());
         Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
+
 
         meetingRepository.save(meeting);
 
@@ -172,7 +170,7 @@ public class MeetingService {
 
         //반환 목록에 들어갈 데이터 찾을 리스트
         Pageable pageable = PageRequest.of(page,size);
-        Page <Meeting> meetingList = meetingRepository.findByOrderByModifiedAtDesc(pageable);
+        Page <Meeting> meetingList = meetingRepository.findByOrderByEndDateDesc(pageable);
 
         for(Meeting meeting:meetingList){
             MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(

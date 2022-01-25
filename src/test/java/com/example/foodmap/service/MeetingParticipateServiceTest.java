@@ -2,6 +2,7 @@
 //
 //package com.example.foodmap.service;
 //
+//import com.example.foodmap.config.EmbeddedS3Config;
 //import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
 //import com.example.foodmap.dto.meeting.ParticipateResponseDto;
 //import com.example.foodmap.model.*;
@@ -9,9 +10,11 @@
 //import com.example.foodmap.repository.MeetingRepository;
 //import com.example.foodmap.repository.UserRepository;
 //import com.example.foodmap.security.UserDetailsImpl;
+//import io.findify.s3mock.S3Mock;
 //import org.junit.jupiter.api.*;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.context.annotation.Import;
 //import org.springframework.test.annotation.Rollback;
 //
 //import javax.transaction.Transactional;
@@ -37,6 +40,7 @@
 //    MeetingService meetingService;
 //    @Autowired
 //    MeetingParticipateService meetingParticipateService;
+//
 //
 //
 //    private Meeting meeting1;

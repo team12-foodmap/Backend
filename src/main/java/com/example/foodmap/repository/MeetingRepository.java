@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<Meeting,Long> {
-    Page <Meeting> findByOrderByModifiedAtDesc(Pageable pageable);
+    Page <Meeting> findByOrderByEndDateDesc(Pageable pageable);
 
 
     void deleteAllByMeetingDateLessThan(LocalDateTime daytime);
