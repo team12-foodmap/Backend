@@ -1,7 +1,7 @@
 package com.example.foodmap.service;
 
 
-import com.example.foodmap.config.CacheKey;
+
 import com.example.foodmap.dto.Restaurant.*;
 import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 import com.example.foodmap.exception.CustomException;
@@ -28,7 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.foodmap.config.CacheKey.*;
+
 import static com.example.foodmap.exception.ErrorCode.POST_NOT_FOUND;
 import static com.example.foodmap.exception.ErrorCode.USER_NOT_FOUND;
 
@@ -278,13 +278,13 @@ public class RestaurantService {
                     .limit(3)
                     .collect(Collectors.toList());
 
-            redisService.setTop3(TOP3, collect);
+//            redisService.setTop3(TOP3, collect);
             return collect;
         }
 
-        if(myLikeList.size() != 0) {
-            redisService.setTop3(TOP3, myLikeList);
-        }
+//        if(myLikeList.size() != 0) {
+//            redisService.setTop3(TOP3, myLikeList);
+//        }
 
         return myLikeList;
     }
