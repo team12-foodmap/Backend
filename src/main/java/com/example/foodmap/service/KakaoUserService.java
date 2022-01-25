@@ -60,7 +60,7 @@ public class KakaoUserService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-// HTTP Body 생성
+// HTTP Body 생성//
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
 //        body.add("client_id", "ca4aaaf3918b25c2334089d9a1d1e8ce");
