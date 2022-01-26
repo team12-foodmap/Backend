@@ -1,7 +1,7 @@
 package com.example.foodmap.model;
 
 
-import com.example.foodmap.dto.review.ReviewRequestDto;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
