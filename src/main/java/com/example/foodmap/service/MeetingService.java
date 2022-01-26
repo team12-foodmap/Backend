@@ -29,7 +29,7 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingParticipateRepository meetingParticipateRepository;
     private final RestaurantRepository restaurantRepository;
-    private final RedisService redisService;
+//    private final RedisService redisService;
     private final RedisTemplate<String, MeetingTotalListResponseDto> meetingLIstTemplate;
 
     //모임등록글

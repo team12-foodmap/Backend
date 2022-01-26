@@ -1,6 +1,5 @@
 package com.example.foodmap.controller;
 
-
 import com.example.foodmap.config.CacheKey;
 import com.example.foodmap.dto.Restaurant.RankingResponseDto;
 import com.example.foodmap.dto.Restaurant.RestaurantDetailResponseDto;
@@ -10,8 +9,6 @@ import com.example.foodmap.model.Location;
 import com.example.foodmap.model.Restaurant;
 import com.example.foodmap.model.User;
 import com.example.foodmap.security.UserDetailsImpl;
-
-
 import com.example.foodmap.service.RedisService;
 import com.example.foodmap.service.RestaurantService;
 import io.swagger.annotations.ApiOperation;
