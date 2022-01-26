@@ -1,52 +1,52 @@
 language: java
 version:
-- openjdk11
+  - openjdk11
 branches:
   only:
-  - develop
+    - develop
 before_install:
-- openssl aes-256-cbc -K $encrypted_1116e8e6e492_key -iv $encrypted_1116e8e6e492_iv
-  -in src/main/resources/application.yml.enc -out src/main/resources/application.yml
-  -d
-- chmod +x gradlew
+  - openssl aes-256-cbc -K $encrypted_1116e8e6e492_key -iv $encrypted_1116e8e6e492_iv
+    -in src/main/resources/application.yml.enc -out src/main/resources/application.yml
+    -d
+  - chmod +x gradlew
 cache:
   directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.gradle"
+    - "$HOME/.m2/repository"
+    - "$HOME/.gradle"
 script: "./gradlew clean build"
 before_deploy:
-- mkdir -p before-deploy
-- cp scripts/*.sh before-deploy/
-- cp appspec.yml before-deploy/
-- cp build/libs/*.jar before-deploy/
-- cd before-deploy && zip -r before-deploy *
-- cd ../ && mkdir -p deploy
-- mv before-deploy/before-deploy.zip deploy/springboot-webservice.zip
+  - mkdir -p before-deploy
+  - cp scripts/*.sh before-deploy/
+  - cp appspec.yml before-deploy/
+  - cp build/libs/*.jar before-deploy/
+  - cd before-deploy && zip -r before-deploy *
+  - cd ../ && mkdir -p deploy
+  - mv before-deploy/before-deploy.zip deploy/springboot-webservice.zip
 deploy:
-- provider: s3
-  access_key_id: "$AWS_ACCESS_KEY"
-  secret_access_key: "$AWS_SECRET_KEY"
-  bucket: team12-ci
-  region: ap-northeast-2
-  skip_cleanup: true
-  acl: private
-  local_dir: deploy
-  wait_until_deployed: true
-  on:
-    branch: develop
-- provider: codedeploy
-  access_key_id: "$AWS_ACCESS_KEY"
-  secret_access_key: "$AWS_SECRET_KEY"
-  bucket: team12-ci
-  key: springboot-webservice.zip
-  bundle_type: zip
-  application: springboot-webservice
-  deployment_group: springboot-webservice-group
-  region: ap-northeast-2
-  wait-until-deployed: true
-  on:
-    branch: develop
+  - provider: s3
+    access_key_id: "$AWS_ACCESS_KEY"
+    secret_access_key: "$AWS_SECRET_KEY"
+    bucket: team12-ci
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait_until_deployed: true
+    on:
+      branch: develop
+  - provider: codedeploy
+    access_key_id: "$AWS_ACCESS_KEY"
+    secret_access_key: "$AWS_SECRET_KEY"
+    bucket: team12-ci
+    key: springboot-webservice.zip
+    bundle_type: zip
+    application: springboot-webservice
+    deployment_group: springboot-webservice-group
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      branch: develop
 notifications:
   email:
     recipients:
-    - hanuli920@gmail.com
+      - hanuli920@gmail.com
