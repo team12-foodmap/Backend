@@ -35,6 +35,7 @@ public class MyPageService {
 
         List<MyReviewResponseDto> myReviewList = new ArrayList<>();
         List<Review> reviewList = reviewRepository.findAllByUser(user, pageable);
+
         for (Review review : reviewList) {
             MyReviewResponseDto myReviewResponseDto = MyReviewResponseDto.builder()
                     .reviewId(review.getId())
@@ -43,9 +44,14 @@ public class MyPageService {
                     .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
                     .build();
             myReviewList.add(myReviewResponseDto);
+
         }
+
         return myReviewList;
     }
+
+
+
 
     //endregion
 

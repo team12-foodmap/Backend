@@ -15,6 +15,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByUser(User user,Pageable pageable);
     Review findAllById(Long reviewId);
 
+    List<Review> findByRestaurantId(Long restaurantId);
+
     @Modifying
     @Query(value = "update Review a set a.reviewLike= a.reviewLike + 1 where a.id = :id")
     void upLikeCnt(@Param("id")Long id);

@@ -1,23 +1,21 @@
 package com.example.foodmap.service;
 
 
-
 import com.example.foodmap.dto.Restaurant.*;
-import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 import com.example.foodmap.exception.CustomException;
-import com.example.foodmap.model.*;
+import com.example.foodmap.model.Restaurant;
+import com.example.foodmap.model.RestaurantLikes;
+import com.example.foodmap.model.Review;
+import com.example.foodmap.model.User;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.repository.UserRepository;
 import com.example.foodmap.validator.RestaurantValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 import static com.example.foodmap.exception.ErrorCode.POST_NOT_FOUND;
 import static com.example.foodmap.exception.ErrorCode.USER_NOT_FOUND;
