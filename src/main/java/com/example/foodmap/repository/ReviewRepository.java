@@ -14,7 +14,7 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByUser(User user,Pageable pageable);
     Review findAllById(Long reviewId);
-    
+
     List<Review> findByRestaurantId(Long restaurantId);
 
     @Modifying
