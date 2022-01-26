@@ -7,7 +7,6 @@ import com.example.foodmap.model.Meeting;
 import com.example.foodmap.model.MeetingComment;
 import com.example.foodmap.repository.MeetingCommentRepository;
 import com.example.foodmap.repository.MeetingRepository;
-import com.example.foodmap.repository.UserRepository;
 import com.example.foodmap.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class MeetingCommentService {
 
     private final MeetingRepository meetingRepository;
     private final MeetingCommentRepository meetingCommentRepository;
-    private final UserRepository userRepository;
+
 
     //모임 댓글 등록
     @Transactional
