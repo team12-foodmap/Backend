@@ -32,7 +32,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Review findAllByUserAndId(User user, Long id);
 
-
+    List<Review> findAllByRestaurantId(Long restaurantId);
 
 
 }

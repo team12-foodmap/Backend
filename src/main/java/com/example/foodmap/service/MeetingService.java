@@ -27,9 +27,7 @@ import static com.example.foodmap.exception.ErrorCode.*;
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
-    private final UserRepository userRepository;
     private final MeetingParticipateRepository meetingParticipateRepository;
-    private final MeetingCommentRepository meetingCommentRepository;
     private final RestaurantRepository restaurantRepository;
     private final RedisService redisService;
     private final RedisTemplate<String, MeetingTotalListResponseDto> meetingLIstTemplate;

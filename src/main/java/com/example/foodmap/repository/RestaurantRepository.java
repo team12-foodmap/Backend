@@ -46,7 +46,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
             value = "SELECT r from Restaurant r WHERE r.restaurantName LIKE %:restaurantName% or r.location.address LIKE %:address%",
             countQuery = "SELECT count(r.id) from Restaurant r where r.restaurantName LIKE %:restaurantName% or r.location.address LIKE %:address%"
     )
-
     Page<Restaurant> findAllSearch(@Param("restaurantName") String restaurantName,@Param("address") String location ,Pageable pageable);
 
 }

@@ -82,6 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").permitAll()
                 .antMatchers("/", "/h2-console/**", "/events", "/events/*").permitAll()
                 .antMatchers("/user/kakao/**").permitAll()
+                .antMatchers("/profile").permitAll()
                 .antMatchers("/userInfo/**").permitAll()
                 .antMatchers("/home").permitAll()
                 .antMatchers("/restaurants/*").permitAll()
@@ -107,6 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //user 허용
         skipPathList.add("GET,/user/kakao/**");
+        skipPathList.add("GET,/profile");
         skipPathList.add("POST,/user/**");
 
         // Image View 허용

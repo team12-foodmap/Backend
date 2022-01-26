@@ -14,5 +14,4 @@ public interface MeetingParticipateRepository extends JpaRepository<MeetingParti
 
     List<MeetingParticipate> findAllByUser(User user, Pageable pageable);
 
-    List<MeetingParticipate> findAllByMeetingId(Long meetingId);
 }

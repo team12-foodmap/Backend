@@ -26,4 +26,5 @@ public class ReviewResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<ReviewLikesDto> reviewLikesDtoList;
+    private int listSize;
 }
