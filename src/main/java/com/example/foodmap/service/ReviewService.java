@@ -3,7 +3,10 @@ package com.example.foodmap.service;
 
 import com.example.foodmap.dto.review.*;
 import com.example.foodmap.exception.CustomException;
-import com.example.foodmap.model.*;
+import com.example.foodmap.model.Restaurant;
+import com.example.foodmap.model.Review;
+import com.example.foodmap.model.ReviewLikes;
+import com.example.foodmap.model.User;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.repository.UserRepository;
@@ -14,12 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.foodmap.exception.ErrorCode.*;
-import static java.net.URLDecoder.decode;
 
 @Service
 @RequiredArgsConstructor
@@ -112,13 +113,12 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
 
         //S3에서 이미지 삭제
-        String oldImageUrl = decode(
-                review.getImage().replace(
-                        "https://team12-images.s3.ap-northeast-2.amazonaws.com/", ""
-                ),
-                StandardCharsets.UTF_8
-        );
-        storageService.deleteFile(oldImageUrl);
+        String imagePath = review.getImage();
+        storageService.deleteFile(imagePath);
+
+        if(reviewRepository.findAllByRestaurantId(review.getRestaurant().getId()).size() == 0) {
+            restaurantRepository.deleteById(review.getRestaurant().getId());
+        }
 
     }
 
@@ -130,7 +130,8 @@ public class ReviewService {
         );
 
         List<ReviewLikesDto> reviewLikesDto = getReviewLikes(review);
-
+        Restaurant restaurant = review.getRestaurant();
+        List<Review> isSize = reviewRepository.findAllByRestaurantId(restaurant.getId());
         return ReviewResponseDto.builder()
                 .restaurantId(review.getRestaurant().getId())
                 .reviewId(review.getId())
@@ -144,6 +145,7 @@ public class ReviewService {
                 .modifiedAt(review.getModifiedAt())
                 .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + review.getImage())
                 .reviewLikesDtoList(reviewLikesDto)
+                .listSize(isSize.size())
                 .build();
     }
 
