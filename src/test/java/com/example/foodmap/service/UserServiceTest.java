@@ -27,6 +27,7 @@
 //import org.springframework.mock.web.MockMultipartFile;
 //import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.test.annotation.Rollback;
+//import org.springframework.test.context.ActiveProfiles;
 //
 //import javax.transaction.Transactional;
 //import java.util.Optional;
@@ -37,6 +38,7 @@
 //
 //@Transactional
 //@Rollback
+//@ActiveProfiles("test")
 //@Import(EmbeddedS3Config.class)
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -113,7 +115,7 @@
 //        userInfoRequestDto = new UserInfoRequestDto(
 //                nickname,latitude,longitude,address);
 //
-//        String expected = "mock1.png";
+//        String expected = "gksdnf.png";
 //        multipartFile = new MockMultipartFile("file", expected,
 //                "image/png", "test data".getBytes());
 //
