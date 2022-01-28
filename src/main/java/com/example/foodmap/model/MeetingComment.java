@@ -12,8 +12,6 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
-@AllArgsConstructor
 @Entity
 public class MeetingComment extends Timestamped{
 
