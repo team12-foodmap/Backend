@@ -135,9 +135,21 @@
 
 ## 💡 Trouble Shooting
 [무중단 배포과정 에러](https://www.notion.so/312e1bb97cd24106850d5478f2bfd191)
-[무중단 배포 후 업로드 에러](https://ripple-dinosaur-f24.notion.site/4a0ad963b5464e79920f24b14302f26b)
-[UTC-KST 에러](https://ripple-dinosaur-f24.notion.site/UTC-KST-3441b382277c498dbc0f87f9eaa0cae5)
-[N+1 문제](https://ripple-dinosaur-f24.notion.site/Query-6810d162ec4d4760babd0bd6103fa8ef)
-[Refactoring](https://ripple-dinosaur-f24.notion.site/Refactoring-b05b2487cd274059ad7148a2a8f52c8f)
-[application.yml 암호화](https://ripple-dinosaur-f24.notion.site/application-yml-333adee4c543423082e2d679cb025f53)
-[카카오 이메일](https://ripple-dinosaur-f24.notion.site/email-2519628666c94964abcc8e0c12a38f2e)
+</br>
+</br>
+ [무중단 배포 후 업로드 에러](https://ripple-dinosaur-f24.notion.site/4a0ad963b5464e79920f24b14302f26b)
+ </br>
+ </br>
+ [UTC-KST 에러](https://ripple-dinosaur-f24.notion.site/UTC-KST-3441b382277c498dbc0f87f9eaa0cae5)
+ </br>
+ </br>
+ [N+1 문제](https://ripple-dinosaur-f24.notion.site/Query-6810d162ec4d4760babd0bd6103fa8ef) 
+ </br>
+ </br>
+ [Refactoring](https://ripple-dinosaur-f24.notion.site/Refactoring-b05b2487cd274059ad7148a2a8f52c8f) 
+ </br>
+ </br>
+ [application.yml 암호화](https://ripple-dinosaur-f24.notion.site/application-yml-333adee4c543423082e2d679cb025f53) 
+ </br>
+ </br>
+ [카카오 이메일](https://ripple-dinosaur-f24.notion.site/email-2519628666c94964abcc8e0c12a38f2e) 
