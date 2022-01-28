@@ -15,19 +15,9 @@ public class MyRestaurantResponseDto {
     private Long restaurantId;
     private String restaurantName;
     private Location location;
-    private double distance;
-    private int reviewCount;
-    private int restaurantLikesCount;
+    private String fried;
+    private String sundae;
+    private String tteokbokkiType;
+    private int spicy;
     private String image;
-
-    public MyRestaurantResponseDto(Restaurant restaurant) {
-        this.restaurantId = restaurant.getId();
-        this.restaurantName = restaurant.getRestaurantName();
-        this.location = restaurant.getLocation();
-        this.distance = getDistance();
-        this.reviewCount =getReviewCount();
-        this.restaurantLikesCount =getRestaurantLikesCount();
-        this.image =restaurant.getImage();
-
-    }
 }

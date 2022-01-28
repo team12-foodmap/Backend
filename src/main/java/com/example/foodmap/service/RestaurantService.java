@@ -3,12 +3,17 @@ package com.example.foodmap.service;
 
 import com.example.foodmap.dto.Restaurant.*;
 import com.example.foodmap.exception.CustomException;
-import com.example.foodmap.model.*;
+import com.example.foodmap.model.Restaurant;
+import com.example.foodmap.model.RestaurantLikes;
+import com.example.foodmap.model.Review;
+import com.example.foodmap.model.User;
 import com.example.foodmap.repository.RestaurantRepository;
 import com.example.foodmap.repository.ReviewRepository;
 import com.example.foodmap.repository.UserRepository;
+import com.example.foodmap.validator.RestaurantValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,15 +21,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.foodmap.config.CacheKey.TOP3;
 import static com.example.foodmap.exception.ErrorCode.POST_NOT_FOUND;
 import static com.example.foodmap.exception.ErrorCode.USER_NOT_FOUND;
 
 
 
 @Slf4j
+@EnableCaching
 @RequiredArgsConstructor
 @Service
 public class RestaurantService {
@@ -32,8 +40,9 @@ public class RestaurantService {
     private final ReviewRepository reviewRepository;
     private final StorageService storageService;
     private final UserRepository userRepository;
+    private final RedisService redisService;
 
-    public static final int DISTANCE = 3;
+    public static final double DISTANCE = 1.5;
 
     //region 식당등록
     @Transactional
@@ -43,20 +52,29 @@ public class RestaurantService {
                 () -> new CustomException(USER_NOT_FOUND)
         );
 
+        RestaurantValidator.isValidRestaurant(requestDto);
 
         String imagePath = "";
         if (image != null) {
              imagePath = storageService.uploadFile(image, "restaurant");
         }
 
-        Location location = new Location(requestDto.getAddress(), requestDto.getLatitude(), requestDto.getLongitude());
-        Restaurant restaurant = new Restaurant(requestDto, imagePath, foundUser, location);
+        Restaurant restaurant = requestDto.toEntity(user, imagePath);
 
         return restaurantRepository.save(restaurant).getId();
     }
 
     //내 근처 식당 조회 -> 추가: 위치기반으로 조회해서 가까운 순으로 정렬
     public List<RestaurantResponseDto> getRestaurants(double userLat, double userLon, int page, int size) {
+
+        //cache
+        double lat1 = Math.floor(userLat * 100) / 100;
+        double lon1 = Math.floor(userLon * 100) / 100;
+
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
+        if (redisService.isExist(key)) {
+            return redisService.getNearbyRestaurantDtoList(key);
+        }
 
         List<RestaurantResponseDto> restaurants = new ArrayList<>();
 
@@ -67,41 +85,52 @@ public class RestaurantService {
 
             for (Restaurant restaurant : restaurantList) {
 
-                double restLat = restaurant.getLocation().getLatitude();
-                double restLon = restaurant.getLocation().getLongitude();
-
-                double distance = getDistance(userLat, userLon, restLat, restLon);
-
-                List<Review> reviews = restaurant.getReviews();
-
-                int spicySum = 0;
-                int spicyAvg = 0;
-                for (Review review : reviews) {
-                    spicySum += review.getSpicy();
-
-                }
-                if (spicySum != 0) {
-                    spicyAvg = Math.round(spicySum / reviews.size()); //맵기 평균값
-                }
-
-                RestaurantResponseDto responseDto = RestaurantResponseDto.builder()
-                        .restaurantId(restaurant.getId())
-                        .restaurantName(restaurant.getRestaurantName())
-                        .location(restaurant.getLocation())
-                        .fried(restaurant.getFried())
-                        .sundae(restaurant.getSundae())
-                        .tteokbokkiType(restaurant.getTteokbokkiType())
-                        .spicy(spicyAvg)
-                        .restaurantLikesCount(restaurant.getRestaurantLikesCount())
-                        .distance(distance)
-                        .reviewCount(reviews.size())
-                        .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
-                        .build();
+                RestaurantResponseDto responseDto = getRestaurantResponseDto(userLat, userLon, restaurant);
 
                 restaurants.add(responseDto);
             }
         }
-            return restaurants;
+
+        if(restaurants.size() != 0) {
+            redisService.setNearbyRestaurantDtoList(key, restaurants);
+        }
+
+        return restaurants;
+    }
+
+
+    private RestaurantResponseDto getRestaurantResponseDto(double userLat, double userLon, Restaurant restaurant) {
+        double restLat = restaurant.getLocation().getLatitude();
+        double restLon = restaurant.getLocation().getLongitude();
+
+        double distance = getDistance(userLat, userLon, restLat, restLon);
+
+        List<Review> reviews = restaurant.getReviews();
+
+        int spicySum = 0;
+        int spicyAvg = 0;
+        for (Review review : reviews) {
+            spicySum += review.getSpicy();
+
+        }
+        if (spicySum != 0) {
+            spicyAvg = Math.round(spicySum / reviews.size()); //맵기 평균값
+        }
+
+        RestaurantResponseDto responseDto = RestaurantResponseDto.builder()
+                .restaurantId(restaurant.getId())
+                .restaurantName(restaurant.getRestaurantName())
+                .location(restaurant.getLocation())
+                .fried(restaurant.getFried())
+                .sundae(restaurant.getSundae())
+                .tteokbokkiType(restaurant.getTteokbokkiType())
+                .spicy(spicyAvg)
+                .restaurantLikesCount(restaurant.getRestaurantLikesCount())
+                .distance(distance)
+                .reviewCount(reviews.size())
+                .image(restaurant.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                .build();
+        return responseDto;
     }
     //endregion
 
@@ -123,7 +152,7 @@ public class RestaurantService {
 
                 RestaurantReviewResponseDto responseDto = RestaurantReviewResponseDto.builder()
                         .reviewId(review.getId())
-                        .image(review.getImage())
+                        .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +review.getImage())
                         .build();
 
                 restaurantReviewResponseDtos.add(responseDto);
@@ -141,12 +170,12 @@ public class RestaurantService {
         double distance = getDistance(userLat, userLon, restLat, restLon);
 
         //식당리뷰 태그
-        List<RestaurantTagResponseDto> tagList = getTagList();
+        List<RestaurantTagResponseDto> tagList = getTagList(restaurant);
 
         //식당 즐겨찾기 리스트
         List<RestaurantLikesDto> restaurantLikesDtoList = getRestaurantLikesDtos(restaurant);
 
-        return RestaurantDetailResponseDto.builder()
+        RestaurantDetailResponseDto restaurantDetailResponseDto = RestaurantDetailResponseDto.builder()
                 .restaurantId(restaurantId)
                 .restaurantName(restaurant.getRestaurantName())
                 .location(restaurant.getLocation())
@@ -160,8 +189,11 @@ public class RestaurantService {
                 .restaurantLikesList(restaurantLikesDtoList)
                 .restaurantReviews(restaurantReviewResponseDtos)
                 .distance(distance)
-                .image(StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
+                .image(restaurant.getImage().isEmpty() ? "" : StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurant.getImage())
                 .build();
+
+
+        return restaurantDetailResponseDto;
     }
 
     private List<RestaurantLikesDto> getRestaurantLikesDtos(Restaurant restaurant) {
@@ -177,19 +209,21 @@ public class RestaurantService {
         return restaurantLikesDtoList;
     }
 
-    private List<RestaurantTagResponseDto> getTagList() {
+    //태그값 내림차순 정렬
+    private List<RestaurantTagResponseDto> getTagList(Restaurant restaurant) {
         List<RestaurantTagResponseDto> taglist = new ArrayList<>();
+        String[] array = {"👍인생맛집이에요", "😇서비스가 좋아요", "💸가성비가 좋아요", "🥉아쉬워요"};
 
         for (int i = 1; i < 5; i++) {
-            int sum = reviewRepository.countByRestaurantTags(i);
+            int sum = reviewRepository.countRestaurantTags(restaurant.getId(), i);
             RestaurantTagResponseDto tagsDto = RestaurantTagResponseDto.builder()
-                    .tagId(i)
+                    .tagId(array[i-1])
                     .count(sum)
                     .build();
             taglist.add(tagsDto);
-            System.out.println(tagsDto.toString());
+
         }
-        return taglist;
+        return taglist.stream().sorted(Comparator.comparing(RestaurantTagResponseDto::getCount).reversed()).collect(Collectors.toList());
     }
     //endregion
 
@@ -211,7 +245,7 @@ public class RestaurantService {
                     .restaurantId(restaurantList.getId())
                     .restaurantName(restaurantList.getRestaurantName())
                     .restaurantLikesCount(restaurantList.getRestaurantLikesCount())
-                    .image(restaurantList.getImage())
+                    .image(restaurantList.getImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + restaurantList.getImage())
                     .distance(distance)
                     .build();
 
@@ -220,12 +254,19 @@ public class RestaurantService {
         }
 
         myLikeList.sort((a, b) -> b.getRestaurantLikesCount() - a.getRestaurantLikesCount());
-        myLikeList.removeIf((a) -> a.getDistance() > 3000);
         if (myLikeList.size() > 3) {
-            return myLikeList.stream()
+            List<RankingResponseDto> collect = myLikeList.stream()
                     .limit(3)
                     .collect(Collectors.toList());
+
+            redisService.setTop3(TOP3, collect);
+            return collect;
         }
+
+        if(myLikeList.size() != 0) {
+            redisService.setTop3(TOP3, myLikeList);
+        }
+
         return myLikeList;
     }
 

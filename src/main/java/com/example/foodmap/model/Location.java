@@ -1,6 +1,6 @@
 package com.example.foodmap.model;
 
-import com.example.foodmap.dto.user.UserLocationDto;
+import com.example.foodmap.dto.user.UserInfoRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,17 +16,17 @@ public class Location {
     private double latitude;
     private double longitude;
 
-
-    public Location(UserLocationDto locationDto) {
-        this.address = locationDto.getAddress();
-        this.latitude = locationDto.getLatitude();
-        this.longitude = locationDto.getLongitude();
-    }
     @Builder
     public Location(String address, double latitude, double longitude) {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public Location(UserInfoRequestDto requestDto) {
+        this.address = requestDto.getAddress();
+        this.latitude = requestDto.getLatitude();
+        this.longitude = requestDto.getLongitude();
     }
 
 }

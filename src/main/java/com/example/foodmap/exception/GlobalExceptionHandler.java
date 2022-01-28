@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestApiException restApiException = new RestApiException();
         restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
         restApiException.setErrorMessage(ex.getMessage());
-
+        log.error("handleApiRequestException throw NullPointerException : {}", ex);
         return new ResponseEntity(
                 restApiException,
                 HttpStatus.BAD_REQUEST
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestApiException restApiException = new RestApiException();
         restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
         restApiException.setErrorMessage(ex.getMessage());
-
+        log.error("handleApiRequestException throw IllegalArgumentException : {}", ex);
         return new ResponseEntity(
                 restApiException,
                 HttpStatus.BAD_REQUEST

@@ -7,8 +7,9 @@ import com.example.foodmap.dto.meeting.MeetingTotalListResponseDto;
 import com.example.foodmap.security.UserDetailsImpl;
 import com.example.foodmap.service.MeetingService;
 
+
+import com.example.foodmap.service.RedisService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,8 @@ import java.util.List;
 public class MeetingController {
 
     private final MeetingService meetingService;
+    private final RedisService redisService;
+
     //모임게시글등록
     @PostMapping("/meetings")
     public ResponseEntity<String> creatMeeting(@RequestBody MeetingCreatRequestDto meetingCreatRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -34,14 +37,7 @@ public class MeetingController {
         return  meetingService.getMeeting(meetingId,userDetails);
 
     }
-//    //모임게시글 등록수정
-//    @PutMapping("/meetings/{meetingId}")
-//    public ResponseEntity<String> updateMeeting(@PathVariable Long meetingId,@RequestBody MeetingCreatRequestDto meetingCreatRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//
-//       meetingService.updateMeeting(meetingId,meetingCreatRequestDto,userDetails);
-//       return ResponseEntity.ok().body("모임글 수정 성공");
-//
-//    }
+
     //모임게시글 삭제
     @DeleteMapping("/meetings/{meetingId}")
     public ResponseEntity<String> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -56,8 +52,8 @@ public class MeetingController {
             @RequestParam int page,
             @RequestParam int size,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return meetingService.getMeetingList(userDetails,page,size);
 
+        return meetingService.getMeetingList(userDetails,page,size);
     }
 
     //모임 음식점 search

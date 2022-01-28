@@ -3,6 +3,7 @@ package com.example.foodmap.model;
 
 import com.example.foodmap.dto.user.UsernameCreateDto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
     @Id
@@ -70,9 +72,6 @@ public class User {
     public void updateUserInfo(String profileImagePath, String nickname, Location location) {
         this.nickname = nickname;
         this.location = location;
-
-        if (!profileImagePath.isEmpty()) {
-            this.profileImage = profileImagePath;
-        }
+        this.profileImage = profileImagePath;
     }
 }

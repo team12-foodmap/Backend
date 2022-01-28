@@ -10,11 +10,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,14 +31,6 @@ public class UserController {
         return ResponseEntity.ok().body(kakaoUserResponseDto);
     }
 
-//    //유저위치 저장(주소, 위도, 경도)
-//    @ApiOperation("유저위치 등록")
-//    @PutMapping("/user/location")
-//    public Location saveLocation(@RequestBody UserLocationDto locationDto,
-//                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return userService.saveUserLocation(locationDto, userDetails.getUser());
-//    }
-
     //유저정보
     @GetMapping("/userInfo")
     public KakaoInfoResponseDto userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -48,11 +42,11 @@ public class UserController {
     @PutMapping("/userInfo/save")
     public ResponseEntity<?> saveUserInfo(
             @ModelAttribute UserInfoRequestDto requestDto,
-            @RequestParam MultipartFile profileImage,
+            @RequestParam(required = false) MultipartFile profileImage,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     )
     {
-        userService.saverUserInfo(requestDto, userDetails,profileImage);
+        userService.saverUserInfo(requestDto, userDetails, profileImage);
         return ResponseEntity.ok().body("사용자 정보가 등록되었습니다.");
     }
 
@@ -60,10 +54,10 @@ public class UserController {
     @PutMapping("/userInfo/update")
     public ResponseEntity<?> updateUserInfo(
             @ModelAttribute UserInfoRequestDto requestDto,
-            @RequestParam MultipartFile profileImage,
+            @RequestParam(required = false) MultipartFile profileImage,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     )   {
 
-        return ResponseEntity.ok().body(userService.updateUserInfo(requestDto, userDetails,profileImage));
+        return ResponseEntity.ok().body(userService.updateUserInfo(requestDto, userDetails, profileImage));
     }
 }

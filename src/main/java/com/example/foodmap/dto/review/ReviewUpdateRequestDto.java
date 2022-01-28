@@ -1,5 +1,8 @@
 package com.example.foodmap.dto.review;
 
+import com.example.foodmap.model.Restaurant;
+import com.example.foodmap.model.Review;
+import com.example.foodmap.model.User;
 import lombok.*;
 
 @Getter

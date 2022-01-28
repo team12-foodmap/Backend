@@ -21,9 +21,6 @@ public class MyMeetingResponseDto {
     private int limitPeople;
     private int nowPeople;
     private String content;
-    private String restaurant;
-    private int viewCount;
-    private LocalDateTime modifiedAt;
     private Long userId;
     private Long meetingId;
 

@@ -1,3 +1,4 @@
+# 언어와 jdk의 버전을 지정한다.
 language: java
 version:
   - openjdk11
@@ -10,9 +11,11 @@ branches:
 
 # 빌드 전에 gradlew의 권한을 추가한다.
 before_install:
+  - openssl aes-256-cbc -K $encrypted_1116e8e6e492_key -iv $encrypted_1116e8e6e492_iv
+    -in src/main/resources/application.yml.enc -out src/main/resources/application.yml -d
   - chmod +x gradlew
 
-# Travis CI 서버의 home
+# Travis CI 서버의 Home
 # gradle을 통하여 의존성을 받게 되면 이를 캐시하여 배포할 때 마다 다시 받지 않도록 설정한다.
 cache:
   directories:
@@ -22,6 +25,43 @@ cache:
 # main 브랜치에 push 되면 수행되는 명령어이다.
 # 프로젝트 내에 권한이 추가된 gradlew를 활용하여 clean, build를 진행한다.
 script: "./gradlew clean build"
+
+before_deploy:
+  - mkdir -p before-deploy
+  - cp scripts/*.sh before-deploy/
+  - cp appspec.yml before-deploy/
+  - cp build/libs/*.jar before-deploy/
+  - cd before-deploy && zip -r before-deploy *
+  - cd ../ && mkdir -p deploy
+  - mv before-deploy/before-deploy.zip deploy/springboot-webservice.zip
+#  - zip -r springboot-webservice *
+#  - mkdir -p deploy
+#  - mv springboot-webservice.zip deploy/springboot-webservice.zip
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: team12-ci
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait_until_deployed : true
+    on:
+      branch: develop
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: team12-ci
+    key: springboot-webservice.zip
+    bundle_type: zip
+    application: springboot-webservice
+    deployment_group: springboot-webservice-group
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      branch: develop
 
 # CI 실행 완료 시 작성한 이메일로 알람
 notifications:

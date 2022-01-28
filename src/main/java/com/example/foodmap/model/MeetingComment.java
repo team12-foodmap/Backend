@@ -2,8 +2,7 @@ package com.example.foodmap.model;
 
 import com.example.foodmap.dto.meeting.MeetingUpdateRequestDto;
 import com.example.foodmap.validator.MeetingValidator;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -42,6 +41,7 @@ public class MeetingComment extends Timestamped{
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<MeetingComment> children = new ArrayList<>();
 
+    @Builder
     public MeetingComment(String content, User user,Meeting meeting ,MeetingComment parent) {
 
         MeetingValidator.isCommentValidator(meeting,content);
@@ -55,4 +55,10 @@ public class MeetingComment extends Timestamped{
     public void updateMeeting (MeetingUpdateRequestDto meetingUpdateRequestDto) {
         this.content=meetingUpdateRequestDto.getContent();
     }
+
+    public void addMeeting(Meeting meeting){
+        this.meeting=meeting;
+        meeting.meetingComments.add(this);
+    }
+
 }

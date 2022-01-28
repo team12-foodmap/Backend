@@ -32,6 +32,7 @@ public class ReviewLikesService {
                     .user(user)
                     .review(review)
                     .build();
+            reviewLikes.addReview(review);
             reviewLikesRepository.save(reviewLikes);
             reviewRepository.upLikeCnt(reviewId);
         }

@@ -1,8 +1,8 @@
 package com.example.foodmap.model;
 
-import com.example.foodmap.dto.meeting.MeetingCreatRequestDto;
 import com.example.foodmap.validator.MeetingValidator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -62,36 +62,23 @@ public class Meeting extends Timestamped {
     @ColumnDefault(value = "0")
     private int nowPeople;
 
-
-    public Meeting(User user,MeetingCreatRequestDto meetingCreatRequestDto) {
-
-        MeetingValidator.isValidMeeting(user,meetingCreatRequestDto);
-
-        this.user=user;
-        this.restaurant=meetingCreatRequestDto.getRestaurant();
-        this.restaurantId=meetingCreatRequestDto.getRestaurantId();
-        this.meetingTitle=meetingCreatRequestDto.getMeetingTitle();
-        this.content=meetingCreatRequestDto.getContent();
-        this.location=meetingCreatRequestDto.getLocation();
-        this.startDate=meetingCreatRequestDto.getStartDate();
-        this.endDate=meetingCreatRequestDto.getEndDate();
-        this.meetingDate=meetingCreatRequestDto.getMeetingDate();
-        this.limitPeople=meetingCreatRequestDto.getLimitPeople();
-        this.nowPeople=meetingCreatRequestDto.getNowPeople();
-
+    @Builder
+    public Meeting(User user, String restaurant, Long restaurantId, String meetingTitle, String content, String location, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime meetingDate, int viewCount, int limitPeople, int nowPeople) {
+        MeetingValidator.isValidMeeting(user,restaurant,  restaurantId,  meetingTitle, content, location, startDate,endDate,meetingDate,  limitPeople, nowPeople);
+        this.user = user;
+        this.restaurant = restaurant;
+        this.restaurantId = restaurantId;
+        this.meetingTitle = meetingTitle;
+        this.content = content;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.meetingDate = meetingDate;
+        this.viewCount = viewCount;
+        this.limitPeople = limitPeople;
+        this.nowPeople = nowPeople;
     }
-//    //모임수정(취소예정)
-//    public void update(MeetingCreatRequestDto meetingCreatRequestDto) {
-//        this.restaurant=meetingCreatRequestDto.getRestaurant();
-//        this.meetingTitle=meetingCreatRequestDto.getMeetingTitle();
-//        this.content=meetingCreatRequestDto.getContent();
-//        this.location=meetingCreatRequestDto.getLocation();
-//        this.startDate=meetingCreatRequestDto.getStartDate();
-//        this.endDate=meetingCreatRequestDto.getEndDate();
-//        this.meetingDate=meetingCreatRequestDto.getMeetingDate();
-//        this.limitPeople=meetingCreatRequestDto.getLimitPeople();
-//        this.nowPeople=meetingCreatRequestDto.getNowPeople();
-//    }
+
 
     public void addnowPeople() {
         this.nowPeople = nowPeople+1;

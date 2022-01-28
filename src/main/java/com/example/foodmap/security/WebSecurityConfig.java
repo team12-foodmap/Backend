@@ -82,8 +82,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").permitAll()
                 .antMatchers("/", "/h2-console/**", "/events", "/events/*").permitAll()
                 .antMatchers("/user/kakao/**").permitAll()
+                .antMatchers("/profile").permitAll()
                 .antMatchers("/userInfo/**").permitAll()
                 .antMatchers("/home").permitAll()
+                .antMatchers("/restaurants/*").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -106,6 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //user 허용
         skipPathList.add("GET,/user/kakao/**");
+        skipPathList.add("GET,/profile");
         skipPathList.add("POST,/user/**");
 
         // Image View 허용
@@ -145,8 +148,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("https://www.everybokki.com"); // domain
+        configuration.addAllowedOrigin("http://13.209.197.165:8080"); // local 테스트 시
         configuration.addAllowedOrigin("http://localhost:3000"); // local 테스트 시
-        configuration.addAllowedOrigin("http://13.125.148.51:8080"); // local 테스트 시
+        configuration.addAllowedOrigin("https://team12-images.s3.ap-northeast-2.amazonaws.com"); // local 테스트 시
+        configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization");

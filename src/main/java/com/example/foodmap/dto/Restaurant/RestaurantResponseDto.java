@@ -1,15 +1,14 @@
 package com.example.foodmap.dto.Restaurant;
 
 import com.example.foodmap.model.Location;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 public class RestaurantResponseDto {
     private Long restaurantId;
     private String restaurantName;
@@ -22,6 +21,7 @@ public class RestaurantResponseDto {
     private int restaurantLikesCount;
     private String image;
     private double distance; //사용자와의 거리
+
 
 }
 

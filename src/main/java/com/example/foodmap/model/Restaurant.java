@@ -1,10 +1,10 @@
 package com.example.foodmap.model;
 
-import com.example.foodmap.dto.Restaurant.RestaurantSaveRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -16,6 +16,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Entity
 public class Restaurant extends Timestamped {
@@ -55,18 +56,5 @@ public class Restaurant extends Timestamped {
 
     @ColumnDefault(value="0")
     private int restaurantLikesCount;
-
-    @Builder
-    public Restaurant(RestaurantSaveRequestDto requestDto, String imagePath, User foundUser, Location location) {
-        this.user = foundUser;
-        this.restaurantName = requestDto.getRestaurantName();
-        this.location = location;
-        this.restaurantType = requestDto.getRestaurantType();
-        this.fried = requestDto.getFried();
-        this.sundae = requestDto.getSundae();
-        this.tteokbokkiType = requestDto.getTteokbokkiType();
-        this.image = imagePath;
-    }
-
 
 }

@@ -1,6 +1,7 @@
 package com.example.foodmap.repository;
 
 import com.example.foodmap.model.Restaurant;
+import com.example.foodmap.model.RestaurantLikes;
 import com.example.foodmap.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +18,12 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     Optional<Restaurant> findById(Long restaurantId);
 
-    List<Restaurant> findAllByUser(User user);
+    @Query("select r from Restaurant r join fetch r.reviews where r.user =:user")
+    List<Restaurant> findAllByUser(@Param("user") User user,Pageable pageable);
 
     String HAVERSINE_PART = "(6371 * acos(cos(radians(:latitude)) * cos(radians(r.location.latitude)) * cos(radians(r.location.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(r.location.latitude))))";
 
-    @Query("SELECT r FROM Restaurant r  WHERE "+HAVERSINE_PART+" < :distance ORDER BY "+HAVERSINE_PART+" ASC")
+    @Query("SELECT r FROM Restaurant r join fetch r.reviews WHERE "+HAVERSINE_PART+" < :distance ORDER BY "+HAVERSINE_PART+" ASC")
     List<Restaurant> findRestaurantByLocation(
             @Param("latitude") double latitude,
             @Param("longitude") double longitude,
@@ -31,11 +33,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     @Modifying
     @Query(value = "update Restaurant r set r.restaurantLikesCount= r.restaurantLikesCount + 1 where r.id = :id")
-    void upLikeCnt(Long id);
+    void upLikeCnt(@Param("id")Long id);
 
     @Modifying
     @Query(value = "update Restaurant r set r.restaurantLikesCount= r.restaurantLikesCount - 1 where r.id = :id")
-    void downLikeCnt(Long id);
+    void downLikeCnt(@Param("id")Long id);
 
     @Query("select r from Restaurant r  order by r.restaurantLikesCount desc ")
     List<Restaurant> findRestaurantsByRestaurantLikesCountDesc(Restaurant restaurant);
@@ -45,4 +47,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
             countQuery = "SELECT count(r.id) from Restaurant r where r.restaurantName LIKE %:restaurantName% or r.location.address LIKE %:address%"
     )
     Page<Restaurant> findAllSearch(@Param("restaurantName") String restaurantName,@Param("address") String location ,Pageable pageable);
+
 }

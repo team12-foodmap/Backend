@@ -9,18 +9,16 @@ import com.example.foodmap.model.MeetingParticipate;
 import com.example.foodmap.model.Restaurant;
 import com.example.foodmap.repository.*;
 import com.example.foodmap.security.UserDetailsImpl;
+import com.example.foodmap.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.foodmap.exception.ErrorCode.*;
 
@@ -29,20 +27,26 @@ import static com.example.foodmap.exception.ErrorCode.*;
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
-    private final UserRepository userRepository;
     private final MeetingParticipateRepository meetingParticipateRepository;
-    private final MeetingCommentRepository meetingCommentRepository;
     private final RestaurantRepository restaurantRepository;
+    private final RedisService redisService;
+    private final RedisTemplate<String, MeetingTotalListResponseDto> meetingLIstTemplate;
+
     //모임등록글
     @Transactional
     public void creatMeeting(MeetingCreatRequestDto meetingCreatRequestDto, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
-        Meeting meeting = new Meeting(userDetails.getUser(), meetingCreatRequestDto);
+
+        UserValidator.isValidUser(userDetails.getUser());
+        Meeting meeting = meetingCreatRequestDto.toEntity(userDetails.getUser());
+
 
         meetingRepository.save(meeting);
 
         //모임등록 한사람 자동참가인원+1 자기자신
-        MeetingParticipate meetingParticipate = new MeetingParticipate(meeting, userDetails);
+        MeetingParticipate meetingParticipate = MeetingParticipate.builder()
+                .meeting(meeting)
+                .userDetails(userDetails)
+                .build();
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
 
@@ -51,17 +55,20 @@ public class MeetingService {
     //상세모임 게시글
     @Transactional
     public MeetingDetailResponseDto getMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
 
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
-                ()->new CustomException(POST_NOT_FOUND)
-        );
-        //조회수 증가
-        viewCountUp(meeting.getId());
-        //댓글 정보
 
+        UserValidator.isValidUser(userDetails.getUser());
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow( ()-> new CustomException(POST_NOT_FOUND));
+
+        List<MeetingParticipate> participates = meeting.getMeetingParticipates(); //추가
+        List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
+
+        for(MeetingParticipate participate: participates){
+           participateInfoDtoList.add(new ParticipateInfoDto(participate.getUser().getId()));
+       }
 
         MeetingInfoResponseDto meetingInfoResponseDto = new MeetingInfoResponseDto(
+                meeting.getUser().getNickname(),
                 meeting.getMeetingTitle(),
                 meeting.getStartDate(),
                 meeting.getEndDate(),
@@ -73,31 +80,16 @@ public class MeetingService {
                 meeting.getRestaurant(),
                 meeting.getViewCount(),
                 meeting.getModifiedAt(),
-                StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" + meeting.getUser().getProfileImage(),
+                meeting.getUser().getProfileImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +meeting.getUser().getProfileImage(),
                 meeting.getRestaurantId(),
                 meeting.getUser().getId(),
                 meeting.getId()
         );
-        //반환할 객체 생성
 
-        return new MeetingDetailResponseDto(meetingInfoResponseDto,commentAll(meetingId,userDetails));
-    }
+        List<MeetingComment> meetingComments = meeting.getMeetingComments();
+        List<MeetingCommentResponseDto> meetingCommentResponseDtos = convertNestedStructure(meetingComments);
 
-
-    //댓글 조회
-    public List<MeetingCommentResponseDto> commentAll(Long meetingId,UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
-
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        return convertNestedStructure(meetingCommentRepository.findMeetingCommentByMeeting(meeting));
-    }
-
-    public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){ //댓글삭제
-        return new MeetingCommentResponseDto(
-                comment.getId(),comment.getContent(),
-                StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
-                comment.getUser().getId(),
-                comment.getUser().getNickname());
+        return new MeetingDetailResponseDto(participateInfoDtoList, meetingInfoResponseDto,meetingCommentResponseDtos);
     }
 
 
@@ -114,33 +106,21 @@ public class MeetingService {
         return result;
     }
 
-
-
-    // 조회수
-    public void viewCountUp(Long meetingId) {
-        meetingRepository.updateView(meetingId);
+    public MeetingCommentResponseDto convertCommentToDto(MeetingComment comment){
+        return new MeetingCommentResponseDto(
+                comment.getId(),comment.getContent(),
+                comment.getUser().getProfileImage().isEmpty()? "" :StorageService.CLOUD_FRONT_DOMAIN_NAME + "/" +comment.getUser().getProfileImage(),
+                comment.getUser().getId(),
+                comment.getUser().getNickname(),
+                comment.getModifiedAt()
+        );
     }
 
-
-//    //본인만 모임글 수정
-//    @Transactional
-//    public void updateMeeting(Long meetingId,MeetingCreatRequestDto meetingCreatRequestDto, UserDetailsImpl userDetails) {
-//        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
-//                ()->new NullPointerException("존재하지 않는 게시물입니다.")
-//        );
-//        if(meeting.getUser().getId().equals(userDetails.getUser().getId())) {
-//
-//            meeting.update(meetingCreatRequestDto);
-//
-//        }else {
-//            throw new IllegalArgumentException("수정 권한이 없습니다.");
-//        }
-//    }
 
     //모임글 삭제
     @Transactional
     public void deleteMeeting(Long meetingId, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(
                 ()->new CustomException(POST_NOT_FOUND)
         );
@@ -155,14 +135,18 @@ public class MeetingService {
     //모임전체 조회리스트
     @Transactional
     public List<MeetingTotalListResponseDto> getMeetingList(UserDetailsImpl userDetails,int page,int size) {
-        loginCheck(userDetails);
-        //반환할 리스트
+        String key = "meeting::" + page + "/" + size;
+        if (redisService.isExist(key)) {
+            return redisService.getMeeting(key);
+        }
+
+        UserValidator.isValidUser(userDetails.getUser());
+
         List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = new ArrayList<>();
 
-
         //반환 목록에 들어갈 데이터 찾을 리스트
-        Pageable pageable = PageRequest.of(page-1,size, Sort.unsorted());
-        Page <Meeting> meetingList = meetingRepository.findAllByOrderByModifiedAtDesc(pageable);
+        Pageable pageable = PageRequest.of(page,size);
+        Page <Meeting> meetingList = meetingRepository.findByOrderByEndDateDesc(pageable);
 
         for(Meeting meeting:meetingList){
             MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
@@ -183,12 +167,17 @@ public class MeetingService {
             meetingTotalListResponseDtoList.add(meetingTotalDto);
 
         }
+
+        if(meetingTotalListResponseDtoList.size() != 0) {
+            redisService.setMeeting(key, meetingTotalListResponseDtoList);
+        }
         return meetingTotalListResponseDtoList;
     }
+
     //모임 음식점 검색
     @Transactional
     public List<MeetingSearchDto>searchPaging(String restaurantName,String location,int page,int size,UserDetailsImpl userDetails) {
-        loginCheck(userDetails);
+        UserValidator.isValidUser(userDetails.getUser());
 
         Pageable pageable = PageRequest.of(page,size);
         Page<Restaurant> restaurants = restaurantRepository.findAllSearch(restaurantName,location,pageable);
@@ -201,11 +190,5 @@ public class MeetingService {
         }
 
         return meetingSearchDtoList;
-    }
-    //유저 정보 확인
-    private void loginCheck(UserDetailsImpl userDetails) {
-        userRepository.findByKakaoId(userDetails.getUser().getKakaoId()).orElseThrow(
-                ()-> new CustomException(USER_NOT_FOUND)
-        );
     }
 }

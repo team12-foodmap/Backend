@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,23 +39,35 @@ public class Review extends Timestamped {
     @JoinColumn(nullable = false)
     private Restaurant restaurant;
 
-    @ColumnDefault(value="0")
-    private int reviewLike ;
+    @ColumnDefault(value = "0")
+    private int reviewLike;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    List<ReviewLikes> reviewLikes = new ArrayList<>();
 
     @Builder
-    public Review(ReviewRequestDto reviewRequestDto, User user,Restaurant restaurant,String imagePath) {
-        this.user =user;
+    public Review(Long id, String content, int spicy, int restaurantTags, String image, User user, Restaurant restaurant, int reviewLike, List<ReviewLikes> reviewLikes) {
+        this.id = id;
+        this.content = content;
+        this.spicy = spicy;
+        this.restaurantTags = restaurantTags;
+        this.image = image;
+        this.user = user;
         this.restaurant = restaurant;
-        this.content = reviewRequestDto.getContent();
-        this.spicy = Integer.parseInt(reviewRequestDto.getSpicy());
-        this.restaurantTags = Integer.parseInt(reviewRequestDto.getRestaurantTags());
-        this.image = imagePath;
+        this.reviewLike = reviewLike;
+        this.reviewLikes = reviewLikes;
     }
 
     public void updateReview(String content, String imagePath, String spicy, String tag) {
         this.content = content;
         this.image = imagePath;
         this.spicy = Integer.parseInt(spicy);
-        this.restaurantTags =Integer.parseInt(tag);
+        this.restaurantTags = Integer.parseInt(tag);
     }
 }
+
+//    public void addRestaurant(Restaurant restaurant){
+//        this.restaurant=restaurant;
+//        restaurant.getReviews().add(this);
+//    }
+//}

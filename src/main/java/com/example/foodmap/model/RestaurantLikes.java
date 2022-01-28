@@ -25,4 +25,15 @@ public class RestaurantLikes {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Restaurant restaurant;
+
+    public RestaurantLikes(User user, Restaurant restaurant) {
+        this.user = user;
+        this.restaurant = restaurant;
+    }
+
+    public void addRestaurant(Restaurant restaurant){
+        this.restaurant=restaurant;
+        restaurant.getRestaurantLikes().add(this);
+    }
+
 }
