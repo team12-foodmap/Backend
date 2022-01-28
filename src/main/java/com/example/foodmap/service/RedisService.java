@@ -29,7 +29,7 @@ public class RedisService {
         ListOperations<String, RestaurantResponseDto> list = redisNearbyRestaurantListDtoTemplate.opsForList();
         list.rightPushAll(key, nearbyRestaruantList);
 
-        redisTemplate.expire(key, Duration.ofMinutes(2L));
+        redisTemplate.expire(key, Duration.ofMinutes(1L));
 
     }
 
@@ -61,7 +61,7 @@ public class RedisService {
         ListOperations<String, MeetingTotalListResponseDto> list = meetingLIstTemplate.opsForList();
         list.rightPushAll(key, value);
 
-        redisTemplate.expire(key, Duration.ofMinutes(5L));
+        redisTemplate.expire(key, Duration.ofMinutes(1L));
     }
 
     public List<MeetingTotalListResponseDto> getMeeting(String key) {
@@ -71,12 +71,6 @@ public class RedisService {
         return list.range(key, 0 , len);
     }
 
-    //상세페이지
-
-//    //캐시
-//    ValueOperations<String, RestaurantDetailResponseDto> op = detailRedisTemplate.opsForValue();
-//    String key = "restaurant::" +restaurantId;
-//                op.set(key, restaurantDetailResponseDto);
 
     //key가 레디스에 존재하는지 확인하는 함수
     public boolean isExist(String key) {
