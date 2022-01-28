@@ -50,31 +50,6 @@ public class MeetingService {
         meetingParticipateRepository.save(meetingParticipate);
         meeting.addnowPeople();
 
-//        meetingCache(meeting);
-
-    }
-
-    private void meetingCache(Meeting meeting) {
-        //cache
-        String key = "meeting::" + 0 + "/" + 10;
-        MeetingTotalListResponseDto meetingTotalDto = new MeetingTotalListResponseDto(
-                meeting.getMeetingTitle(),
-                meeting.getStartDate(),
-                meeting.getEndDate(),
-                meeting.getMeetingDate(),
-                meeting.getLocation(),
-                meeting.getLimitPeople(),
-                meeting.getNowPeople(),
-                meeting.getContent(),
-                meeting.getRestaurant(),
-                meeting.getViewCount(),
-                meeting.getModifiedAt(),
-                meeting.getUser().getId(),
-                meeting.getId()
-        );
-
-//        meetingLIstTemplate.opsForList().leftPushIfPresent(key, meetingTotalDto);
-
     }
 
     //상세모임 게시글
@@ -160,11 +135,14 @@ public class MeetingService {
     //모임전체 조회리스트
     @Transactional
     public List<MeetingTotalListResponseDto> getMeetingList(UserDetailsImpl userDetails,int page,int size) {
+        String key = "meeting::" + page + "/" + size;
+        if (redisService.isExist(key)) {
+            return redisService.getMeeting(key);
+        }
+
         UserValidator.isValidUser(userDetails.getUser());
 
-
         List<MeetingTotalListResponseDto> meetingTotalListResponseDtoList = new ArrayList<>();
-
 
         //반환 목록에 들어갈 데이터 찾을 리스트
         Pageable pageable = PageRequest.of(page,size);
@@ -190,14 +168,9 @@ public class MeetingService {
 
         }
 
-//        //cache
-//        String key = "meeting::" + page + "/" + size;
-//        if (redisService.isExist(key)) {
-//            return redisService.getMeeting(key);
-//        }
-//        if(meetingTotalListResponseDtoList.size() != 0) {
-//            redisService.setMeeting(key, meetingTotalListResponseDtoList);
-//        }
+        if(meetingTotalListResponseDtoList.size() != 0) {
+            redisService.setMeeting(key, meetingTotalListResponseDtoList);
+        }
         return meetingTotalListResponseDtoList;
     }
 

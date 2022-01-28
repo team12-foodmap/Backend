@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.foodmap.config.CacheKey.TOP3;
 import static com.example.foodmap.exception.ErrorCode.POST_NOT_FOUND;
 import static com.example.foodmap.exception.ErrorCode.USER_NOT_FOUND;
 
@@ -41,8 +41,6 @@ public class RestaurantService {
     private final StorageService storageService;
     private final UserRepository userRepository;
     private final RedisService redisService;
-    private final RedisTemplate<String, RestaurantResponseDto> redisNearbyRestaurantListDtoTemplate;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     public static final double DISTANCE = 1.5;
 
@@ -63,19 +61,6 @@ public class RestaurantService {
 
         Restaurant restaurant = requestDto.toEntity(user, imagePath);
 
-//        //cache적용
-//        double userlat = user.getLocation().getLatitude();
-//        double userlon = user.getLocation().getLongitude();
-//
-//        RestaurantResponseDto restaurantResponseDto = getRestaurantResponseDto(userlat, userlon, restaurant);
-//
-//        double lat1 = Math.floor(requestDto.getLatitude() * 100) / 100;
-//        double lon1 = Math.floor(requestDto.getLongitude() * 100) / 100;
-//
-//        //등록한 식당이 리스트 맨 위에 올라오도록?
-//        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+0+"/"+10;
-//        redisNearbyRestaurantListDtoTemplate.opsForList().leftPushIfPresent(key, restaurantResponseDto);
-
         return restaurantRepository.save(restaurant).getId();
     }
 
@@ -86,11 +71,10 @@ public class RestaurantService {
         double lat1 = Math.floor(userLat * 100) / 100;
         double lon1 = Math.floor(userLon * 100) / 100;
 
-//        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
-//        if (redisService.isExist(key)) {
-////           return redisNearbyRestaurantListDtoTemplate.opsForList().range(key, 0, -1);
-//            return redisService.getNearbyRestaurantDtoList(key);
-//        }
+        String key = "restaurant::" + lat1 +"/" + lon1 + "/"+page+"/"+size;
+        if (redisService.isExist(key)) {
+            return redisService.getNearbyRestaurantDtoList(key);
+        }
 
         List<RestaurantResponseDto> restaurants = new ArrayList<>();
 
@@ -107,9 +91,9 @@ public class RestaurantService {
             }
         }
 
-//        if(restaurants.size() != 0) {
-//            redisService.setNearbyRestaurantDtoList(key, restaurants);
-//        }
+        if(restaurants.size() != 0) {
+            redisService.setNearbyRestaurantDtoList(key, restaurants);
+        }
 
         return restaurants;
     }
@@ -275,13 +259,13 @@ public class RestaurantService {
                     .limit(3)
                     .collect(Collectors.toList());
 
-//            redisService.setTop3(TOP3, collect);
+            redisService.setTop3(TOP3, collect);
             return collect;
         }
 
-//        if(myLikeList.size() != 0) {
-//            redisService.setTop3(TOP3, myLikeList);
-//        }
+        if(myLikeList.size() != 0) {
+            redisService.setTop3(TOP3, myLikeList);
+        }
 
         return myLikeList;
     }
